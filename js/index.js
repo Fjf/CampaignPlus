@@ -24,6 +24,35 @@ function addEnemy(){
         Math.floor(Math.random() * 20 + 1) + "</td></tr>"
 }
 
+function sortInitiative(){
+    //Function from W3Schools
+    //Sorts the table on the n-th element.
+    //Converts the string to a number first.
+    n = 2;
+
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("encounter_list");
+    switching = true;
+    while (switching) {
+        switching = false;
+        rows = table.getElementsByTagName("TR");
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+            if (x.innerHTML.toLowerCase() - 0 < y.innerHTML.toLowerCase() - 0) {
+                shouldSwitch= true;
+                break;
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
+}
+
+
 clearEncounter()
 
 
