@@ -35,11 +35,15 @@ function refreshPlayers(){
 }
 
 function addNewPlayer(){
-    naam = document.getElementById("new_player_name").value;
-    klasse = document.getElementById("new_player_class").value;
-    rest = document.getElementById("new_player_rest").value;
+    var naam = document.getElementById("new_player_name").value;
+    var klasse = document.getElementById("new_player_class").value;
+    var rest = document.getElementById("new_player_rest").value;
 
-    document.cookie = "player_" + naam + "=" + klasse + ":" + rest + ";";
+    var d = new Date();
+    d.setTime(d.getTime() + (365*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+
+    document.cookie = "player_" + naam + "=" + klasse + ":" + rest + ";" + expires + ";";
     refreshPlayers()
 }
 
@@ -47,7 +51,11 @@ function addNewEnemy(){
     naam = document.getElementById("new_enemy_name").value;
     maxhp = document.getElementById("new_enemy_maxhp").value;
 
-    document.cookie = "enemy_" + naam + "=" + maxhp + ";";
+    var d = new Date();
+    d.setTime(d.getTime() + (365*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+
+    document.cookie = "enemy_" + naam + "=" + maxhp + ";" + expires + ";";
 
     enemyList[0].push(naam)
     enemyList[1].push(maxhp)
