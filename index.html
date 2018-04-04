@@ -15,11 +15,35 @@
                 <ul>
                     <li onclick="clearEncounter()">Begin new encounter</li>
                     <li onclick="buttonAddEnemy()">Add enemy</li>
-                    <li>Add player character</li>
+                    <li onclick="buttonAddPlayer()">Add player character</li>
                     <li onclick="sortInitiative()">Sort by initiative</li>
                 </ul>
             </div>
             <div id="content_expanded">
+                <div id="content_expanded_enemy" style="display:none;">
+                    Select the desired enemy you want to add and click 'Add'.<br>
+                    <select id='content_selected_enemy'></select><br>
+
+                    <button onclick='addEnemy()'>Add</button><p>
+
+                    Add new enemy to the list of possible enemies.
+                    <input id="new_enemy_name" type="text" placeholder="Naam">
+                    <input id="new_enemy_maxhp" type="text" placeholder="Max HP">
+                    <input type="submit" value="Add" onclick="addNewEnemy()">
+                </div>
+
+                <div id="content_expanded_player" style="display:none;">
+                    Select the desired player you want to add and click 'Add'.<br>
+
+                    <select id='content_selected_player'></select><br>
+                    <button onclick='addPlayer()'>Add</button><p>
+
+                    Add new players to the list of possible players.
+                    <input id="new_player_name" type="text" placeholder="Naam">
+                    <input id="new_player_class" type="text" placeholder="Class">
+                    <input id="new_player_rest" type="text" placeholder="Andere Shit">
+                    <input type="submit" value="Add" onclick="addNewPlayer()">
+                </div>
             </div>
         </div>
         <div id="content_right">

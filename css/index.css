@@ -60,6 +60,10 @@ body {
     border-style: outset;
 }
 
+input {
+    width:90%;
+}
+
 #content_right {
     width: 70%;
     padding: 5px;
