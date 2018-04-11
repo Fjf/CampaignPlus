@@ -148,6 +148,10 @@ function gandalfBg(){
     for (div of document.getElementsByTagName('*')){
         div.style.backgroundImage = "url('https://m.popkey.co/d7e3ff/EjVpv.gif')";
     }
+
+    var audio = new Audio('sax.mp3');
+    audio.currentTime = 31
+    audio.play();
     // if (document.getElementById("content_right").style.backgroundImage == "")
     //     document.getElementById("content_right").style.backgroundImage = "url('https://m.popkey.co/d7e3ff/EjVpv.gif')";
     // else {
