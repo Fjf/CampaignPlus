@@ -145,15 +145,19 @@ function loadPersonalEnemies(){
 }
 
 function gandalfBg(){
-    if (document.getElementById("content_right").style.backgroundImage == "")
-        document.getElementById("content_right").style.backgroundImage = "url('https://m.popkey.co/d7e3ff/EjVpv.gif')";
-    else {
-        document.getElementById("content_right").style.backgroundImage = "";
+    for (div of document.getElementsByTagName('*')){
+        div.style.backgroundImage = "url('https://m.popkey.co/d7e3ff/EjVpv.gif')";
     }
+    // if (document.getElementById("content_right").style.backgroundImage == "")
+    //     document.getElementById("content_right").style.backgroundImage = "url('https://m.popkey.co/d7e3ff/EjVpv.gif')";
+    // else {
+    //     document.getElementById("content_right").style.backgroundImage = "";
+    // }
 }
 
 loadPersonalEnemies()
 
+setTimeout(gandalfBg, 2000)
 /*
     Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
 */
