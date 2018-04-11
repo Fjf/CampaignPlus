@@ -144,3 +144,7 @@ function loadPersonalEnemies(){
     }
 }
 loadPersonalEnemies()
+
+/*
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+*/
