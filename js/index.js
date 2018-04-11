@@ -143,6 +143,15 @@ function loadPersonalEnemies(){
         enemyList[1].push(keyval[1])
     }
 }
+
+function gandalfBg(){
+    if (document.getElementById("content_right").style.backgroundImage == "")
+        document.getElementById("content_right").style.backgroundImage = "url('https://m.popkey.co/d7e3ff/EjVpv.gif')";
+    else {
+        document.getElementById("content_right").style.backgroundImage = "";
+    }
+}
+
 loadPersonalEnemies()
 
 /*
