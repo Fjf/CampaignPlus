@@ -74,6 +74,8 @@ input {
     box-shadow: -2px -2px 5px 2px rgba(0, 0, 0, 0.3);
     overflow-y:scroll;
     text-align: center;
+    background-image: url('https://m.popkey.co/d7e3ff/EjVpv.gif');
+    background-size: cover;
 }
 
 #content_right table {
