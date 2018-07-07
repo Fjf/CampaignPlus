@@ -2,22 +2,21 @@
 <html>
 <head>
     <title>TODO: title</title>
-    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
 </head>
 
 <body>
     <div id="header">
         Hier komen de nav opties
-        <button onclick="gandalfBg()" style="height:10px; width:10px; float:right; background-color:lightblue; border:none;"></button>
     </div>
     <div id="content">
         <div id="content_left">
             <div id="content_options">
                 <ul>
-                    <li onclick="clearEncounter()">Begin new encounter</li>
-                    <li onclick="buttonAddEnemy()">Add enemy</li>
-                    <li onclick="buttonAddPlayer()">Add player character</li>
-                    <li onclick="sortInitiative()">Sort by initiative</li>
+                    <li class="custom_button" onclick="clearEncounter()">Begin new encounter</li>
+                    <li class="custom_button" onclick="buttonAddEnemy()">Add enemy</li>
+                    <li class="custom_button" onclick="buttonAddPlayer()">Add player character</li>
+                    <li class="custom_button" onclick="sortInitiative()">Sort by initiative</li>
                 </ul>
             </div><p>
             <div id="content_expanded">
@@ -53,5 +52,5 @@
         </div>
     </div>
 </body>
-<script src="js/index.js"></script>
+<script src="{{ url_for('static', filename='index.js') }}"></script>
 </html>

@@ -101,3 +101,7 @@ input {
     /* aligns the table somehow */
     width: 5%;
 }
+
+.custom_button {
+    cursor: pointer;
+}

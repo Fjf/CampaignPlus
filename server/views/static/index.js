@@ -14,24 +14,31 @@ function addPlayer(){
 }
 
 function refreshPlayers(){
-    playerList = []
-    //Doe iets om players + stats te lezen uit de cookies.
-    for (cookieStr of document.cookie.split(';')){
-        cookieStr = cookieStr.trim()
-        if (cookieStr.length == 0 || !cookieStr.startsWith("player_"))
-            continue;
-        data = cookieStr.split("=");
-        name = data[0].split("_")[1]
-        playerList.push(name)
+    let func = function(data) {
+        console.log(data)
+        str = "";
+        for (player of data){
+            str += "<option value='" + player + "'>" + player.name + " (" + player.class + ")</option>"
+        }
+        document.getElementById("content_selected_player").innerHTML = str;
     }
-    //Gewenste lijst met namen voor de players
-    // playerList = ["duncan", "luciano"];
 
-    str = "";
-    for (player of playerList){
-        str += "<option value='" + player + "'>" + player + "</option>"
+    response = requestApiJsonData("api/getplayers", "GET", {}, func)
+}
+
+
+function requestApiJsonData(api, requestType, data, callback) {
+    let xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState === 4) {
+            callback(JSON.parse(xmlHttp.response));
+        }
     }
-    document.getElementById("content_selected_player").innerHTML = str;
+
+    xmlHttp.open(requestType, api, true)
+    xmlHttp.setRequestHeader("Content-Type", "application/json");
+    xmlHttp.send(JSON.stringify(data))
 }
 
 function addNewPlayer(){
@@ -39,11 +46,12 @@ function addNewPlayer(){
     var klasse = document.getElementById("new_player_class").value;
     var rest = document.getElementById("new_player_rest").value;
 
-    var d = new Date();
-    d.setTime(d.getTime() + (365*24*60*60*1000));
-    var expires = "expires="+ d.toUTCString();
+    let data = {
+        name: naam,
+        class: klasse,
+    }
+    response = requestApiJsonData("api/createplayer", "POST", data, null)
 
-    document.cookie = "player_" + naam + "=" + klasse + ":" + rest + ";" + expires + ";";
     refreshPlayers()
 }
 
@@ -152,16 +160,13 @@ function gandalfBg(){
     var audio = new Audio('sax.mp3');
     audio.currentTime = 31
     audio.play();
-    // if (document.getElementById("content_right").style.backgroundImage == "")
-    //     document.getElementById("content_right").style.backgroundImage = "url('https://m.popkey.co/d7e3ff/EjVpv.gif')";
-    // else {
-    //     document.getElementById("content_right").style.backgroundImage = "";
-    // }
+     if (document.getElementById("content_right").style.backgroundImage == "")
+         document.getElementById("content_right").style.backgroundImage = "url('https://m.popkey.co/d7e3ff/EjVpv.gif')";
+     else {
+         document.getElementById("content_right").style.backgroundImage = "";
+     }
 }
 
 loadPersonalEnemies()
 
-setTimeout(gandalfBg, 2000)
-/*
-    Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-*/
+//setTimeout(gandalfBg, 2000)
