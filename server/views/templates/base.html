@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO: title</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    </head>
+
+    <body>
+        {% block content %}
+        {% endblock %}
+    </body>
+    <script src="{{ url_for('static', filename='js/lib/requests.js') }}"></script>
+    {% block javascripts %}
+    {% endblock %}
+</html>

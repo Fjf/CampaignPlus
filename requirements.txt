@@ -1,2 +1,3 @@
+werkzeug
 sqlalchemy
 flask==0.12.4

@@ -6,6 +6,6 @@ def get_players():
     return player_repository.get_players()
 
 
-def create_player(name, class_name):
-    player = PlayerModel.from_name(name, class_name)
+def create_player(name, class_name, user_id):
+    player = PlayerModel.from_name(name, class_name, user_id)
     player_repository.create_player(player)

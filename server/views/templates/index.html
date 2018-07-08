@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>TODO: title</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block content %}
     <div id="header">
         Hier komen de nav opties
     </div>
@@ -51,6 +46,8 @@
             </table>
         </div>
     </div>
-</body>
-<script src="{{ url_for('static', filename='index.js') }}"></script>
-</html>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+{% endblock %}

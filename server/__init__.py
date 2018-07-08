@@ -16,6 +16,8 @@ def create_app(config) -> Flask:
     app.port = app_section['port']
     app.database_name = 'database.db'
 
+    app.secret_key = app_section['secret'].encode()
+
     return app
 
 
@@ -54,7 +56,6 @@ def init():
 
     # Create model
     server.lib.database.metadata_create_all()
-
 
     print('Setup done.')
 
