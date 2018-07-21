@@ -132,7 +132,7 @@ function setUserData() {
         if (data == null)
             return
 
-        document.getElementById("header").innerHTML = "Logged in as " + data.name;
+        document.getElementById("currentuser").innerHTML = "Logged in as " + data.name;
     }
     requestApiJsonData("api/session", "GET", {}, set_data)
 }

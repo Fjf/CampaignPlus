@@ -7,10 +7,13 @@ body {
 }
 
 #header {
-    margin: inherit;
+    display: flex;
+    flex-direction: row;
+    justify-content: center; /* align horizontal */
+    align-items: center; /* align vertical */
+    margin: auto;
     background-color: blue;
     height: 5%;
-    padding: 5px;
 }
 
 #content {
@@ -104,4 +107,23 @@ input {
 
 .custom_button {
     cursor: pointer;
+}
+
+.logindiv {
+    background-color: grey;
+    width: 40%;
+    height: 100%;
+    padding: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.clickabletext {
+    cursor: pointer;
+    color: blue;
+}
+
+.headerelem {
+    text-align: center;
+    flex: 1;
 }

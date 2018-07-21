@@ -2,12 +2,32 @@
 
 {% block content %}
     <body>
-        Log in to your account
-        <form action="javascript:login();" method = "POST">
-            <p>Name<input type = "text" name = "Name" /></p>
-            <p>Password<input type ="password" name = "Password" /></p>
-            <p><input type = "submit" value = "submit" /></p>
-        </form>
+        <div class="logindiv" id="login">
+            Log in to your account
+            <form action="javascript:login();" method = "POST">
+                Name<br>
+                <input type = "text" name = "Name" /><br>
+                Password<br>
+                <input type ="password" name = "Password" /><br>
+                <input type = "submit" value = "submit" /><br>
+            </form>
+            <div id="errorboxlogin"></div>
+            Don't have an account yet? Register <b class="clickabletext" onclick="show('register')">here.</b>
+        </div>
+        <div class="logindiv" id="register" style="display:none;">
+            Register a new account:
+            <form action="javascript:register();" method = "POST">
+                Name<br>
+                <input type="text" name="name"/><br>
+                Password<br>
+                <input type="password" name="pw"/><br>
+                Confirm Password<br>
+                <input type="password" name="pwconfirm"/><br>
+                <input type = "submit" value = "submit" /><br>
+            </form>
+            Already have an account? Login <b class="clickabletext" onclick="show('login')">here.</b>
+            <div id="errorboxregister"></div>
+        </div>
     </body>
 {% endblock %}
 

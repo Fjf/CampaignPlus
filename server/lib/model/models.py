@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, ForeignKey, LargeBinary
+from sqlalchemy.orm import relationship, deferred
 
 from server.lib.database import OrmModelBase
 
@@ -14,7 +14,7 @@ class UserModel(OrmModelBase):
     id = Column(Integer(), primary_key=True)
 
     name = Column(String(), unique=True, nullable=False)
-    password = Column(String(), nullable=False)
+    password = deferred(Column(LargeBinary(), nullable=False))
 
     @classmethod
     def from_name_password(cls, name: str, password: str):

@@ -2,7 +2,7 @@ from flask import request
 from werkzeug.exceptions import BadRequest
 
 from server.lib.service import player_service
-from server.lib.user_session import session_user
+from server.lib.user_session import session_user, session_user_set
 
 from server.views.api import api, json_api
 from server.lib.service import user_service
@@ -20,12 +20,17 @@ def register():
     pw = data["password"]
     data = user_service.create_user(name, pw)
 
+    error = ""
+    if data == 0:
+        error = "Username already in use"
+
     # Do this to set session to the registered user.
     if data == 1:
         data = user_service.login(name, pw)
 
     return {
-        "success": data
+        "success": data,
+        "error": error
     }
 
 
