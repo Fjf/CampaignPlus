@@ -9,9 +9,11 @@ function login() {
     let func = function(data) {
         console.log(data)
         if (data.success)
-            location.href="http://localhost:5000/"
-        else
+            location.href="/"
+        else {
+            document.getElementById("errorboxlogin").innerHTML = data.error;
             console.log("Something went wrong logging in.")
+        }
     }
 
     let data = {
@@ -33,9 +35,11 @@ function register() {
     let func = function(data) {
         console.log(data)
         if (data.success)
-            location.href="http://localhost:5000/"
-        else
+            location.href="/"
+        else {
+            document.getElementById("errorboxregister").innerHTML = data.error;
             console.log("Something went wrong trying to register.")
+        }
     }
 
     let data = {
@@ -43,4 +47,20 @@ function register() {
         "password": password
     }
     requestApiJsonData("api/register", "POST", data, func)
+}
+
+
+function show(divId) {
+    let divs = document.getElementsByClassName("logindiv")
+    for (let i = 0; i < divs.length; i++) {
+        if (divs[i] == document.getElementById(divId)) {
+            divs[i].style.display = "block";
+        }
+        else {
+            divs[i].style.display = "none";
+        }
+    }
+
+    document.getElementById("errorboxlogin").innerHTML = "";
+    document.getElementById("errorboxregister").innerHTML = "";
 }
