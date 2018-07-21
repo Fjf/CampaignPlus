@@ -14,6 +14,7 @@ def create_app(config) -> Flask:
     app_section = config['app']
     app.config['DEBUG'] = app_section.getboolean('debug')
     app.port = app_section['port']
+    app.host = app_section['host']
     app.database_name = 'database.db'
 
     app.secret_key = app_section['secret'].encode()

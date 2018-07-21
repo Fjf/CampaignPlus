@@ -96,8 +96,8 @@ input {
     padding: 5px 0;
 }
 
-#content_right {
-
+.encounter {
+    display: none;
 }
 
 #content_right table td {

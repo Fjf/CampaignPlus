@@ -8,47 +8,80 @@
     <div id="content">
         <div id="content_left">
             <div id="content_options">
-                <ul>
-                    <li class="custom_button" onclick="clearEncounter()">Begin new encounter</li>
-                    <li class="custom_button" onclick="buttonAddEnemy()">Add enemy</li>
-                    <li class="custom_button" onclick="buttonAddPlayer()">Add player character</li>
-                    <li class="custom_button" onclick="sortInitiative()">Sort by initiative</li>
-                </ul>
-            </div><p>
-            <div id="content_expanded">
-                <div id="content_expanded_enemy" style="display:none;">
-                    Select the desired enemy you want to add and click 'Add'.<br>
-                    <select id='content_selected_enemy'></select><br>
-
-                    <button onclick='addEnemy()'>Add</button><p>
-
-                    Add new enemy to the list of possible enemies.
-                    <input id="new_enemy_name" type="text" placeholder="Naam">
-                    <input id="new_enemy_maxhp" type="text" placeholder="Max HP">
-                    <input type="submit" value="Add" onclick="addNewEnemy()">
+                <div class="playthrough" id="playthrough_options">
+                    <ul>
+                        <li class="custom_button" onclick="buttonExpandPlaythrough()">Playthroughs.</li>
+                        <li class="custom_button" onclick="">User settings?</li>
+                    </ul>
                 </div>
+                <div class="encounter" id="encounter_options">
+                    <ul>
+                        <li class="custom_button" onclick="clearEncounter()">Begin new encounter</li>
+                        <li class="custom_button" onclick="buttonAddEnemy()">Add enemy</li>
+                        <li class="custom_button" onclick="buttonAddPlayer()">Add player character</li>
+                        <li class="custom_button" onclick="sortInitiative()">Sort by initiative</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="content_expanded">
+                <div class="encounter" id="encounter_expanded">
+                    <div id="content_expanded_enemy" style="display:none;">
+                        Select the desired enemy you want to add and click 'Add'.<br>
+                        <select id='content_selected_enemy'></select><br>
 
-                <div id="content_expanded_player" style="display:none;">
-                    Select the desired player you want to add and click 'Add'.<br>
+                        <button onclick='addEnemy()'>Add</button><p>
 
-                    <select id='content_selected_player'></select><br>
-                    <button onclick='addPlayer()'>Add</button><p>
+                        Add new enemy to the list of possible enemies.
+                        <input id="new_enemy_name" type="text" placeholder="Naam">
+                        <input id="new_enemy_maxhp" type="text" placeholder="Max HP">
+                        <input type="submit" value="Add" onclick="addNewEnemy()">
+                    </div>
 
-                    Add new players to the list of possible players.
-                    <input id="new_player_name" type="text" placeholder="Naam">
-                    <input id="new_player_class" type="text" placeholder="Class">
-                    <input id="new_player_rest" type="text" placeholder="Andere Shit">
-                    <input type="submit" value="Add" onclick="addNewPlayer()">
+                    <div id="content_expanded_player" style="display:none;">
+                        Select the desired player you want to add and click 'Add'.<br>
+
+                        <select id='content_selected_player'></select><br>
+                        <button onclick='addPlayer()'>Add</button><p>
+
+                        Add new players to the list of possible players.
+                        <input id="new_player_name" type="text" placeholder="Naam">
+                        <input id="new_player_class" type="text" placeholder="Class">
+                        <input id="new_player_rest" type="text" placeholder="Andere Shit">
+                        <input type="submit" value="Add" onclick="addNewPlayer()">
+                    </div>
+                </div>
+                <div class="playthrough" id="playthrough_expanded" style="display:none">
+                    Select the playthrough you want to continue with and click 'Load'.<br>
+                    <select id='content_selected_playthrough'></select><br>
+
+                    <button onclick='loadPlaythrough()'>Load</button><br>
+
+                    Creating a playthrough? Fill in a name and click 'Create'.<br>
+
+                    <input id="new_playthrough_name" type="text" placeholder="Naam">
+                    <input type="submit" value="Create" onclick="createPlaythrough()">
                 </div>
             </div>
         </div>
         <div id="content_right">
-            <table id="encounter_list">
-            </table>
+            <div class="encounter" id="encounter_content">
+                <table id="encounter_list">
+                </table>
+            </div>
+            <div class="playthrough" id="playthrough_content" style="display:none">
+                <div id="playthrough_name"></div><br>
+
+                <div>
+                    <input id="playthrough_link_url" type="text" disabled style="width:70%">
+                    <input type="button" value="Copy URL" onclick="copyPlaythroughUrl()" style="width:20%">
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
 
 {% block javascripts %}
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/playthrough.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/encounter.js') }}"></script>
 {% endblock %}

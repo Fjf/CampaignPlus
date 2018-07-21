@@ -48,3 +48,5 @@ def require_login():
 import server.views.api.player  # noqa
 import server.views.api.user  # noqa
 import server.views.api.enemy  # noqa
+import server.views.api.playthrough  # noqa
+

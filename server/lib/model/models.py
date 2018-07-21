@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, LargeBinary
+import datetime
+
+from sqlalchemy import Column, Integer, String, ForeignKey, LargeBinary, DateTime
 from sqlalchemy.orm import relationship, deferred
 
 from server.lib.database import OrmModelBase
@@ -78,3 +80,53 @@ class EnemyModel(OrmModelBase):
         c.max_hp = max_hp
         c.user_id = user_id
         return c
+
+
+class PlaythroughModel(OrmModelBase):
+    """
+    A playthrough which contains data about a game.
+    """
+
+    __tablename__ = 'playthrough'
+
+    id = Column(Integer(), primary_key=True)
+
+    """
+    The user to whom this player character belongs.
+    """
+
+    user_id = Column(Integer(), ForeignKey("user.id"))
+    user = relationship("UserModel")
+
+    name = Column(String(), nullable=False)
+    date = Column(DateTime(), nullable=False)
+
+    @classmethod
+    def from_name_date(cls, name: str, date: datetime, user_id: int):
+        c = cls()
+        c.name = name
+        c.date = date
+        c.user_id = user_id
+        return c
+
+
+class PlaythroughJoinCodeModel(OrmModelBase):
+    """
+    A code for users to join a game.
+    This should be cleaned up regularly.
+    """
+
+    __tablename__ = "playthrough_code"
+
+    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"), primary_key=True)
+    playthrough = relationship("PlaythroughModel")
+
+    code = Column(String(), nullable=True, unique=True)
+    date = Column(DateTime(), nullable=True)
+
+    @classmethod
+    def from_playthrough_id(cls, playthrough_id: int):
+        c = cls()
+        c.playthrough_id = playthrough_id
+        return c
+
