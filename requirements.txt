@@ -1,3 +1,4 @@
-werkzeug
-sqlalchemy
-flask==0.12.4
+bcrypt==3.1.4
+SQLAlchemy==1.1.13
+Werkzeug==0.12.2
+Flask==0.12.2
