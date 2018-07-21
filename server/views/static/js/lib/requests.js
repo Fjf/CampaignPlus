@@ -6,13 +6,13 @@ function requestApiJsonData(api, requestType, data, callback) {
             if (xmlHttp.status == 200)
                 callback(JSON.parse(xmlHttp.response));
             else
-                console.log("Something went wrong calling " + api)
+                console.log("Something went wrong calling " + api);
         }
     }
 
-    xmlHttp.open(requestType, api, true)
+    xmlHttp.open(requestType, api, true);
     xmlHttp.setRequestHeader("Content-Type", "application/json");
-    xmlHttp.send(JSON.stringify(data))
+    xmlHttp.send(JSON.stringify(data));
 }
 
 function copyTextToClipboard(text) {

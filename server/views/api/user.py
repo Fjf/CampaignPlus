@@ -18,18 +18,18 @@ def register():
 
     name = data["name"]
     pw = data["password"]
-    data = user_service.create_user(name, pw)
+    user_data = user_service.create_user(name, pw)
 
     error = ""
-    if data == 0:
+    if user_data == 0:
         error = "Username already in use"
 
     # Do this to set session to the registered user.
-    if data == 1:
-        data = user_service.login(name, pw)
+    if user_data == 1:
+        user_data = user_service.login(name, pw)
 
     return {
-        "success": data,
+        "success": user_data,
         "error": error
     }
 

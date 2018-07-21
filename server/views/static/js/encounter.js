@@ -76,7 +76,7 @@ function buttonAddEnemy(){
 }
 
 function hideAll(){
-    for (div of document.getElementById("content_expanded").getElementsByTagName("div")) {
+    for (div of document.getElementById("encounter_expanded").getElementsByTagName("div")) {
         div.style.display = "none";
     }
 }
