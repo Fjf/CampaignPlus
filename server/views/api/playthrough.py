@@ -56,14 +56,3 @@ def get_playthrough_url():
     url = playthrough_service.get_playthrough_url(id, user)
 
     return {"url": url}
-
-
-@api.route('/join/<code>', methods=["GET"])
-@json_api()
-@require_login()
-def join_playthrough(code):
-    user = session_user()
-
-    playthrough_service.join_playthrough(code)
-
-    return

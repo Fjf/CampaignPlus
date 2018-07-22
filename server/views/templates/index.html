@@ -4,6 +4,7 @@
     <div id="header">
         <div class="headerelem" id="currentuser"></div>
         <div class="headerelem" id="logout"><button onclick="window.location.href='/logout'">Log out</button></div>
+        <div class="headerelem" id="toggleviews"><button onclick="toggleViews()">Toggle Encounter/Playthrough</button></div>
     </div>
     <div id="content">
         <div id="content_left">
@@ -18,7 +19,7 @@
                     <ul>
                         <li class="custom_button" onclick="clearEncounter()">Begin new encounter</li>
                         <li class="custom_button" onclick="buttonAddEnemy()">Add enemy</li>
-                        <li class="custom_button" onclick="buttonAddPlayer()">Add player character</li>
+                        <li class="custom_button" onclick="buttonAddPlayer()">Add player</li>
                         <li class="custom_button" onclick="sortInitiative()">Sort by initiative</li>
                     </ul>
                 </div>

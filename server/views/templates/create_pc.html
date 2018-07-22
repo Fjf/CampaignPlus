@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <b>Add your player character to game {{ code }}.</b>
+    <div class="datadiv" id="login">
+        Create your player character.
+        <form action="javascript:uploadCharacter();" method = "POST">
+            Player Character Name<br>
+            <input type="text" id="name" /><br>
+            Race<br>
+            <input type="text" id="race" /><br>
+            Class<br>
+            <input type="text" id="class" /><br>
+            Backstory<br>
+            <textarea id="backstory" placeholder="Once upon a time..."></textarea>
+            <input type="submit" />
+        </form>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        var code = "{{ code }}"
+    </script>
+    <script src="{{ url_for('static', filename='js/create_pc.js') }}"></script>
+{% endblock %}

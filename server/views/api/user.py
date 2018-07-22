@@ -1,5 +1,6 @@
 from flask import request
 from werkzeug.exceptions import BadRequest
+from werkzeug.utils import redirect
 
 from server.lib.service import player_service
 from server.lib.user_session import session_user, session_user_set
@@ -28,9 +29,14 @@ def register():
     if user_data == 1:
         user_data = user_service.login(name, pw)
 
+    refer = "/"
+    if "redirect" in data:
+        refer += data["redirect"]
+
     return {
         "success": user_data,
-        "error": error
+        "error": error,
+        "refer": refer
     }
 
 
@@ -44,8 +50,13 @@ def login():
 
     data = user_service.login(data["name"], data["password"])
 
+    refer = "/"
+    if "redirect" in data:
+        refer += data["redirect"]
+
     return {
-        "success": data
+        "success": data,
+        "refer": refer
     }
 
 

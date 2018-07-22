@@ -59,5 +59,14 @@ def get_playthrough_url(playthrough: PlaythroughModel) -> Optional[str]:
     return app.host + ":5000/join/" + model.code
 
 
+def find_playthrough_with_code(code: str) -> Optional[PlaythroughModel]:
+    db = request_session()
+
+    return db.query(PlaythroughModel) \
+        .join(PlaythroughJoinCodeModel) \
+        .filter(PlaythroughJoinCodeModel.code == code) \
+        .one_or_none()
+
+
 def _create_random_string(length: int):
     return "".join(ALLOWED_CHARS[randint(0, len(ALLOWED_CHARS)-1)] for _ in range(length))

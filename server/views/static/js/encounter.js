@@ -23,9 +23,8 @@ function refreshPlayers(){
         document.getElementById("content_selected_player").innerHTML = str;
     }
 
-    response = requestApiJsonData("api/getplayers", "GET", {}, func)
+    response = requestApiJsonData("api/getplayers", "POST", {playthrough_id: PLAYTHROUGH_ID}, func)
 }
-
 
 function addNewPlayer(){
     let naam = document.getElementById("new_player_name").value;
@@ -112,7 +111,7 @@ function sortInitiative(){
             x = rows[i].getElementsByTagName("TD")[n];
             y = rows[i + 1].getElementsByTagName("TD")[n];
             if (x.innerHTML.toLowerCase() - 0 < y.innerHTML.toLowerCase() - 0) {
-                shouldSwitch= true;
+                shouldSwitch = true;
                 break;
             }
         }

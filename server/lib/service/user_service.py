@@ -21,7 +21,6 @@ def login(username, password):
 
 
 def create_user(username, password):
-    print(username)
     if find_user_by_username(username) is not None:
         return 0
 

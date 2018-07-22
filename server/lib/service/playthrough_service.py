@@ -20,3 +20,14 @@ def get_playthrough_url(id: int, user: UserModel) -> Optional[str]:
         return None
 
     return playthrough_repository.get_playthrough_url(playthrough)
+
+
+def join_playthrough(user: UserModel, code: str):
+    # Check if user already joined the playthrough, if so, do not let the player add a new player character.
+
+    # Create an empty player character for the user and refer them to a new page
+    return None
+
+
+def find_playthrough_with_code(code: str):
+    return playthrough_repository.find_playthrough_with_code(code)

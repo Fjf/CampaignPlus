@@ -26,34 +26,6 @@ class UserModel(OrmModelBase):
         return c
 
 
-class PlayerModel(OrmModelBase):
-    """
-    A player character for a user, which may be used in a game.
-    """
-
-    __tablename__ = 'player'
-
-    id = Column(Integer(), primary_key=True)
-
-    """
-    The user to whom this player character belongs.
-    """
-
-    user_id = Column(Integer(), ForeignKey("user.id"))
-    user = relationship("UserModel")
-
-    name = Column(String(), unique=True, nullable=False)
-    class_name = Column(String(), nullable=False)
-
-    @classmethod
-    def from_name(cls, player: str, player_class: str, user_id: int):
-        c = cls()
-        c.name = player
-        c.class_name = player_class
-        c.user_id = user_id
-        return c
-
-
 class EnemyModel(OrmModelBase):
     """
     A player character for a user, which may be used in a game.
@@ -130,3 +102,35 @@ class PlaythroughJoinCodeModel(OrmModelBase):
         c.playthrough_id = playthrough_id
         return c
 
+
+class PlayerModel(OrmModelBase):
+    """
+    A player character for a user, which may be used in a game.
+    """
+
+    __tablename__ = 'player'
+
+    id = Column(Integer(), primary_key=True)
+
+    """
+    The user to whom this player character belongs.
+    """
+
+    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"))
+    playthrough = relationship("PlaythroughModel")
+
+    user_id = Column(Integer(), ForeignKey("user.id"))
+    user = relationship("UserModel")
+
+    name = Column(String(), nullable=False)
+    race_name = Column(String(), nullable=False)
+    class_name = Column(String(), nullable=False)
+    backstory = Column(String(), nullable=True)
+
+    @classmethod
+    def from_name_playthrough_user(cls, name: str, playthrough: PlaythroughModel, user: UserModel):
+        c = cls()
+        c.name = name
+        c.playthrough_id = playthrough.id
+        c.user_id = user.id
+        return c

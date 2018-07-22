@@ -40,6 +40,9 @@ function loadPlaythrough() {
             return
         }
         document.getElementById("playthrough_link_url").value = data.url
+
+        div = document.getElementById("content_selected_playthrough");
+        PLAYTHROUGH_ID = div.value
     }
 
     let div = document.getElementById("content_selected_playthrough");

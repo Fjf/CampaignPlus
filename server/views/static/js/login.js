@@ -9,7 +9,7 @@ function login() {
     let func = function(data) {
         console.log(data)
         if (data.success)
-            location.href="/"
+            location.href = data.refer
         else {
             document.getElementById("errorboxlogin").innerHTML = data.error;
             console.log("Something went wrong logging in.")
@@ -18,16 +18,16 @@ function login() {
 
     let data = {
         "name": username,
-        "password": password
+        "password": password,
+        "redirect": redirect
     }
-    requestApiJsonData("api/login", "POST", data, func)
+    requestApiJsonData("/api/login", "POST", data, func)
 }
 
 
 function register() {
-    console.log("Test123")
-    let username = document.forms[0].elements[0].value;
-    let password = document.forms[0].elements[1].value;
+    let username = document.getElementById("register_name").value;
+    let password = document.getElementById("register_pass").value;
 
     if (username.length == 0 || password.length == 0) {
         return false
@@ -36,7 +36,7 @@ function register() {
     let func = function(data) {
         console.log(data)
         if (data.success)
-            location.href="/"
+            location.href = data.refer
         else {
             document.getElementById("errorboxregister").innerHTML = data.error;
             console.log("Something went wrong trying to register.")
@@ -45,9 +45,10 @@ function register() {
 
     let data = {
         "name": username,
-        "password": password
+        "password": password,
+        "redirect": redirect
     }
-    requestApiJsonData("api/register", "POST", data, func)
+    requestApiJsonData("/api/register", "POST", data, func)
 }
 
 

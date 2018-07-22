@@ -1,3 +1,7 @@
+::-webkit-scrollbar {
+    display: none;
+}
+
 body {
     font-family: Arial, Helvetica, sans-serif;
     color: #151515;
@@ -96,7 +100,7 @@ input {
     padding: 5px 0;
 }
 
-.playthrough {
+.encounter {
     display: none;
 }
 
