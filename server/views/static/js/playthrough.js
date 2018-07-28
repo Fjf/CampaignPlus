@@ -52,10 +52,10 @@ function loadPlaythrough() {
 
     name = div.options[div.selectedIndex].text;
 
-    document.getElementById("playthrough_name").innerHTML = "Playthrough: " + name
+    document.getElementById("playthrough_name").innerHTML = "Playthrough: " + data.name
 
     response = requestApiJsonData("api/getplaythroughurl", "POST", {id: div.value}, func)
-
+    updatePlaythroughPlayers(div.value)
     document.getElementById("playthrough_content").style.display = "block";
 }
 
@@ -63,4 +63,18 @@ function copyPlaythroughUrl() {
     let div = document.getElementById("playthrough_link_url")
     copyTextToClipboard(div.value)
     div.style.borderColor = "green";
+}
+
+function updatePlaythroughPlayers(pid) {
+    let func = function(data) {
+        str = "";
+        console.log(data)
+        for (player of data){
+            console.log(player.name)
+            str += "<div>" + player.name + " - <i>" + player.class + "</i>(" + player.user_name + ")</div>"
+        }
+        document.getElementById("players").innerHTML = str;
+    }
+    console.log(pid)
+    response = requestApiJsonData("api/getplayers", "POST", {playthrough_id: pid}, func)
 }

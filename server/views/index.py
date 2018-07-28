@@ -38,7 +38,7 @@ def join_playthrough(code):
 
     playthrough_service.join_playthrough(user, code)
 
-    return render_template('create_pc.html', code=code)
+    return render_template('create_pc.html', code=code, username=user.name)
 
 
 print("Loaded index successfully.")

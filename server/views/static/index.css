@@ -44,13 +44,25 @@ body {
     width: 100%;
 }
 
+.custom_button {
+    cursor: pointer;
+    background-color: #9393c3;
+}
+
+.custom_button:hover {
+    background-color: #A3A3D3;
+}
+
+.custom_list {
+    background-color: #9393c3;
+}
+
 #content_left li{
     margin: 5px 0 5px 0;
     width: 94%;
     text-align: center;
     height: 20px;
     padding: 7px 3% 5px 3%;
-    background-color: #9393c3;
 }
 
 #content_options {
@@ -100,6 +112,30 @@ input {
     padding: 5px 0;
 }
 
+.datadiv {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#backstory[contenteditable]:empty:before {
+    content: attr(div-placeholder);
+    color: #555;
+}
+
+div[contenteditable] {
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    background-color: white;
+    background-color: -moz-field;
+    border: 1px solid darkgray;
+    box-shadow: 1px 1px 1px 0 lightgray inset;
+    font: -moz-field;
+    font: -webkit-small-control;
+    margin-top: 5px;
+    padding: 2px 3px;
+}
+
 .encounter {
     display: none;
 }
@@ -107,10 +143,6 @@ input {
 #content_right table td {
     /* aligns the table somehow */
     width: 5%;
-}
-
-.custom_button {
-    cursor: pointer;
 }
 
 .logindiv {

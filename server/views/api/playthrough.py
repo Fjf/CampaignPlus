@@ -56,3 +56,26 @@ def get_playthrough_url():
     url = playthrough_service.get_playthrough_url(id, user)
 
     return {"url": url}
+
+
+@api.route('/getplaythroughname', methods=["POST"])
+@json_api()
+@require_login()
+def get_playthrough_name():
+    data = request.get_json()
+
+    if not data or "code" not in data:
+        raise BadRequest()
+
+    code = data["code"]
+    playthrough = playthrough_service.find_playthrough_with_code(code)
+
+    success = playthrough is not None
+    name = ""
+    if success:
+        name = playthrough.name
+
+    return {
+        "success": success,
+        "name": name
+    }

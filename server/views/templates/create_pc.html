@@ -1,26 +1,42 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <b>Add your player character to game {{ code }}.</b>
-    <div class="datadiv" id="login">
-        Create your player character.
-        <form action="javascript:uploadCharacter();" method = "POST">
-            Player Character Name<br>
-            <input type="text" id="name" /><br>
-            Race<br>
-            <input type="text" id="race" /><br>
-            Class<br>
-            <input type="text" id="class" /><br>
-            Backstory<br>
-            <textarea id="backstory" placeholder="Once upon a time..."></textarea>
-            <input type="submit" />
-        </form>
+    <div id="header">
+        <div class="headerelem" id="currentuser"></div>
+    </div>
+    <div id="content">
+        <div id="content_left">
+            <div id="charactertext">
+                These characters have already joined this game:<br>
+            </div>
+            <ul id="characters" style="list-style-type: none">
+
+            </ul>
+        </div>
+        <div id="content_right">
+            <div id="playthrough_name"></div><br>
+            <div class="datadiv" id="login">
+                Create your player character.
+                <form action="javascript:uploadCharacter();" method = "POST">
+                    Player Character Name<br>
+                    <input type="text" id="name" /><br>
+                    Race<br>
+                    <input type="text" id="race" /><br>
+                    Class<br>
+                    <input type="text" id="class" /><br>
+                    Backstory<br>
+                    <div contenteditable id="backstory" div-placeholder="Er was eens..."></div><br>
+                    <input type="submit"/>
+                </form>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
 {% block javascripts %}
     <script>
-        var code = "{{ code }}"
+        var PLAYTHROUGH_ID = "{{ code }}"
+        var USERNAME = "{{ username }}"
     </script>
     <script src="{{ url_for('static', filename='js/create_pc.js') }}"></script>
 {% endblock %}
