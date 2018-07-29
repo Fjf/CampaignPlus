@@ -41,5 +41,12 @@ def join_playthrough(code):
     return render_template('create_pc.html', code=code, username=user.name)
 
 
+@app.route('/map/<code>', methods=["GET"])
+def show_map(code):
+    playthrough = playthrough_service.find_playthrough_with_code(code)
+    return render_template('map.html', pid=playthrough.id)
+
+
+
 print("Loaded index successfully.")
 

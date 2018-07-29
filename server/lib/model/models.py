@@ -134,3 +134,32 @@ class PlayerModel(OrmModelBase):
         c.playthrough_id = playthrough.id
         c.user_id = user.id
         return c
+
+
+class MapModel(OrmModelBase):
+    """
+    The mapmodel contanis data about maps and their location on their parent maps.
+    """
+
+    __tablename__ = 'map'
+
+    id = Column(Integer(), primary_key=True)
+
+    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"), nullable=False)
+    playthrough = relationship("PlaythroughModel")
+
+    parent_map_id = Column(Integer(), ForeignKey("map.id"), nullable=True)
+    parent_map = relationship("MapModel")
+
+    map_url = Column(String(), nullable=False)
+    x = Column(Integer(), nullable=False)
+    y = Column(Integer(), nullable=False)
+
+    @classmethod
+    def from_name_date(cls, playthrough_id: int, map_url: str, x: int, y: int):
+        c = cls()
+        c.playthrough_id = playthrough_id
+        c.map_url = map_url
+        c.x = x
+        c.y = y
+        return c

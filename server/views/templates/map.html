@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id="header">
+        <div class="headerelem" id="currentuser"></div>
+    </div>
+    <div id="content">
+        <div id="content_left">
+            <ul id="places" style="list-style-type: none">
+                <li>Stad 1</li>
+                <li>Stad 2</li>
+            </ul>
+        </div>
+        <div id="content_right">
+            <div>
+                <input id="map_file" type="file" value="file">
+                <input id="map_x" type="number" placeholder="x">
+                <input id="map_y" type="number" placeholder="y">
+                <input id="map_pid" type="number" placeholder="parent id">
+                <input type="button" value="Submit" onclick="uploadMap()">
+            </div>
+            <canvas id="map">
+
+            </canvas>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        var PLAYTHROUGH_ID = "{{ pid }}"
+    </script>
+    <script src="{{ url_for('static', filename='js/map.js') }}"></script>
+{% endblock %}
