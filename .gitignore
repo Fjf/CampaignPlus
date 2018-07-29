@@ -3,3 +3,5 @@ env/*
 *.pyc
 *.mp3
 *.db
+*.jpg
+*.png
