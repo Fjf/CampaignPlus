@@ -100,6 +100,36 @@ input {
     padding: 10px;
 }
 
+#players div {
+    cursor: pointer;
+    margin: 2px;
+    padding: 2px;
+    background-color: #B3B3E3;
+}
+#players div:hover {
+    background-color: #A3A3D3;
+}
+
+#playthrough_content_left {
+    width: 40%;
+    float: left;
+    box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+#playthrough_content_right {
+    width: 59%;
+    float: right;
+    box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.pc_table {
+    width: 45%;
+    flex-grow: 1;
+    padding: 2px;
+}
 
 #content_right table tr:nth-child(1) {
     padding: 50px;

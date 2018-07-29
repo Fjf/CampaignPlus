@@ -39,3 +39,7 @@ def delete_player(pid: int, user: UserModel) -> str:
 
     player_repository.delete_player(player)
     return ""
+
+
+def find_player(pid):
+    return player_repository.find_player(pid)

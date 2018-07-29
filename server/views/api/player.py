@@ -77,3 +77,28 @@ def delete_player():
         "success": success,
         "error": error
     }
+
+
+@api.route('/getplayerdata', methods=["POST"])
+@json_api()
+@require_login()
+def get_player():
+    data = request.get_json()
+
+    if not data or "player_id" not in data:
+        raise BadRequest()
+
+    player = player_service.find_player(data["player_id"])
+
+    success = player is not None
+
+    if not success:
+        return {"success": success}
+    else:
+        return {
+            "success": success,
+            "name": player.name,
+            "class": player.class_name,
+            "user_name": player.user.name,
+            "backstory": player.backstory
+        }

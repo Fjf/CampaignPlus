@@ -76,9 +76,22 @@
                     <input id="playthrough_link_url" type="text" disabled style="width:70%">
                     <input type="button" value="Copy URL" onclick="copyPlaythroughUrl()" style="width:20%">
                 </div><br>
-
-                Joined players:<br>
-                <div id="players">
+                <div id="playthrough_content_wrapper">
+                    <div id="playthrough_content_left">
+                        Joined players:<br>
+                        <div id="players">
+                        </div>
+                    </div>
+                    <div id="playthrough_content_right">
+                        <div class="pc_table">Owner of PC</div>
+                        <div class="pc_table" id="pc_owner"></div>
+                        <div class="pc_table" >Name</div>
+                        <div class="pc_table" id="pc_name"></div>
+                        <div class="pc_table">Class</div>
+                        <div class="pc_table" id="pc_class"></div>
+                        <div class="pc_table">Backstory</div>
+                        <div class="pc_table" id="pc_backstory"></div>
+                    </div>
                 </div>
             </div>
         </div>

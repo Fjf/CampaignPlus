@@ -4,14 +4,24 @@ function uploadCharacter() {
     let class_name = document.getElementById("class").value;
     let backstory = document.getElementById("backstory").innerHTML;
 
+    if (name == "" || race == "" || class_name == "")
+        return
+
+    document.getElementById("submit_pc").disabled = true;
+
     let func = function (data) {
+        document.getElementById("submit_pc").disabled = false;
+
         if (!data.success) {
             console.log("Creation of player character was unsuccessful.")
             console.log("The following error was thrown: " + data.error)
             return
         }
 
+        cleanFields()
+
         console.log("Your player character was added successfully.")
+        getGameCharacters()
     }
 
     data = {
@@ -22,6 +32,13 @@ function uploadCharacter() {
         backstory: backstory
     }
     requestApiJsonData("/api/createplayer", "POST", data, func)
+}
+
+function cleanFields() {
+    document.getElementById("name").value = "";
+    document.getElementById("race").value = "";
+    document.getElementById("class").value  = "";
+    document.getElementById("backstory").innerHTML  = "";
 }
 
 function getGameCharacters() {

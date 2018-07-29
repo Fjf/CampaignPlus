@@ -52,7 +52,7 @@ function loadPlaythrough() {
 
     name = div.options[div.selectedIndex].text;
 
-    document.getElementById("playthrough_name").innerHTML = "Playthrough: " + data.name
+    document.getElementById("playthrough_name").innerHTML = "Playthrough: " + name
 
     response = requestApiJsonData("api/getplaythroughurl", "POST", {id: div.value}, func)
     updatePlaythroughPlayers(div.value)
@@ -67,14 +67,31 @@ function copyPlaythroughUrl() {
 
 function updatePlaythroughPlayers(pid) {
     let func = function(data) {
-        str = "";
-        console.log(data)
-        for (player of data){
-            console.log(player.name)
-            str += "<div>" + player.name + " - <i>" + player.class + "</i>(" + player.user_name + ")</div>"
+        let src = ""
+        let div;
+        for (var i = 0; i < data.length; i++){
+            player = data[i]
+            src += "<div onclick='retrievePlayerData(" + player.id + ")'>" +
+                            player.name + " - <i>" + player.class + "</i>(" + player.user_name + ")</div>"
+
         }
-        document.getElementById("players").innerHTML = str;
+        document.getElementById("players").innerHTML = src;
     }
-    console.log(pid)
-    response = requestApiJsonData("api/getplayers", "POST", {playthrough_id: pid}, func)
+
+    response = requestApiJsonData("/api/getplayers", "POST", {playthrough_id: pid}, func)
+}
+
+function retrievePlayerData(pid) {
+    let func = function(data) {
+        if (!data.success){
+            console.log("Something went wrong")
+            return
+        }
+        document.getElementById("pc_name").innerHTML = data.name
+        document.getElementById("pc_class").innerHTML = data.class
+        document.getElementById("pc_owner").innerHTML = data.user_name
+        document.getElementById("pc_backstory").innerHTML = data.backstory
+    }
+    console.log("Retrieving data for id: " + pid)
+    response = requestApiJsonData("/api/getplayerdata", "POST", {player_id: pid}, func)
 }
