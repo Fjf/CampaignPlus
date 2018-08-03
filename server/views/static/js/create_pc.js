@@ -54,7 +54,8 @@ function getGameCharacters() {
             li.setAttribute("class", "custom_list")
             if (data[i].user_name == USERNAME)
                 li.innerHTML = data[i].name + " - <i>" + data[i].class + "</i> (<b>You</b>)" +
-                               "<button onclick='deleteCharacter(" + data[i].id + ")'>Remove</button>"
+                               "<button onclick='deleteCharacter(" + data[i].id + ")'>Del</button>" +
+                               "<button onclick='editCharacter(" + data[i].id + ")'>Edit</button>"
             else
                 li.innerHTML = data[i].name + " - <i>" + data[i].class + "</i> " + " (" + data[i].user_name + ")"
             ul.appendChild(li)
@@ -62,6 +63,75 @@ function getGameCharacters() {
     }
 
     response = requestApiJsonData("/api/getplayers", "POST", {playthrough_code: PLAYTHROUGH_ID}, func)
+}
+
+function toggleUpload() {
+    if (document.getElementById("update").style.display == "none") {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("update").style.display = "block";
+    } else {
+        document.getElementById("update").style.display = "none";
+        document.getElementById("login").style.display = "block";
+    }
+
+}
+
+function editCharacter(pid) {
+    let func = function(data) {
+        if (!data.success){
+            console.log("Something went wrong")
+            return
+        }
+
+        document.getElementById("up_id").innerHTML = pid;
+        document.getElementById("up_name").value = data.name;
+        document.getElementById("up_race").value = data.class;
+        document.getElementById("up_class").value = data.user_name;
+        document.getElementById("up_backstory").innerHTML = data.backstory;
+
+        toggleUpload()
+    }
+    console.log("Retrieving data for id: " + pid)
+    response = requestApiJsonData("/api/getplayerdata", "POST", {player_id: pid}, func)
+}
+
+function updateCharacter() {
+    let name = document.getElementById("up_name").value;
+    let id = document.getElementById("up_id").value;
+    let race = document.getElementById("up_race").value;
+    let class_name = document.getElementById("up_class").value;
+    let backstory = document.getElementById("up_backstory").innerHTML;
+
+    if (name == "" || race == "" || class_name == "")
+        return
+
+    document.getElementById("submit_pc").disabled = true;
+
+    let func = function (data) {
+        document.getElementById("submit_pc").disabled = false;
+
+        if (!data.success) {
+            console.log("Updating of player character was unsuccessful.")
+            console.log("The following error was thrown: " + data.error)
+            return
+        }
+
+        cleanFields()
+
+        console.log("Your player character was updated successfully.")
+        getGameCharacters()
+        toggleUpload()
+    }
+
+    data = {
+        code: PLAYTHROUGH_ID,
+        name: name,
+        race: race,
+        class_name: class_name,
+        backstory: backstory,
+        id: id
+    }
+    requestApiJsonData("/api/updateplayer", "POST", data, func)
 }
 
 function deleteCharacter(id) {

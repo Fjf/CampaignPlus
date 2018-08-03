@@ -131,6 +131,11 @@ input {
     padding: 2px;
 }
 
+#map {
+    width: 100%;
+    background-color: #FFF;
+}
+
 #content_right table tr:nth-child(1) {
     padding: 50px;
     font-weight: bold;

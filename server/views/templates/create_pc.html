@@ -15,6 +15,21 @@
         </div>
         <div id="content_right">
             <div id="playthrough_name"></div><br>
+            <div class="datadiv" id="update" style="display:none;">
+                Create your player character.
+                <div id="up_id" style="display:none;"></div>
+                <form action="javascript:updateCharacter();" method = "POST">
+                    Player Character Name<br>
+                    <input type="text" id="up_name"/><br>
+                    Race<br>
+                    <input type="text" id="up_race"/><br>
+                    Class<br>
+                    <input type="text" id="up_class"/><br>
+                    Backstory<br>
+                    <div contenteditable id="up_backstory"></div><br>
+                    <input id="update_pc" type="submit" value="Update"/>
+                </form>
+            </div>
             <div class="datadiv" id="login">
                 Create your player character.
                 <form action="javascript:uploadCharacter();" method = "POST">
@@ -26,7 +41,7 @@
                     <input type="text" id="class" /><br>
                     Backstory<br>
                     <div contenteditable id="backstory" div-placeholder="Er was eens..."></div><br>
-                    <input id="submit_pc" type="submit"/>
+                    <input id="submit_pc" type="submit" value="Upload"/>
                 </form>
             </div>
         </div>

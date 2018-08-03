@@ -1,6 +1,9 @@
-from flask import request
+import os
+
+from flask import request, send_from_directory
 from werkzeug.exceptions import BadRequest
 
+from server import app
 from server.lib.user_session import session_user
 from server.views.api import api, json_api, require_login
 from server.lib.service import enemy_service, map_service, playthrough_service
@@ -32,15 +35,14 @@ def create_map():
 
 
 @api.route('/getmap', methods=["POST"])
-@json_api()
 @require_login()
 def get_map():
+    path = os.path.join(app.root_path, 'images')
+
     data = request.get_json()
 
     if not data or "playthrough_id" not in data or "map_id" not in data:
         raise BadRequest()
 
-    data = {
+    return send_from_directory(path, '323UiB5KR0vAnmk.png')
 
-    }
-    return data

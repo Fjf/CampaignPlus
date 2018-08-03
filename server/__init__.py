@@ -16,7 +16,7 @@ def create_app(config) -> Flask:
     app.port = app_section['port']
     app.host = app_section['host']
     app.database_name = 'database.db'
-    app.map_storage = 'storage/img'
+    app.map_storage = 'server/images'
 
     app.secret_key = app_section['secret'].encode()
 
@@ -25,7 +25,7 @@ def create_app(config) -> Flask:
 
 def setup_directories():
     os.makedirs('storage', exist_ok=True)
-    os.makedirs('storage/img', exist_ok=True)
+    os.makedirs('server/images', exist_ok=True)
 
 
 def init():

@@ -41,5 +41,20 @@ def delete_player(pid: int, user: UserModel) -> str:
     return ""
 
 
-def find_player(pid):
-    return player_repository.find_player(pid)
+def update_player(pid: int, name: str, race: str, class_name: str, backstory: str, code: str, user: UserModel):
+    player = player_repository.find_player(pid)
+    if not player:
+        return "This player was not found."
+
+    if player.user != user:
+        return "This player does not belong to you."
+
+    # TODO: Use the code??
+
+    player.backstory = backstory
+    player.name = name
+    player.race = race
+    player.class_name = class_name
+
+    player_repository.create_player(player)
+    return ""

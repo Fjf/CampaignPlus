@@ -4,12 +4,11 @@ function loadMap(map_id) {
     // If map_id is -1, the base map will be loaded.
 
     let func = function(data) {
-        if (!data.success) {
-            console.log("Something went wrong retrieving the map.")
-            return
-        }
 
-        context.drawImage(data.image, 0, 0)
+        x = document.createElement("IMG")
+        x.src = data
+
+        context.drawImage(x, 0, 0)
     }
 
     data = {
@@ -17,7 +16,24 @@ function loadMap(map_id) {
         map_id: map_id
     }
 
-    requestApiJsonData("/api/getmap", "POST", data, func)
+    requestImageData("/api/getmap", "POST", data, func)
+}
+
+function requestImageData(api, requestType, data, callback) {
+    let xmlHttp = new XMLHttpRequest();
+
+    xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState === 4) {
+            if (xmlHttp.status == 200)
+                callback(xmlHttp.response);
+            else
+                console.log("Something went wrong calling " + api);
+        }
+    }
+
+    xmlHttp.open(requestType, api, true);
+    xmlHttp.setRequestHeader("Content-Type", "application/json");
+    xmlHttp.send(JSON.stringify(data));
 }
 
 function uploadMap() {

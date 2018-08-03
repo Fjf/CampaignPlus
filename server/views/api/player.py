@@ -28,6 +28,28 @@ def create_player():
     }
 
 
+@api.route('/updateplayer', methods=["POST"])
+@json_api()
+@require_login()
+def update_player():
+    data = request.get_json()
+
+    required_fields = ["id", "name", "class_name", "code", "backstory", "race"]
+
+    if not data or (False in [x in required_fields for x in data]):
+        raise BadRequest()
+
+    user = session_user()
+
+    error = player_service.update_player(data["id"], data["name"], data["race"], data["class_name"], data["backstory"], data["code"], user)
+
+    success = error == ""
+    return {
+        "success": success,
+        "error": error
+    }
+
+
 @api.route('/getplayers', methods=["POST"])
 @json_api()
 @require_login()
