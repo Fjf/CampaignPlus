@@ -48,14 +48,14 @@ def login():
     if not data or "name" not in data or "password" not in data:
         raise BadRequest()
 
-    data = user_service.login(data["name"], data["password"])
+    res = user_service.login(data["name"], data["password"])
 
     refer = "/"
     if "redirect" in data:
         refer += data["redirect"]
 
     return {
-        "success": data,
+        "success": res,
         "refer": refer
     }
 
