@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from server.lib.database import request_session
 from server.lib.model.models import PlayerModel, UserModel
 from server.lib.repository import player_repository
 from server.lib.service import playthrough_service
@@ -53,7 +54,7 @@ def update_player(pid: int, name: str, race: str, class_name: str, backstory: st
 
     player.backstory = backstory
     player.name = name
-    player.race = race
+    player.race_name = race
     player.class_name = class_name
 
     player_repository.create_player(player)

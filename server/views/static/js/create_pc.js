@@ -85,8 +85,8 @@ function editCharacter(pid) {
 
         document.getElementById("up_id").innerHTML = pid;
         document.getElementById("up_name").value = data.name;
-        document.getElementById("up_race").value = data.class;
-        document.getElementById("up_class").value = data.user_name;
+        document.getElementById("up_race").value = data.race;
+        document.getElementById("up_class").value = data.class;
         document.getElementById("up_backstory").innerHTML = data.backstory;
 
         toggleUpload()
@@ -97,7 +97,7 @@ function editCharacter(pid) {
 
 function updateCharacter() {
     let name = document.getElementById("up_name").value;
-    let id = document.getElementById("up_id").value;
+    let pid = document.getElementById("up_id").innerHTML;
     let race = document.getElementById("up_race").value;
     let class_name = document.getElementById("up_class").value;
     let backstory = document.getElementById("up_backstory").innerHTML;
@@ -105,10 +105,10 @@ function updateCharacter() {
     if (name == "" || race == "" || class_name == "")
         return
 
-    document.getElementById("submit_pc").disabled = true;
+    document.getElementById("update_pc").disabled = true;
 
     let func = function (data) {
-        document.getElementById("submit_pc").disabled = false;
+        document.getElementById("update_pc").disabled = false;
 
         if (!data.success) {
             console.log("Updating of player character was unsuccessful.")
@@ -129,8 +129,9 @@ function updateCharacter() {
         race: race,
         class_name: class_name,
         backstory: backstory,
-        id: id
+        pid: pid
     }
+    console.log(data)
     requestApiJsonData("/api/updateplayer", "POST", data, func)
 }
 

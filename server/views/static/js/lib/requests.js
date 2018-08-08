@@ -89,5 +89,12 @@ function copyTextToClipboard(text) {
         console.log('Oops, unable to copy');
     }
 
-document.body.removeChild(textArea);
+    document.body.removeChild(textArea);
 }
+
+function isInt(value) {
+  return !isNaN(value) &&
+         parseInt(Number(value)) == value &&
+         !isNaN(parseInt(value, 10));
+}
+

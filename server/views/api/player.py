@@ -34,14 +34,16 @@ def create_player():
 def update_player():
     data = request.get_json()
 
-    required_fields = ["id", "name", "class_name", "code", "backstory", "race"]
+    required_fields = ["pid", "name", "class_name", "code", "backstory", "race"]
 
     if not data or (False in [x in required_fields for x in data]):
         raise BadRequest()
 
     user = session_user()
 
-    error = player_service.update_player(data["id"], data["name"], data["race"], data["class_name"], data["backstory"], data["code"], user)
+    print(data)
+
+    error = player_service.update_player(data["pid"], data["name"], data["race"], data["class_name"], data["backstory"], data["code"], user)
 
     success = error == ""
     return {
@@ -121,6 +123,7 @@ def get_player():
             "success": success,
             "name": player.name,
             "class": player.class_name,
+            "race": player.race_name,
             "user_name": player.user.name,
             "backstory": player.backstory
         }

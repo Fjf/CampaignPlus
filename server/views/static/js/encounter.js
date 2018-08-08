@@ -8,9 +8,7 @@ function addPlayer(){
     e = document.getElementById("content_selected_player")
     player = e.options[e.selectedIndex].value;
 
-    document.getElementById("encounter_list").insertRow(-1).innerHTML = "<tr><td><b>" + player +
-        "</b></td><td>" + "iets" + "</td><td>" +
-        prompt("What did " + player + " roll for initiative?") + "</td><td><input type='text' value='-1'</td></tr>"
+    addTableRow(player, "-", prompt("What did " + player + " roll for initiative?"))
 }
 
 function refreshPlayers(){
@@ -68,6 +66,23 @@ function refreshEnemies(){
     response = requestApiJsonData("api/getenemies", "GET", {}, func)
 }
 
+function addTableRow(name, hp, initiative) {
+    let rows = document.getElementById("encounter_list").getElementsByTagName("tr");
+    let lastId = rows[rows.length - 1].id
+    let id = lastId + 1
+    if (!isInt(id))
+        id = 0
+
+    document.getElementById("encounter_list").insertRow(-1).innerHTML = "<tr><td>" + name +
+        "</td><td>" + hp + "</td><td>" + initiative +
+        "</td><td><input type='text' value='" + hp + "'</td><td><button onclick='removeTableRow(this)'>Del</button></td></tr>"
+}
+
+function removeTableRow(n) {
+    var i = n.parentNode.parentNode.rowIndex;
+    document.getElementById("encounter_list").deleteRow(i);
+}
+
 function buttonAddEnemy(){
     refreshEnemies();
     hideAll();
@@ -84,14 +99,12 @@ function addEnemy(){
     e = document.getElementById("content_selected_enemy")
     enemyName = e.options[e.selectedIndex].value;
     enemyHp = enemyObj[enemyName].hp
-    document.getElementById("encounter_list").insertRow(-1).innerHTML = "<tr><td>" + enemyName +
-        "</td><td>" + enemyHp + "</td><td>" + Math.floor(Math.random() * 20 + 1) +
-        "</td><td><input type='text' value='" + enemyHp + "'></td></tr>"
+    addTableRow(enemyName, enemyHp, Math.floor(Math.random() * 20 + 1))
 }
 
 function clearEncounter(){
-    document.getElementById("encounter_list").innerHTML = "<tr><td>Name</td>\
-    <td>Max HP</td><td>Initiative</td><td>Current HP</td></tr>"
+    document.getElementById("encounter_list").innerHTML = "<tr><td>Name</td>" +
+    "<td>Max HP</td><td>Initiative</td><td>Current HP</td></tr>"
 }
 
 function sortInitiative(){
