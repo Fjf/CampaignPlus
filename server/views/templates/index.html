@@ -33,9 +33,16 @@
                         <button onclick='addEnemy()'>Add</button><p>
 
                         Add new enemy to the list of possible enemies.
-                        <input id="new_enemy_name" type="text" placeholder="Naam">
-                        <input id="new_enemy_maxhp" type="text" placeholder="Max HP">
-                        <input type="submit" value="Add" onclick="addNewEnemy()">
+                        <input class="new_item" id="new_enemy_name" type="text" placeholder="Naam">
+                        <input class="new_item" id="new_enemy_maxhp" type="text" placeholder="Max HP">
+                        <input class="new_item" id="new_enemy_armorclass" type="text" placeholder="Armor Class">
+                        <input class="new_item" id="new_enemy_str" type="text" placeholder="Strength">
+                        <input class="new_item" id="new_enemy_dex" type="text" placeholder="Dexterity">
+                        <input class="new_item" id="new_enemy_con" type="text" placeholder="Constitution">
+                        <input class="new_item" id="new_enemy_int" type="text" placeholder="Intelligence">
+                        <input class="new_item" id="new_enemy_wis" type="text" placeholder="Wisdom">
+                        <input class="new_item" id="new_enemy_cha" type="text" placeholder="Charisma">
+                        <input class="new_item" type="submit" value="Add" onclick="addNewEnemy()">
                     </div>
 
                     <div id="content_expanded_player" style="display:none;">
@@ -44,7 +51,7 @@
                         <select id='content_selected_player'></select><br>
                         <button onclick='addPlayer()'>Add</button><p>
 
-                        Add new players to the list of possible players.
+                        Add temporary player (will not get saved over sessions).
                         <input id="new_player_name" type="text" placeholder="Naam">
                         <input id="new_player_class" type="text" placeholder="Class">
                         <input id="new_player_rest" type="text" placeholder="Andere Shit">
@@ -83,17 +90,55 @@
                         </div>
                     </div>
                     <div id="playthrough_content_right">
-                        <div class="pc_table">Owner of PC</div>
-                        <div class="pc_table" id="pc_owner"></div>
-                        <div class="pc_table" >Name</div>
-                        <div class="pc_table" id="pc_name"></div>
-                        <div class="pc_table">Class</div>
-                        <div class="pc_table" id="pc_class"></div>
-                        <div class="pc_table">Backstory</div>
-                        <div class="pc_table" id="pc_backstory"></div>
+                        <div class="pc_table_row">
+                            <div class="pc_table_left">Owner of PC</div>
+                            <div class="pc_table_right" id="pc_owner"></div>
+                        </div>
+                        <div class="pc_table_row">
+                            <div class="pc_table_left" >Name</div>
+                            <div class="pc_table_right" id="pc_name"></div>
+                        </div>
+                        <div class="pc_table_row">
+                            <div class="pc_table_left">Class</div>
+                            <div class="pc_table_right" id="pc_class"></div>
+                        </div>
+                        <div class="pc_table_row">
+                            <div class="pc_table_left">Backstory</div>
+                            <div class="pc_table_right" id="pc_backstory"></div>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div id="stats_popup">
+        <button onclick="this.parentNode.style.display='none'" style="float: right">X</button><br>
+        <div id="stats_container">
+            <div id="stats_name">
+                test
+            </div>
+            <input type="text" id="stats_id" style="display:none">
+            <div id="stats_left">
+                <table>
+                    <tr><td>Type</td><td>Value</td></tr>
+                    <tr><td>Strength:</td><td><input type="text" id="stats_stre" disabled></td></tr>
+                    <tr><td>Dexterity:</td><td><input type="text" id="stats_dex" disabled></td></tr>
+                    <tr><td>Constitution:</td><td><input type="text" id="stats_con" disabled></td></tr>
+                    <tr><td>Intelligence:</td><td><input type="text" id="stats_inte" disabled></td></tr>
+                    <tr><td>Wisdom:</td><td><input type="text" id="stats_wis" disabled></td></tr>
+                    <tr><td>Charisma:</td><td><input type="text" id="stats_cha" disabled></td></tr>
+                    <tr><td>Armor Class:</td><td><input type="text" id="stats_ac" disabled></td></tr>
+                </table>
+            </div>
+            <div id="stats_right">
+                <div id="stats_abilities">
+                    <input type="text" id="new_ability" placeholder="Add new ability here."><button onclick="addAbility()">Add</button><br>
+                    <ul id="stats_abilities_list">
+
+                    </ul>
+                </div>
+            </div>
+            <br style="clear: both" />
         </div>
     </div>
 {% endblock %}

@@ -65,12 +65,13 @@ def get_players():
 
     if pid is None:
         pt = playthrough_service.find_playthrough_with_code(data["playthrough_code"])
-        if pt is None:
-            raise BadRequest("Invalid code.")
+    else:
+        pt = playthrough_service.find_playthrough_with_id(pid)
 
-        pid = pt.id
+    if pt is None:
+        raise BadRequest("Invalid code/id.")
 
-    players = player_service.get_players(pid)
+    players = player_service.get_players(pt)
     data = []
     for player in players:
         data.append({

@@ -33,3 +33,11 @@ def delete_player(player: PlayerModel):
 
     db.delete(player)
     db.commit()
+
+
+def get_all_players():
+    db = request_session()
+
+    return db.query(PlayerModel) \
+        .join(PlaythroughModel) \
+        .all()

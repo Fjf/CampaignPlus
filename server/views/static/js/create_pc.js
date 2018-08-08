@@ -131,7 +131,6 @@ function updateCharacter() {
         backstory: backstory,
         pid: pid
     }
-    console.log(data)
     requestApiJsonData("/api/updateplayer", "POST", data, func)
 }
 

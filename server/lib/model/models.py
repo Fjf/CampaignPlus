@@ -28,7 +28,7 @@ class UserModel(OrmModelBase):
 
 class EnemyModel(OrmModelBase):
     """
-    A player character for a user, which may be used in a game.
+    An enemy for a playthrough, which may be used in a game.
     """
 
     __tablename__ = 'enemy'
@@ -43,14 +43,49 @@ class EnemyModel(OrmModelBase):
     user = relationship("UserModel")
 
     name = Column(String(), unique=True, nullable=False)
-    max_hp = Column(String(), nullable=False)
+    max_hp = Column(Integer(), nullable=False)
+    armor_class = Column(Integer(), nullable=False)
+
+    strength = Column(Integer, nullable=True)
+    dexterity = Column(Integer, nullable=True)
+    constitution = Column(Integer, nullable=True)
+    intelligence = Column(Integer, nullable=True)
+    wisdom = Column(Integer, nullable=True)
+    charisma = Column(Integer, nullable=True)
 
     @classmethod
-    def from_name(cls, player: str, max_hp: int, user_id: int):
+    def from_name_hp_ac(cls, player: str, max_hp: int, ac: int, user_id: int):
         c = cls()
         c.name = player
         c.max_hp = max_hp
+        c.armor_class = ac
         c.user_id = user_id
+        return c
+
+
+class EnemyAbilityModel(OrmModelBase):
+    """
+    An enemy for a playthrough, which may be used in a game.
+    """
+
+    __tablename__ = 'enemy_ability'
+
+    id = Column(Integer(), primary_key=True)
+
+    """
+    The user to whom this player character belongs.
+    """
+
+    enemy_id = Column(Integer(), ForeignKey("enemy.id"), nullable=False)
+    enemy = relationship("EnemyModel")
+
+    text = Column(String(), nullable=False)
+
+    @classmethod
+    def from_id_text(cls, enemy_id: int, text: str):
+        c = cls()
+        c.enemy_id = enemy_id
+        c.text = text
         return c
 
 

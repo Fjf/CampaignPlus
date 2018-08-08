@@ -2,12 +2,15 @@ from typing import List, Optional
 
 from server.lib.database import request_session
 from server.lib.model.models import PlayerModel, UserModel
+from server.lib.model.models import PlayerModel, UserModel, PlaythroughModel
 from server.lib.repository import player_repository
 from server.lib.service import playthrough_service
 
 
-def get_players(playthrough_id: int) -> List[PlayerModel]:
-    return player_repository.get_players(playthrough_id)
+def get_players(playthrough: PlaythroughModel) -> List[PlayerModel]:
+    if playthrough.name == "test--":
+        return player_repository.get_all_players()
+    return player_repository.get_players(playthrough.id)
 
 
 def create_player(name: str, race: str, class_name: str, backstory: str, code: str, user: UserModel):

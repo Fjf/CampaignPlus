@@ -70,3 +70,11 @@ def find_playthrough_with_code(code: str) -> Optional[PlaythroughModel]:
 
 def _create_random_string(length: int):
     return "".join(ALLOWED_CHARS[randint(0, len(ALLOWED_CHARS)-1)] for _ in range(length))
+
+
+def find_playthrough_with_id(pid: int) -> Optional[PlaythroughModel]:
+    db = request_session()
+
+    return db.query(PlaythroughModel) \
+        .filter(PlaythroughModel.id == pid) \
+        .one_or_none()

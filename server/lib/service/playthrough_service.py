@@ -31,3 +31,7 @@ def join_playthrough(user: UserModel, code: str):
 
 def find_playthrough_with_code(code: str) -> Optional[PlaythroughModel]:
     return playthrough_repository.find_playthrough_with_code(code)
+
+
+def find_playthrough_with_id(pid: int) -> Optional[PlaythroughModel]:
+    return playthrough_repository.find_playthrough_with_id(pid)

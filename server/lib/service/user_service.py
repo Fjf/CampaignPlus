@@ -11,7 +11,7 @@ def login(username, password):
     user = find_user_by_username(username)
     if user is None:
         return 0
-    
+
     if not(user.name == username and bcrypt.checkpw(password.encode(), user.password)):
         print("Something went wrong logging in user {}".format(username))
         return 0
