@@ -30,7 +30,8 @@
                         Select the desired enemy you want to add and click 'Add'.<br>
                         <select id='content_selected_enemy'></select><br>
 
-                        <button onclick='addEnemy()'>Add</button><p>
+                        <button onclick='addEnemy()'>Add To Game</button>
+                        <button onclick='deleteEnemy()'>Delete</button><p>
 
                         Add new enemy to the list of possible enemies.
                         <input class="new_item" id="new_enemy_name" type="text" placeholder="Naam">
@@ -54,7 +55,6 @@
                         Add temporary player (will not get saved over sessions).
                         <input id="new_player_name" type="text" placeholder="Naam">
                         <input id="new_player_class" type="text" placeholder="Class">
-                        <input id="new_player_rest" type="text" placeholder="Andere Shit">
                         <input type="submit" value="Add" onclick="addNewPlayer()">
                     </div>
                 </div>

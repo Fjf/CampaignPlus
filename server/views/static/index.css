@@ -58,11 +58,15 @@ body {
 }
 
 #content_left li{
-    margin: 5px 0 5px 0;
+    margin: 5px 0px;
     width: 94%;
     text-align: center;
-    height: 20px;
+    min-height: 20px;
     padding: 7px 3% 5px 3%;
+}
+
+.dataform {
+    padding: 0px 0px 5% 0px
 }
 
 #content_options {
@@ -84,14 +88,15 @@ input {
 #content_right {
     font-size: 18px;
     width: 75%;
-    padding: 5px;
-    height:100%;
+    display: block;
+    padding: 5px 5px 10px 5px;
+    height: 94%;
     position: fixed;
     margin-left: 25%;
     margin-right: 0px;
     background-color: #c3c3ff;
     box-shadow: -2px -2px 5px 2px rgba(0, 0, 0, 0.3);
-    overflow-y:scroll;
+    overflow-y: scroll;
     text-align: center;
     background-size: cover;
 }
@@ -160,7 +165,8 @@ input {
     box-shadow: 4px 4px 4px #A1A1A1;
     border: 3px;
     border-style: ridge;
-
+    overflow-x:hidden;
+    max-height:75%;
 }
 
 #stats_abilities_list {

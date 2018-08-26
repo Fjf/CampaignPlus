@@ -14,4 +14,4 @@ if __name__ == "__main__":
 
     import server
 
-    server.app.run(threaded=True, host=args.host, port=args.port)
+    server.app.run(ssl_context='adhoc', threaded=True, host=args.host, port=args.port)

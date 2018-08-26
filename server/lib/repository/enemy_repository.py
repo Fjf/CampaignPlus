@@ -17,6 +17,13 @@ def create_enemy(enemy):
     db.commit()
 
 
+def delete_enemy(enemy: EnemyModel):
+    db = request_session()
+
+    db.delete(enemy)
+    db.commit()
+
+
 def add_ability(ability: EnemyAbilityModel):
     db = request_session()
 

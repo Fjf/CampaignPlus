@@ -21,6 +21,18 @@ def create_enemy(name, max_hp, ac, stre, dex, con, inte, wis, cha, user):
     enemy_repository.create_enemy(enemy)
 
 
+def delete_enemy(enemy_id: int, user: UserModel):
+    enemy = get_enemy(enemy_id)
+    if not enemy:
+        return "This enemy does not exist"
+
+    if enemy.user != user:
+        return "This enemy does not belong to this user"
+
+    enemy_repository.delete_enemy(enemy)
+    return ""
+
+
 def get_enemy(enemy_id: int):
     return enemy_repository.get_enemy(enemy_id)
 

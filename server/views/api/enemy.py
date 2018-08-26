@@ -118,3 +118,24 @@ def delete_ability():
         "error": error
     }
 
+
+@api.route('/deleteenemy', methods=["POST"])
+@json_api()
+@require_login()
+def delete_enemy():
+    data = request.get_json()
+
+    required_fields = ["enemy_id"]
+
+    if not data or (False in [x in required_fields for x in data]):
+        raise BadRequest()
+
+    user = session_user()
+
+    error = enemy_service.delete_enemy(data["enemy_id"], user)
+    success = error == ""
+
+    return {
+        "success": success,
+        "error": error
+    }

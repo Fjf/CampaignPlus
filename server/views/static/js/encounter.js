@@ -47,6 +47,9 @@ function addNewPlayer(){
         class: klasse,
     }
     localPlayers.push(data)
+    document.getElementById("new_player_name").value = "";
+    document.getElementById("new_player_class").value = "";
+
     refreshPlayers()
 }
 
@@ -80,9 +83,10 @@ function addNewEnemy(){
         }
 
         clearNewItems()
+        updateEnemies()
     }
 
-    response = requestApiJsonData("api/createenemy", "POST", data, refreshEnemies)
+    response = requestApiJsonData("api/createenemy", "POST", data, updateEnemies)
 }
 
 function clearNewItems() {
@@ -93,7 +97,7 @@ function clearNewItems() {
 }
 
 var enemyObj = {}
-function refreshEnemies(){
+function updateEnemies(){
     let func = function(data) {
         str = "";
         for (enemy of data){
@@ -234,8 +238,29 @@ function removeAbility(id) {
     requestApiJsonData("api/deleteability", "POST", data, func)
 }
 
+function deleteEnemy() {
+    let e = document.getElementById("content_selected_enemy")
+    let enemyName = e.options[e.selectedIndex].value;
+    let enemyId = enemyObj[enemyName].id
+
+
+    let func = function(data) {
+        if (!data.success) {
+            console.log("Something went wrong deleting this ability.")
+            return
+        }
+
+        updateEnemies()
+    }
+    let data = {
+        enemy_id: enemyId
+    }
+
+    requestApiJsonData("api/deleteenemy", "POST", data, func)
+}
+
 function buttonAddEnemy(){
-    refreshEnemies();
+    updateEnemies();
     hideAll();
     document.getElementById("content_expanded_enemy").style.display = "block";
 }
