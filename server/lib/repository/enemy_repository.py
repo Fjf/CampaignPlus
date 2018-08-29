@@ -4,10 +4,12 @@ from server.lib.database import request_session
 from server.lib.model.models import EnemyModel, EnemyAbilityModel
 
 
-def get_enemies():
+def get_enemies(user_id: int):
     db = request_session()
 
-    return db.query(EnemyModel).all()
+    return db.query(EnemyModel)\
+        .filter(EnemyModel.user_id == user_id)\
+        .all()
 
 
 def create_enemy(enemy):

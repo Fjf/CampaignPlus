@@ -238,15 +238,83 @@ function removeAbility(id) {
     requestApiJsonData("api/deleteability", "POST", data, func)
 }
 
+function EnemyList() {
+    this.enemies = new Object();
+
+    this.update = function() {
+        var self = this;
+        let func = function(data) {
+            str = "";
+            for (enemy of data){
+                // Add enemies to a dictionary with their name as key.
+                self.enemies[enemy.name] = new Enemy(enemy)
+
+                str += "<option value='" + enemy.name + "'>" + enemy.name + "</option>"
+            }
+            document.getElementById("content_selected_enemy").innerHTML = str;
+        }
+
+        response = requestApiJsonData("api/getenemies", "GET", {}, func)
+    };
+
+    this.deleteEnemy = function(name) {
+        let enemy = this.getSelectedEnemy();
+        enemy.requestDelete();
+    };
+
+    this.getSelectedEnemy = function() {
+        let e = document.getElementById("content_selected_enemy");
+        let enemyName = e.options[e.selectedIndex].value;
+        return this.enemies[enemyName];
+    };
+
+    this.addEnemy = function() {
+        let enemy = this.getSelectedEnemy();
+
+        addTableRow(enemy.name, enemy.hp, Math.floor(Math.random() * 20 + 1), "enemy")
+    };
+}
+
+function Enemy(enemy) {
+    this.name = enemy.name;
+    this.hp = enemy.hp;
+    this.ac = enemy.ac;
+    this.stre = enemy.stre;
+    this.dex = enemy.dex;
+    this.wis = enemy.wis;
+    this.con = enemy.con;
+    this.inte = enemy.inte;
+    this.cha = enemy.cha;
+    this.id = enemy.id;
+
+    this.requestDelete = function() {
+        let func = function(data) {
+            if (!data.success) {
+                console.log("Something went wrong deleting this enemy.")
+                return
+            }
+
+            enemyList.update()
+        }
+        let data = {
+            enemy_id: this.id
+        }
+
+        requestApiJsonData("api/deleteenemy", "POST", data, func)
+    }
+}
+
+enemyList = new EnemyList();
+enemyList.update()
+
 function deleteEnemy() {
-    let e = document.getElementById("content_selected_enemy")
-    let enemyName = e.options[e.selectedIndex].value;
+
     let enemyId = enemyObj[enemyName].id
 
 
     let func = function(data) {
         if (!data.success) {
-            console.log("Something went wrong deleting this ability.")
+            console.log("Something went wrong deleting this enemy.")
             return
         }
 

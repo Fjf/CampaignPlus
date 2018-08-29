@@ -4,8 +4,8 @@ from server.lib.model.models import EnemyModel, EnemyAbilityModel, UserModel
 from server.lib.repository import enemy_repository
 
 
-def get_enemies():
-    return enemy_repository.get_enemies()
+def get_enemies(user: UserModel):
+    return enemy_repository.get_enemies(user.id)
 
 
 def create_enemy(name, max_hp, ac, stre, dex, con, inte, wis, cha, user):

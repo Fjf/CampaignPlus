@@ -27,7 +27,9 @@ def create_enemy():
 @json_api()
 @require_login()
 def get_enemies():
-    enemies = enemy_service.get_enemies()
+    user = session_user()
+
+    enemies = enemy_service.get_enemies(user)
 
     data = []
     for enemy in enemies:
