@@ -1,14 +1,48 @@
-let context = document.getElementById("map").getContext("2d")
+let canvas = document.getElementById("map");
+canvas.width = 1920
+canvas.height = 1080
+let context = canvas.getContext("2d")
+
+
+let currentMap = {
+    img: new Image(),
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    startMoveEvent: null,
+    draw: function() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(this.img, this.x, this.y, this.width, this.height, 0, 0, canvas.width, canvas.height)
+    }
+};
+
+let curAction = 4;
+
+let actions = {
+    zoomIn: 1,
+    zoomOut: 2,
+    placeMarker: 3,
+    move: 4,
+    none: 5
+}
 
 function loadMap(map_id) {
     // If map_id is -1, the base map will be loaded.
 
     let func = function(data) {
+        if (!data.success) {
+            console.log("Something went wrong retrieving the background image");
+            return;
+        }
+        currentMap.img = new Image();
+        currentMap.img.src = data.image;
 
-        x = document.createElement("IMG")
-        x.src = data
-
-        context.drawImage(x, 0, 0)
+        currentMap.img.onload = function(e) {
+            currentMap.width = currentMap.img.width;
+            currentMap.height = currentMap.img.height;
+            currentMap.draw();
+        }
     }
 
     data = {
@@ -16,24 +50,7 @@ function loadMap(map_id) {
         map_id: map_id
     }
 
-    requestImageData("/api/getmap", "POST", data, func)
-}
-
-function requestImageData(api, requestType, data, callback) {
-    let xmlHttp = new XMLHttpRequest();
-
-    xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState === 4) {
-            if (xmlHttp.status == 200)
-                callback(xmlHttp.response);
-            else
-                console.log("Something went wrong calling " + api);
-        }
-    }
-
-    xmlHttp.open(requestType, api, true);
-    xmlHttp.setRequestHeader("Content-Type", "application/json");
-    xmlHttp.send(JSON.stringify(data));
+    requestApiJsonData("/api/getmap", "POST", data, func)
 }
 
 function uploadMap() {
@@ -66,3 +83,112 @@ function uploadMap() {
 }
 
 
+loadMap()
+
+function relMouseCoords(event){
+    var totalOffsetX = 0;
+    var totalOffsetY = 0;
+    var canvasX = 0;
+    var canvasY = 0;
+    var currentElement = this;
+
+    do{
+        totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
+        totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
+    }
+    while(currentElement = currentElement.offsetParent)
+
+    canvasX = event.pageX - totalOffsetX;
+    canvasY = event.pageY - totalOffsetY;
+
+    return {x:canvasX, y:canvasY}
+}
+HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
+
+
+function zoomIn(e) {
+    let zoomPercent = 0.1;
+    zoomCentre = canvas.relMouseCoords(e);
+
+    newWidth = currentMap.width * (1 - zoomPercent);
+    newHeight = currentMap.height * (1 - zoomPercent);
+
+    diffX = currentMap.width - newWidth;
+    diffY = currentMap.height - newHeight;
+
+    xPercent = zoomCentre.x / canvas.clientWidth;
+    yPercent = zoomCentre.y / canvas.clientHeight;
+
+    currentMap.x += diffX * xPercent;
+    currentMap.y += diffY * yPercent;
+
+    currentMap.width = newWidth;
+    currentMap.height = newHeight;
+
+    currentMap.draw();
+}
+
+function zoomOut(e) {
+    let zoomPercent = 0.1;
+    zoomCentre = canvas.relMouseCoords(e);
+
+    newWidth = currentMap.width * 1/(1 - zoomPercent);
+    newHeight = currentMap.height * 1/(1 - zoomPercent);
+
+    diffX = currentMap.width - newWidth;
+    diffY = currentMap.height - newHeight;
+
+    xPercent = zoomCentre.x / canvas.clientWidth;
+    yPercent = zoomCentre.y / canvas.clientHeight;
+
+    currentMap.x += diffX * xPercent;
+    currentMap.y += diffY * yPercent;
+
+    currentMap.width = newWidth;
+    currentMap.height = newHeight;
+
+    currentMap.draw();
+}
+
+function resize() {
+    currentMap.x = 0;
+    currentMap.y = 0;
+    currentMap.width = currentMap.img.width;
+    currentMap.height = currentMap.img.height;
+    currentMap.draw();
+}
+
+
+canvas.onclick = function(e) {
+    if (curAction == actions.zoomIn) {
+        zoomIn(e);
+    } else if (curAction == actions.zoomOut) {
+        zoomOut(e);
+    }
+}
+
+canvas.onmousedown = function(e) {
+    if (curAction == actions.move) {
+        currentMap.startMoveEvent = e;
+    }
+}
+
+function moveMap(e) {
+    currentMap.x -= currentMap.startMoveEvent.x - e.x;
+    currentMap.y -= currentMap.startMoveEvent.y - e.y;
+
+    currentMap.draw();
+    currentMap.startMoveEvent = e;
+}
+
+canvas.onmousemove = function(e) {
+    if (curAction == actions.move && currentMap.startMoveEvent != null) {
+        moveMap(e)
+    }
+}
+
+document.onmouseup = function(e) {
+    if (curAction == actions.move && currentMap.startMoveEvent != null) {
+        currentMap.startMoveEvent = null;
+    }
+}

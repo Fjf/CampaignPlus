@@ -1,6 +1,5 @@
 env/*
 .idea/*
-storage/*
 *.pyc
 *.mp3
 *.db

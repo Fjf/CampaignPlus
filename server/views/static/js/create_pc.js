@@ -156,3 +156,4 @@ function getPlaythroughName(code) {
 
 getGameCharacters()
 getPlaythroughName(PLAYTHROUGH_ID)
+setUserData()

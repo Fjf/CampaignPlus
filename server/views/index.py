@@ -47,6 +47,12 @@ def show_map(code):
     return render_template('map.html', pid=playthrough.id)
 
 
+@app.route('/settings', methods=["GET"])
+@require_login()
+def settings():
+
+    return render_template("settings.html")
+
 
 print("Loaded index successfully.")
 

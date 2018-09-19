@@ -4,6 +4,7 @@
     <div id="header">
         <div class="headerelem" id="currentuser"></div>
         <div class="headerelem" id="logout"><button onclick="window.location.href='/logout'">Log out</button></div>
+        <div class="headerelem" id="settings"><button onclick="window.location.href='/settings'">Settings</button></div>
         <div class="headerelem" id="toggleviews"><button onclick="toggleViews()">Toggle Encounter/Playthrough</button></div>
     </div>
     <div id="content">
@@ -12,7 +13,6 @@
                 <div class="playthrough" id="playthrough_options">
                     <ul>
                         <li class="custom_button" onclick="buttonExpandPlaythrough()">Playthroughs.</li>
-                        <li class="custom_button" onclick="">User settings?</li>
                     </ul>
                 </div>
                 <div class="encounter" id="encounter_options">
@@ -111,7 +111,7 @@
             </div>
         </div>
     </div>
-    <div id="stats_popup">
+    <div class="popup" id="stats_popup">
         <button onclick="this.parentNode.style.display='none'" style="float: right">X</button><br>
         <div id="stats_container">
             <div id="stats_name">

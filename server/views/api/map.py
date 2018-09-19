@@ -35,14 +35,11 @@ def create_map():
 
 
 @api.route('/getmap', methods=["POST"])
+@json_api()
 @require_login()
 def get_map():
-    path = os.path.join(app.root_path, 'images')
-
-    data = request.get_json()
-
-    if not data or "playthrough_id" not in data or "map_id" not in data:
-        raise BadRequest()
-
-    return send_from_directory(path, '323UiB5KR0vAnmk.png')
+    return {
+        "success": True,
+        "image": '/static/images/323UiB5KR0vAnmk.png'
+    }
 

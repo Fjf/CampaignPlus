@@ -7,11 +7,20 @@
     <div id="content">
         <div id="content_left">
             <ul id="places" style="list-style-type: none">
-                <li>Stad 1</li>
-                <li>Stad 2</li>
+                <button onclick="document.getElementById('upload_map').style.display='block'">Upload</button>
+                <button onclick="curAction = actions.zoomIn">Zoom In</button>
+                <button onclick="curAction = actions.zoomOut">Zoom out</button>
+                <button onclick="curAction = actions.move">Move</button>
+                <button onclick="resize()">Resize</button>
             </ul>
         </div>
         <div id="content_right">
+            <canvas id="map">
+
+            </canvas>
+        </div>
+        <div class="popup" id="upload_map">
+            <button onclick="this.parentNode.style.display='none'" style="float: right">X</button><br>
             <div>
                 <input id="map_file" type="file" value="file">
                 <input id="map_x" type="number" placeholder="x">
@@ -19,9 +28,6 @@
                 <input id="map_pid" type="number" placeholder="parent id">
                 <input type="button" value="Submit" onclick="uploadMap()">
             </div>
-            <canvas id="map">
-
-            </canvas>
         </div>
     </div>
 {% endblock %}
