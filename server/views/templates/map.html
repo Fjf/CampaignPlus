@@ -6,13 +6,21 @@
     </div>
     <div id="content">
         <div id="content_left">
-            <ul id="places" style="list-style-type: none">
+            <div id="functions">
                 <button onclick="document.getElementById('upload_map').style.display='block'">Upload</button>
                 <button onclick="curAction = actions.zoomIn">Zoom In</button>
                 <button onclick="curAction = actions.zoomOut">Zoom out</button>
                 <button onclick="curAction = actions.move">Move</button>
                 <button onclick="resize()">Resize</button>
-            </ul>
+                <button onclick="addMarker()">Add place</button>
+            </div>
+            <div id="places">
+
+            </div>
+            <div id="submap_data" style="display: none;">
+                <div contenteditable id="up_backstory">Location story here.</div><br>
+
+            </div>
         </div>
         <div id="content_right">
             <canvas id="map">
@@ -23,10 +31,10 @@
             <button onclick="this.parentNode.style.display='none'" style="float: right">X</button><br>
             <div>
                 <input id="map_file" type="file" value="file">
-                <input id="map_x" type="number" placeholder="x">
-                <input id="map_y" type="number" placeholder="y">
-                <input id="map_pid" type="number" placeholder="parent id">
-                <input type="button" value="Submit" onclick="uploadMap()">
+                <input id="map_x" type="number" placeholder="x" disabled>
+                <input id="map_y" type="number" placeholder="y" disabled>
+                <input id="map_pid" type="number" placeholder="parent id" disabled>
+                <input id="map_submit" type="button" value="Submit" onclick="uploadMap()">
             </div>
         </div>
     </div>

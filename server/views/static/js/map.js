@@ -6,18 +6,54 @@ let context = canvas.getContext("2d")
 
 let currentMap = {
     img: new Image(),
+    id: 0,
     x: 0,
     y: 0,
     width: 0,
     height: 0,
     startMoveEvent: null,
+    markers: [],
+    markerWidth: 40,
+    markerHeight: 40,
+    markerImg: new Image(),
     draw: function() {
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(this.img, this.x, this.y, this.width, this.height, 0, 0, canvas.width, canvas.height)
+        for (pos of this.markers) {
+            xScale = (canvas.width / this.width);
+            yScale = (canvas.height / this.height);
+
+            relativeX = (pos.x - this.x) * xScale - this.markerWidth / 2;
+            relativeY = (pos.y - this.y) * yScale - this.markerHeight;
+
+            // Dont draw the marker if it is out of bounds.
+            if (relativeX + this.markerWidth < 0 || relativeX > canvas.width ||
+                relativeY + this.markerHeight < 0 || relativeY > canvas.height)
+            {
+                continue;
+            }
+            context.drawImage(this.markerImg, relativeX, relativeY, this.markerWidth, this.markerHeight);
+        }
     }
 };
 
-let curAction = 4;
+
+let currentMarker = {
+
+}
+
+let newMarker = {
+    x: 0,
+    y: 0,
+    width: 40,
+    height: 40,
+    img: new Image(),
+    draw: function() {
+        context.drawImage(this.img, this.x - this.width / 2, this.y - this.height, this.width, this.height);
+    }
+}
+newMarker.img.src = "/static/images/marker.png";
+currentMap.markerImg.src = "/static/images/marker.png";
 
 let actions = {
     zoomIn: 1,
@@ -26,6 +62,8 @@ let actions = {
     move: 4,
     none: 5
 }
+
+let curAction = 4;
 
 function loadMap(map_id) {
     // If map_id is -1, the base map will be loaded.
@@ -37,6 +75,7 @@ function loadMap(map_id) {
         }
         currentMap.img = new Image();
         currentMap.img.src = data.image;
+        currentMap.id = data.id;
 
         currentMap.img.onload = function(e) {
             currentMap.width = currentMap.img.width;
@@ -55,16 +94,18 @@ function loadMap(map_id) {
 
 function uploadMap() {
     let func = function(data) {
+        document.getElementById("map_submit").disabled = false;
         if (!data.success) {
             console.log("Something went wrong uploading the map.")
             console.log("The following error was thrown: " + data.error)
             return
         }
+        document.getElementById("upload_map").style.display = "none";
 
         loadMap()
     }
 
-    parent_id = document.getElementById("map_pid").value
+    parent_id = currentMap.id;
     x = document.getElementById("map_x").value
     y = document.getElementById("map_y").value
     file = document.getElementById("map_file").files[0]
@@ -80,6 +121,7 @@ function uploadMap() {
 
 
     requestApiFormData("/api/uploadmap", "POST", formdata, func)
+    document.getElementById("map_submit").disabled = true;
 }
 
 
@@ -164,6 +206,19 @@ canvas.onclick = function(e) {
         zoomIn(e);
     } else if (curAction == actions.zoomOut) {
         zoomOut(e);
+    } else if (curAction == actions.placeMarker) {
+        pos = canvas.relMouseCoords(e);
+
+        pos.x = currentMap.width * pos.x / canvas.clientWidth;
+        pos.y = currentMap.height * pos.y / canvas.clientHeight;
+
+        currentMap.markers.push({x: pos.x, y: pos.y});
+
+        curAction = actions.none;
+        document.getElementById("map_x").value = Math.round(pos.x);
+        document.getElementById("map_y").value = Math.round(pos.y);
+        document.getElementById("map_pid").value = currentMap.id;
+        document.getElementById("upload_map").style.display = "block";
     }
 }
 
@@ -181,9 +236,22 @@ function moveMap(e) {
     currentMap.startMoveEvent = e;
 }
 
+function addMarker() {
+    curAction = actions.placeMarker;
+}
+
 canvas.onmousemove = function(e) {
     if (curAction == actions.move && currentMap.startMoveEvent != null) {
         moveMap(e)
+    } else if (curAction == actions.placeMarker) {
+        pos = canvas.relMouseCoords(e);
+        console.log(pos);
+        newMarker.x = canvas.width * pos.x / canvas.clientWidth;
+        newMarker.y = canvas.height * pos.y / canvas.clientHeight;
+
+        // Redraw map so you dont see snaking marker.
+        currentMap.draw();
+        newMarker.draw();
     }
 }
 

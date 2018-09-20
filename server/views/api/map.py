@@ -10,6 +10,7 @@ from server.lib.service import enemy_service, map_service, playthrough_service
 
 
 @api.route('/uploadmap', methods=["POST"])
+@json_api()
 @require_login()
 def create_map():
     try:
@@ -31,15 +32,19 @@ def create_map():
     parent = map_service.get_map(pid)
 
     map_service.create_map(pid, file, x, y, parent)
-    return ""
+    return {
+        "success": True
+    }
 
 
 @api.route('/getmap', methods=["POST"])
 @json_api()
 @require_login()
 def get_map():
+    map = map_service.get_map(3)
     return {
         "success": True,
-        "image": '/static/images/323UiB5KR0vAnmk.png'
+        "id": 3,
+        "image": os.path.join("/static/images/uploads", map.map_url)
     }
 
