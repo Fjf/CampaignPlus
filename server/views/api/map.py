@@ -21,15 +21,15 @@ def create_map():
             "error": "No file was uploaded."
         }
 
-    pid = request.form.get('playthrough_id', None)
-    x = request.form.get('x', None)
-    y = request.form.get('y', None)
-    parent_id = request.form.get('parent_id', None)
+    pid = int(request.form.get('playthrough_id', None))
+    x = int(request.form.get('x', None))
+    y = int(request.form.get('y', None))
+    parent_id = int(request.form.get('parent_id', None))
 
     if pid is None or x is None or y is None or parent_id is None:
         raise BadRequest()
 
-    parent = map_service.get_map(pid)
+    parent = map_service.get_map(parent_id)
 
     map_service.create_map(pid, file, x, y, parent)
     return {
@@ -41,10 +41,21 @@ def create_map():
 @json_api()
 @require_login()
 def get_map():
-    map = map_service.get_map(3)
+    data = request.get_json()
+
+    required_fields = ["map_id", "playthrough_id"]
+
+    if not data or (False in [x in required_fields for x in data]):
+        raise BadRequest()
+
+    map = map_service.get_map(data["map_id"])
+    children = map_service.get_children(map)
+
+    markers = [{"x": child.x, "y": child.y, "id": child.id} for child in children]
+
     return {
         "success": True,
-        "id": 3,
-        "image": os.path.join("/static/images/uploads", map.map_url)
+        "id": data["map_id"],
+        "image": os.path.join("/static/images/uploads", map.map_url),
+        "markers": markers
     }
-

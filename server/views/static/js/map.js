@@ -19,9 +19,10 @@ let currentMap = {
     draw: function() {
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(this.img, this.x, this.y, this.width, this.height, 0, 0, canvas.width, canvas.height)
+
+        xScale = (canvas.width / this.width);
+        yScale = (canvas.height / this.height);
         for (pos of this.markers) {
-            xScale = (canvas.width / this.width);
-            yScale = (canvas.height / this.height);
 
             relativeX = (pos.x - this.x) * xScale - this.markerWidth / 2;
             relativeY = (pos.y - this.y) * yScale - this.markerHeight;
@@ -34,6 +35,22 @@ let currentMap = {
             }
             context.drawImage(this.markerImg, relativeX, relativeY, this.markerWidth, this.markerHeight);
         }
+    },
+    isInMarker: function(loc) {
+        xScale = (canvas.width / this.width);
+        yScale = (canvas.height / this.height);
+
+        loc.x *= xScale;
+        loc.y *= yScale;
+        for (pos of this.markers) {
+
+            relativeX = (pos.x - this.x) * xScale - this.markerWidth / 2;
+            relativeY = (pos.y - this.y) * yScale - this.markerHeight;
+
+            if (isInRectangle(loc, relativeX, relativeY, this.markerWidth, this.markerHeight))
+                return pos.id;
+        }
+        return -1;
     }
 };
 
@@ -63,7 +80,7 @@ let actions = {
     none: 5
 }
 
-let curAction = 4;
+let curAction = actions.none;
 
 function loadMap(map_id) {
     // If map_id is -1, the base map will be loaded.
@@ -76,10 +93,35 @@ function loadMap(map_id) {
         currentMap.img = new Image();
         currentMap.img.src = data.image;
         currentMap.id = data.id;
+        currentMap.markers = [];
+
+        for (marker of data.markers) {
+            currentMap.markers.push({x: marker.x, y: marker.y, id: marker.id});
+        }
 
         currentMap.img.onload = function(e) {
-            currentMap.width = currentMap.img.width;
-            currentMap.height = currentMap.img.height;
+            let ratio = canvas.width / canvas.height;
+            let imgRatio = currentMap.img.width / currentMap.img.height;
+
+            console.log(ratio)
+            console.log(imgRatio)
+
+            if (ratio <= imgRatio) {
+                // Horizontal white border top and bottom.
+                currentMap.width = currentMap.img.width;
+                currentMap.height = (currentMap.img.width / ratio);
+
+                currentMap.x = 0;
+                currentMap.y = -(currentMap.height - currentMap.img.height) / 2
+            } else {
+                // Vertical white border left and right.
+                currentMap.width = (currentMap.img.height / (1/ratio));
+                currentMap.height = currentMap.img.height;
+
+                currentMap.x = -(currentMap.width - currentMap.img.width) / 2
+                currentMap.y = 0;
+            }
+
             currentMap.draw();
         }
     }
@@ -91,6 +133,7 @@ function loadMap(map_id) {
 
     requestApiJsonData("/api/getmap", "POST", data, func)
 }
+
 
 function uploadMap() {
     let func = function(data) {
@@ -119,13 +162,14 @@ function uploadMap() {
     formdata.append('x', x)
     formdata.append('y', y)
 
+    console.log("Parent map id: " + parent_id)
 
     requestApiFormData("/api/uploadmap", "POST", formdata, func)
     document.getElementById("map_submit").disabled = true;
 }
 
 
-loadMap()
+loadMap(3)
 
 function relMouseCoords(event){
     var totalOffsetX = 0;
@@ -201,6 +245,11 @@ function resize() {
 }
 
 
+function isInRectangle(pos, x, y, width, height) {
+    return pos.x < x + width && pos.x > x && pos.y < y + height && pos.y > y;
+}
+
+
 canvas.onclick = function(e) {
     if (curAction == actions.zoomIn) {
         zoomIn(e);
@@ -219,6 +268,16 @@ canvas.onclick = function(e) {
         document.getElementById("map_y").value = Math.round(pos.y);
         document.getElementById("map_pid").value = currentMap.id;
         document.getElementById("upload_map").style.display = "block";
+    } else if (curAction == actions.none) {
+        pos = canvas.relMouseCoords(e);
+
+        pos.x = currentMap.width * pos.x / canvas.clientWidth;
+        pos.y = currentMap.height * pos.y / canvas.clientHeight;
+
+        let i;
+        if((i = currentMap.isInMarker(pos)) != -1) {
+            loadMap(i)
+        }
     }
 }
 
@@ -245,7 +304,7 @@ canvas.onmousemove = function(e) {
         moveMap(e)
     } else if (curAction == actions.placeMarker) {
         pos = canvas.relMouseCoords(e);
-        console.log(pos);
+
         newMarker.x = canvas.width * pos.x / canvas.clientWidth;
         newMarker.y = canvas.height * pos.y / canvas.clientHeight;
 

@@ -1,7 +1,7 @@
 import os
 import string
 from random import randint
-from typing import Optional
+from typing import Optional, List
 
 from server import app
 from server.lib.model.models import MapModel
@@ -36,3 +36,7 @@ def get_map(map_id: int) -> Optional[MapModel]:
 
 def _create_random_string(length: int):
     return "".join(ALLOWED_CHARS[randint(0, len(ALLOWED_CHARS)-1)] for _ in range(length))
+
+
+def get_children(map: MapModel) -> Optional[List[MapModel]]:
+    return map_repository.get_children(map.id)
