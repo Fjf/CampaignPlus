@@ -36,6 +36,26 @@ let currentMap = {
             context.drawImage(this.markerImg, relativeX, relativeY, this.markerWidth, this.markerHeight);
         }
     },
+    resize: function() {
+        let ratio = canvas.width / canvas.height;
+        let imgRatio = this.img.width / this.img.height;
+
+        if (ratio <= imgRatio) {
+            // Horizontal white border top and bottom.
+            this.width = this.img.width;
+            this.height = (this.img.width / ratio);
+
+            this.x = 0;
+            this.y = -(this.height - this.img.height) / 2
+        } else {
+            // Vertical white border left and right.
+            this.width = (this.img.height / (1/ratio));
+            this.height = this.img.height;
+
+            this.x = -(this.width - this.img.width) / 2
+            this.y = 0;
+        }
+    },
     isInMarker: function(loc) {
         xScale = (canvas.width / this.width);
         yScale = (canvas.height / this.height);
@@ -100,27 +120,7 @@ function loadMap(map_id) {
         }
 
         currentMap.img.onload = function(e) {
-            let ratio = canvas.width / canvas.height;
-            let imgRatio = currentMap.img.width / currentMap.img.height;
-
-            console.log(ratio)
-            console.log(imgRatio)
-
-            if (ratio <= imgRatio) {
-                // Horizontal white border top and bottom.
-                currentMap.width = currentMap.img.width;
-                currentMap.height = (currentMap.img.width / ratio);
-
-                currentMap.x = 0;
-                currentMap.y = -(currentMap.height - currentMap.img.height) / 2
-            } else {
-                // Vertical white border left and right.
-                currentMap.width = (currentMap.img.height / (1/ratio));
-                currentMap.height = currentMap.img.height;
-
-                currentMap.x = -(currentMap.width - currentMap.img.width) / 2
-                currentMap.y = 0;
-            }
+            currentMap.resize();
 
             currentMap.draw();
         }
@@ -237,10 +237,7 @@ function zoomOut(e) {
 }
 
 function resize() {
-    currentMap.x = 0;
-    currentMap.y = 0;
-    currentMap.width = currentMap.img.width;
-    currentMap.height = currentMap.img.height;
+    currentMap.resize();
     currentMap.draw();
 }
 
