@@ -7,6 +7,7 @@ let context = canvas.getContext("2d")
 let currentMap = {
     img: new Image(),
     id: 0,
+    parent_id: 0,
     x: 0,
     y: 0,
     width: 0,
@@ -102,21 +103,120 @@ let actions = {
 
 let curAction = actions.none;
 
-function loadMap(map_id) {
-    // If map_id is -1, the base map will be loaded.
 
+function loadMapData(map_id) {
     let func = function(data) {
         if (!data.success) {
-            console.log("Something went wrong retrieving the background image");
+            console.log("Something went wrong retrieving map data.")
+        } else {
+            document.getElementById("map_name").value = data.name;
+            document.getElementById("map_story").value = data.story;
+        }
+
+        var old_element = document.getElementById("button_loadmap");
+        var new_element = old_element.cloneNode(true);
+        old_element.parentNode.replaceChild(new_element, old_element);
+
+        document.getElementById("button_loadmap").addEventListener("click", createLoadMap(map_id), false);
+
+        var old_element = document.getElementById("button_update");
+        var new_element = old_element.cloneNode(true);
+        old_element.parentNode.replaceChild(new_element, old_element);
+
+        document.getElementById("button_update").addEventListener("click", createSetMapData(map_id), false);
+    }
+
+    let data = {
+        playthrough_id: PLAYTHROUGH_ID,
+        map_id: map_id
+    }
+
+    requestApiJsonData("/api/getmapdata", "POST", data, func)
+}
+
+
+function setMapData(map_id) {
+    console.log("This function is called now.")
+    name = document.getElementById("map_name").value;
+    story = document.getElementById("map_story").value;
+
+    document.getElementById("button_update").disabled = true;
+
+    let func = function(data) {
+        document.getElementById("button_update").disabled = false;
+        if (!data.success) {
+            console.log("Something went wrong updating map data.")
+            console.log("Error: " + data.error);
+            return
+        }
+    }
+
+    let data = {
+        playthrough_id: PLAYTHROUGH_ID,
+        map_id: map_id,
+        name: name,
+        story: story
+    }
+
+    requestApiJsonData("/api/setmapdata", "POST", data, func)
+}
+
+
+function createSetMapData(map_id) {
+    return function() { setMapData(map_id); }
+}
+
+function createLoadMap(i) {
+    return function() { loadMap(i); }
+}
+
+function createLoadMapData(i) {
+    return function() { loadMapData(i); }
+}
+
+
+function loadMap(map_id) {
+    // TODO: If map_id is -1, the base map will be loaded.
+    let func = function(data) {
+        if (!data.success) {
+            console.log("Something went wrong retrieving the map.");
             return;
         }
         currentMap.img = new Image();
         currentMap.img.src = data.image;
         currentMap.id = data.id;
+        currentMap.parent_id = data.parent_id;
         currentMap.markers = [];
+
+        let div;
+        let places = document.getElementById("places");
+        places.innerHTML = "";
+
+        div = document.createElement("div");
+        div.classList.add("custom_button")
+        div.innerHTML = "Parent map";
+        div.addEventListener("click", createLoadMapData(currentMap.parent_id), false);
+        places.appendChild(div);
+
+        div = document.createElement("div");
+        div.classList.add("custom_button")
+        div.innerHTML = "Currently opened map";
+        div.addEventListener("click", createLoadMapData(currentMap.id), false);
+        places.appendChild(div);
 
         for (marker of data.markers) {
             currentMap.markers.push({x: marker.x, y: marker.y, id: marker.id});
+
+            div = document.createElement("div");
+            div.classList.add("custom_button")
+
+            div.addEventListener("click", createLoadMapData(marker.id), false);
+
+            if (marker.name == "")
+                marker.name = "Unmarked location";
+
+            div.innerHTML = marker.name + " {" + marker.x + ", " + marker.y + "}.";
+            places.appendChild(div);
         }
 
         currentMap.img.onload = function(e) {
@@ -255,8 +355,8 @@ canvas.onclick = function(e) {
     } else if (curAction == actions.placeMarker) {
         pos = canvas.relMouseCoords(e);
 
-        pos.x = currentMap.width * pos.x / canvas.clientWidth;
-        pos.y = currentMap.height * pos.y / canvas.clientHeight;
+        pos.x = currentMap.width * pos.x / canvas.clientWidth + currentMap.x;
+        pos.y = currentMap.height * pos.y / canvas.clientHeight + currentMap.y;
 
         currentMap.markers.push({x: pos.x, y: pos.y});
 

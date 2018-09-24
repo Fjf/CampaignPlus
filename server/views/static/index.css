@@ -65,6 +65,30 @@ body {
     padding: 7px 3% 5px 3%;
 }
 
+#map_content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.textbox {
+    width: 90%;
+
+}
+
+.map_content_element {
+    max-height: 33%;
+    overflow-y: scroll;
+}
+
+#places div{
+    margin: 5px 0px;
+    width: 94%;
+    text-align: center;
+    min-height: 20px;
+    padding: 7px 3% 5px 3%;
+}
+
 .dataform {
     padding: 0px 0px 5% 0px
 }

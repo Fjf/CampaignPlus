@@ -6,20 +6,26 @@
     </div>
     <div id="content">
         <div id="content_left">
-            <div id="functions">
-                <button onclick="document.getElementById('upload_map').style.display='block'">Upload</button>
-                <button onclick="curAction = actions.zoomIn">Zoom In</button>
-                <button onclick="curAction = actions.zoomOut">Zoom out</button>
-                <button onclick="curAction = actions.move">Move</button>
-                <button onclick="resize()">Resize</button>
-                <button onclick="addMarker()">Add place</button>
-            </div>
-            <div id="places">
-
-            </div>
-            <div id="submap_data" style="display: none;">
-                <div contenteditable id="up_backstory">Location story here.</div><br>
-
+            <div id="map_content">
+                <div id="functions" class="map_content_element">
+                    <button onclick="document.getElementById('upload_map').style.display='block'">Upload</button>
+                    <button onclick="curAction = actions.zoomIn">Zoom In</button>
+                    <button onclick="curAction = actions.zoomOut">Zoom out</button>
+                    <button onclick="curAction = actions.move">Move</button>
+                    <button onclick="resize()">Resize</button>
+                    <button onclick="addMarker()">Add place</button>
+                </div>
+                <div id="placeswrapper" class="map_content_element">
+                    <center><b>Places:</b></center>
+                    <div id="places">
+                    </div>
+                </div>
+                <div id="map_data" class="map_content_element">
+                    <input class="textbox" id="map_name" type="text" placeholder="Location name here."><br>
+                    <textarea class="textbox" id="map_story" placeholder="Location story here."></textarea><br>
+                    <button id="button_update">Update this data.</button>
+                    <button id="button_loadmap">Load this map.</button>
+                </div>
             </div>
         </div>
         <div id="content_right">
