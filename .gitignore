@@ -6,3 +6,4 @@ env/*
 *.jpg
 *.dump
 *.png
+!marker.png
