@@ -192,11 +192,13 @@ function loadMap(map_id) {
         let places = document.getElementById("places");
         places.innerHTML = "";
 
-        div = document.createElement("div");
-        div.classList.add("custom_button")
-        div.innerHTML = "Parent map";
-        div.addEventListener("click", createLoadMapData(currentMap.parent_id), false);
-        places.appendChild(div);
+        if (data.parent_id != "") {
+            div = document.createElement("div");
+            div.classList.add("custom_button")
+            div.innerHTML = "Parent map";
+            div.addEventListener("click", createLoadMapData(currentMap.parent_id), false);
+            places.appendChild(div);
+        }
 
         div = document.createElement("div");
         div.classList.add("custom_button")

@@ -85,6 +85,12 @@ def get_map_data():
 
     map = map_service.get_map(data["map_id"])
 
+    if map is None:
+        return {
+            "success": False,
+            "error": "This map does not exist."
+        }
+
     mapdata = map_service.get_map_data(map)
 
     if mapdata is None:
