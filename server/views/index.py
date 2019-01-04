@@ -43,6 +43,11 @@ def join_playthrough(code):
 
 @app.route('/map/<code>', methods=["GET"])
 def show_map(code):
+    try:
+        user = session_user()
+    except ValueError:
+        return login(refer="map/" + code)
+
     playthrough = playthrough_service.find_playthrough_with_code(code)
     return render_template('map.html', pid=playthrough.id)
 

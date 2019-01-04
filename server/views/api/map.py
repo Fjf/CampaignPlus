@@ -101,6 +101,7 @@ def get_map_data():
 
     return {
         "success": True,
+        "id": mapdata.map.id,
         "story": mapdata.story,
         "name": mapdata.name
     }

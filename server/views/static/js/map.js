@@ -113,12 +113,14 @@ function loadMapData(map_id) {
             document.getElementById("map_story").value = data.story;
         }
 
+        // This removes the eventlisteners from the button.
         var old_element = document.getElementById("button_loadmap");
         var new_element = old_element.cloneNode(true);
         old_element.parentNode.replaceChild(new_element, old_element);
 
         document.getElementById("button_loadmap").addEventListener("click", createLoadMap(map_id), false);
 
+        // This removes the eventlisteners from the button.
         var old_element = document.getElementById("button_update");
         var new_element = old_element.cloneNode(true);
         old_element.parentNode.replaceChild(new_element, old_element);
@@ -416,5 +418,49 @@ canvas.onmousemove = function(e) {
 document.onmouseup = function(e) {
     if (curAction == actions.move && currentMap.startMoveEvent != null) {
         currentMap.startMoveEvent = null;
+    }
+}
+
+
+let mapMenu = {
+    active: 0, // 0 means upload file is active, 1 means the select dropdown.
+    toggle: function() {
+        if (this.active === 0) {
+            this.updateValues();
+
+            document.getElementById("map_id").style.display = "block";
+            document.getElementById("map_file").style.display = "none";
+            this.active = 1;
+        } else {
+            document.getElementById("map_id").style.display = "none";
+            document.getElementById("map_file").style.display = "block";
+            this.active = 0;
+        }
+    },
+    updateValues: function() {
+        let func = function(data) {
+            if (!data.success) {
+                console.log("Something went wrong retrieving uploaded maps.");
+                return;
+            }
+
+            let map_options = document.getElementById("map_id")
+            map_options.innerHTML = "";
+            let div;
+            for (map of data.maps) {
+                div = document.createElement("option");
+                div.value = map.id;
+                div.innerHTML = map.name;
+
+                map_options.appendChild(div);
+            }
+        }
+
+        let data = {
+            playthrough_id: PLAYTHROUGH_ID,
+            map_id: currentMap.id
+        };
+
+        requestApiJsonData("/api/getmapdata", "POST", data, func);
     }
 }

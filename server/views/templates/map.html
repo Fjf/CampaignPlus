@@ -8,7 +8,7 @@
         <div id="content_left">
             <div id="map_content">
                 <div id="functions" class="map_content_element">
-                    <button onclick="document.getElementById('upload_map').style.display='block'">Upload</button>
+                    <button onclick="document.getElementById('upload_map').style.display='block'">Create Map</button>
                     <button onclick="curAction = actions.zoomIn">Zoom In</button>
                     <button onclick="curAction = actions.zoomOut">Zoom out</button>
                     <button onclick="curAction = actions.move">Move</button>
@@ -33,14 +33,22 @@
 
             </canvas>
         </div>
-        <div class="popup" id="upload_map">
+        <div class="popup" id="create_map">
             <button onclick="this.parentNode.style.display='none'" style="float: right">X</button><br>
             <div>
-                <input id="map_file" type="file" value="file">
-                <input id="map_x" type="number" placeholder="x" disabled>
-                <input id="map_y" type="number" placeholder="y" disabled>
-                <input id="map_pid" type="number" placeholder="parent id" disabled>
-                <input id="map_submit" type="button" value="Submit" onclick="uploadMap()">
+                <input id="create_map_file" type="file" value="file">
+                <input id="create_map_name" type="number" placeholder="parent id" disabled>
+                <input id="map_submit" type="button" value="Submit" onclick="createMap()">
+            </div>
+        </div>
+        <div class="popup" id="select_marker_location">
+            <button onclick="this.parentNode.style.display='none'" style="float: right">X</button><br>
+            <div>
+                <select id="map_id" style="display: none;">
+                    <option value="map1">Map 1</option>
+                    <option value="map2">Map 2</option>
+                </select>
+                <button>Connect</button>
             </div>
         </div>
     </div>

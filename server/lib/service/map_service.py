@@ -4,7 +4,7 @@ from random import randint
 from typing import Optional, List
 
 from server import app
-from server.lib.model.models import MapModel
+from server.lib.model.models import MapModel, MapDataModel
 from server.lib.repository import map_repository
 
 ALLOWED_CHARS = string.digits + string.ascii_letters
@@ -36,7 +36,7 @@ def get_map(map_id: int) -> Optional[MapModel]:
     return map_repository.get_map(map_id)
 
 
-def get_map_data(map: MapModel) -> Optional[MapModel]:
+def get_map_data(map: MapModel) -> Optional[MapDataModel]:
     return map_repository.get_mapdata_from_map(map)
 
 

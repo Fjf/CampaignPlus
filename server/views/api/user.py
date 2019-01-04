@@ -19,22 +19,20 @@ def register():
 
     name = data["name"]
     pw = data["password"]
-    user_data = user_service.create_user(name, pw)
+    error = user_service.create_user(name, pw)
 
-    error = ""
-    if user_data == 0:
-        error = "Username already in use"
+    success = error == ""
 
-    # Do this to set session to the registered user.
-    if user_data == 1:
-        user_data = user_service.login(name, pw)
+    if success == 1:
+        # Assume logging in goes correctly right after having created this account.
+        user_service.login(name, pw)
 
     refer = "/"
     if "redirect" in data:
         refer += data["redirect"]
 
     return {
-        "success": user_data,
+        "success": success,
         "error": error,
         "refer": refer
     }

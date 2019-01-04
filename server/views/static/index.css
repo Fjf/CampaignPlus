@@ -72,8 +72,11 @@ body {
 }
 
 .textbox {
-    width: 90%;
-
+    width: 99%;
+    max-width: 99%;
+    min-width: 99%;
+    min-height: 20px;
+    border: solid 1px grey;
 }
 
 .map_content_element {

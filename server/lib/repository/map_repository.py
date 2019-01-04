@@ -29,7 +29,7 @@ def create_mapdata_from_map(mapmodel: MapModel) -> MapDataModel:
     return map_data
 
 
-def get_mapdata_from_map(mapmodel: MapModel):
+def get_mapdata_from_map(mapmodel: MapModel) -> Optional[MapDataModel]:
     db = request_session()
 
     return db.query(MapDataModel) \
