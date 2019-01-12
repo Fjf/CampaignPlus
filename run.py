@@ -1,4 +1,5 @@
 import argparse
+import os
 
 
 def get_args():
@@ -8,7 +9,6 @@ def get_args():
     parser.add_argument("--host", type=str, help="Change host to run the server on.", default='127.0.0.1')
     parser.add_argument("--context", type=str, help="Allows to add ssl certificate.", default=None)
     return parser.parse_args()
-
 
 if __name__ == "__main__":
     args = get_args()

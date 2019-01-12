@@ -25,7 +25,7 @@ def create_app(config) -> Flask:
 
 def setup_directories():
     os.makedirs('storage', exist_ok=True)
-    os.makedirs('server/images', exist_ok=True)
+    os.makedirs('server/views/static/images/uploads', exist_ok=True)
 
 
 def init():

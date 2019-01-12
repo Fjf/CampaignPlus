@@ -22,16 +22,12 @@ def create_map():
         }
 
     pid = int(request.form.get('playthrough_id', None))
-    x = int(request.form.get('x', None))
-    y = int(request.form.get('y', None))
-    parent_id = int(request.form.get('parent_id', None))
+    name = request.form.get('name', "")
 
-    if pid is None or x is None or y is None or parent_id is None:
+    if pid is None:
         raise BadRequest()
 
-    parent = map_service.get_map(parent_id)
-
-    map_service.create_map(pid, file, x, y, parent)
+    map_service.create_map(pid, file, 0, 0, name=name)
     return {
         "success": True
     }
@@ -49,80 +45,57 @@ def get_map():
         raise BadRequest()
 
     map = map_service.get_map(data["map_id"])
-    mapdata = map_service.get_map_data(map)
-
-    mapname = mapdata.name if mapdata is not None else None
-
-    children = map_service.get_children(map)
-
-    markers = []
-    for child in children:
-        mapdata = map_service.get_map_data(child)
-        name = mapdata.name if mapdata is not None else None
-
-        markers.append({"x": child.x, "y": child.y, "id": child.id, "name": name})
-
-    return {
-        "success": True,
-        "id": data["map_id"],
-        "mapdata": mapname,
-        "parent_id": map.parent_map_id,
-        "image": os.path.join("/static/images/uploads", map.map_url),
-        "markers": markers
-    }
-
-
-@api.route('/getmapdata', methods=["POST"])
-@json_api()
-@require_login()
-def get_map_data():
-    data = request.get_json()
-
-    required_fields = ["map_id", "playthrough_id"]
-
-    if not data or (False in [x in required_fields for x in data]):
-        raise BadRequest()
-
-    map = map_service.get_map(data["map_id"])
-
     if map is None:
         return {
             "success": False,
             "error": "This map does not exist."
         }
 
-    mapdata = map_service.get_map_data(map)
+    print(map.id)
+    children = map_service.get_children(map)
 
-    if mapdata is None:
-        return {
-            "success": False,
-            "error": "This map does not have additional data."
-        }
+    markers = []
+    for child in children:
+        markers.append({"x": child.x, "y": child.y, "id": child.id, "name": child.name})
 
     return {
         "success": True,
-        "id": mapdata.map.id,
-        "story": mapdata.story,
-        "name": mapdata.name
+        "id": map.id,
+        "mapdata": map.name,
+        "parent_id": map.parent_map_id,
+        "image": os.path.join("/static/images/uploads", map.map_url),
+        "markers": markers
     }
 
 
-@api.route('/setmapdata', methods=["POST"])
+@api.route('/updatemapdata', methods=["POST"])
 @json_api()
 @require_login()
 def set_map_data():
     data = request.get_json()
 
-    required_fields = ["map_id", "playthrough_id", "story", "name"]
+    required_fields = ["map_id"]
 
-    if not data or (False in [x in required_fields for x in data]):
+    if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
-
-    print(data)
 
     map = map_service.get_map(data["map_id"])
 
-    error = map_service.set_map_data(map, data["name"], data["story"])
+    name = story = x = y = parent_id = None
+
+    if "name" in data:
+        name = data["name"]
+    if "story" in data:
+        story = data["story"]
+    if "x" in data:
+        x = data["x"]
+    if "y" in data:
+        y = data["y"]
+    if "parent_id" in data:
+        parent_id = data["parent_id"]
+
+    print(data)
+    error = map_service.update_map(map, x, y, parent_id, name, story)
 
     success = error == ""
 
@@ -131,3 +104,31 @@ def set_map_data():
         "error": error
     }
 
+
+@api.route('/getmaps', methods=["POST"])
+@json_api()
+@require_login()
+def get_all_maps():
+    data = request.get_json()
+
+    required_fields = ["playthrough_id"]
+
+    if not data or (False in [x in required_fields for x in data]):
+        raise BadRequest()
+
+    maps = map_service.get_all_maps(data["playthrough_id"])
+
+    maps_list = []
+    for map in maps:
+        if map.parent_map is None:
+            continue
+
+        maps_list.append({
+            "map_id": map.id,
+            "map_name": map.name
+        })
+
+    return {
+        "success": True,
+        "maps": maps_list
+    }

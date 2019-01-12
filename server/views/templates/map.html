@@ -8,7 +8,7 @@
         <div id="content_left">
             <div id="map_content">
                 <div id="functions" class="map_content_element">
-                    <button onclick="document.getElementById('upload_map').style.display='block'">Create Map</button>
+                    <button onclick="document.getElementById('create_map').style.display='block'">Create Map</button>
                     <button onclick="curAction = actions.zoomIn">Zoom In</button>
                     <button onclick="curAction = actions.zoomOut">Zoom out</button>
                     <button onclick="curAction = actions.move">Move</button>
@@ -34,21 +34,37 @@
             </canvas>
         </div>
         <div class="popup" id="create_map">
-            <button onclick="this.parentNode.style.display='none'" style="float: right">X</button><br>
-            <div>
+            <div class="popup_header">
+                Create Map
+                <button onclick="this.parentNode.parentNode.style.display='none'" style="float: right">X</button>
+            </div>
+            <div class="popup_content_wrapper">
                 <input id="create_map_file" type="file" value="file">
-                <input id="create_map_name" type="number" placeholder="parent id" disabled>
+
+                <input id="create_map_title" type="text" placeholder="Title">
                 <input id="map_submit" type="button" value="Submit" onclick="createMap()">
+
+                <p>Create a Battlegrid? <br>
+                <input id="create_map_grid" type="button" value="Open Map Editor" onclick="openMapEditor()">
             </div>
         </div>
-        <div class="popup" id="select_marker_location">
-            <button onclick="this.parentNode.style.display='none'" style="float: right">X</button><br>
-            <div>
-                <select id="map_id" style="display: none;">
-                    <option value="map1">Map 1</option>
-                    <option value="map2">Map 2</option>
-                </select>
-                <button>Connect</button>
+        <div class="popup" id="select_map">
+             <div class="popup_header">
+                Select Map
+                <button onclick="this.parentNode.parentNode.style.display='none'" style="float: right">X</button>
+            </div>
+            <div class="popup_content_wrapper">
+                <input id="select_map_name" type="text" placeholder="Select a map" disabled>
+                <input id="select_map_id" type="number" style="display: none;">
+                <input id="select_map_pid" type="number" placeholder="parent id" disabled>
+                <input id="select_map_x" type="number" placeholder="x" disabled>
+                <input id="select_map_y" type="number" placeholder="y" disabled>
+                <input id="submit_selected" type="button" value="Submit" onclick="selectMap()"><br>
+
+                Select an existing map
+                <ul id="create_map_maplist" style="list-style-type: none">
+
+                </ul>
             </div>
         </div>
     </div>

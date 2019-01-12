@@ -239,7 +239,43 @@ function loadMap(map_id) {
 }
 
 
-function uploadMap() {
+function selectMap() {
+    let func = function(data) {
+        document.getElementById("submit_selected").disabled = false;
+        if (!data.success) {
+            console.log("Something went wrong uploading the map.")
+            console.log("The following error was thrown: " + data.error)
+            return
+        }
+        document.getElementById("select_map").style.display = "none";
+
+        loadMap(currentMap.id)
+    }
+
+    parent_id = currentMap.id;
+    x = 1 * document.getElementById("select_map_x").value
+    y = 1 * document.getElementById("select_map_y").value
+    id = 1 * document.getElementById("select_map_id").value
+
+    if (name == "") {
+        console.log("Map title may not be empty")
+        return
+    }
+
+    data = {
+        map_id: id,
+        x: x,
+        y: y,
+        parent_id: parent_id
+    }
+
+    console.log(data)
+
+    requestApiJsonData("/api/updatemapdata", "POST", data, func)
+    document.getElementById("submit_selected").disabled = true;
+}
+
+function createMap() {
     let func = function(data) {
         document.getElementById("map_submit").disabled = false;
         if (!data.success) {
@@ -247,33 +283,71 @@ function uploadMap() {
             console.log("The following error was thrown: " + data.error)
             return
         }
-        document.getElementById("upload_map").style.display = "none";
+        document.getElementById("create_map").style.display = "none";
 
         loadMap()
+        getAllMaps()
     }
 
     parent_id = currentMap.id;
-    x = document.getElementById("map_x").value
-    y = document.getElementById("map_y").value
-    file = document.getElementById("map_file").files[0]
+    name = document.getElementById("create_map_title").value
+    file = document.getElementById("create_map_file").files[0]
 
-    console.log(file)
+    if (name == "") {
+        console.log("Map title may not be empty")
+        return
+    }
 
     var formdata = new FormData();
     formdata.append('file', file);
     formdata.append('playthrough_id', PLAYTHROUGH_ID)
-    formdata.append('parent_id', parent_id)
-    formdata.append('x', x)
-    formdata.append('y', y)
+    formdata.append('name', name);
 
-    console.log("Parent map id: " + parent_id)
 
     requestApiFormData("/api/uploadmap", "POST", formdata, func)
     document.getElementById("map_submit").disabled = true;
 }
 
+function getAllMaps() {
+    let func = function(data) {
+        console.log(data)
+        if (!data.success) {
+            console.log("Something went wrong retrieving maps.")
+            return
+        }
 
-loadMap(3)
+        function createSelectMapName(div) {
+            return function() {
+                document.getElementById("select_map_name").value = div.innerHTML;
+                document.getElementById("select_map_id").value = div.value;
+            }
+        }
+
+        if (data.maps.length == 0)
+            alert("It seems this is the first time you are here. Please note that the first map you upload will become the base map image.")
+
+        document.getElementById("create_map_maplist").innerHTML = ""
+        for (map of data.maps) {
+            li = document.createElement("li");
+            li.value = map.map_id
+            li.innerHTML = map.map_name
+
+            li.addEventListener("click", createSelectMapName(li), false);
+
+            document.getElementById("create_map_maplist").appendChild(li);
+        }
+    }
+
+    data = {
+        playthrough_id: PLAYTHROUGH_ID
+    }
+
+
+    requestApiJsonData("/api/getmaps", "POST", data, func)
+}
+
+loadMap(1)
+getAllMaps()
 
 function relMouseCoords(event){
     var totalOffsetX = 0;
@@ -365,10 +439,10 @@ canvas.onclick = function(e) {
         currentMap.markers.push({x: pos.x, y: pos.y});
 
         curAction = actions.none;
-        document.getElementById("map_x").value = Math.round(pos.x);
-        document.getElementById("map_y").value = Math.round(pos.y);
-        document.getElementById("map_pid").value = currentMap.id;
-        document.getElementById("upload_map").style.display = "block";
+        document.getElementById("select_map_x").value = Math.round(pos.x);
+        document.getElementById("select_map_y").value = Math.round(pos.y);
+        document.getElementById("select_map_pid").value = currentMap.id;
+        document.getElementById("select_map").style.display = "block";
     } else if (curAction == actions.none) {
         pos = canvas.relMouseCoords(e);
 
@@ -421,46 +495,3 @@ document.onmouseup = function(e) {
     }
 }
 
-
-let mapMenu = {
-    active: 0, // 0 means upload file is active, 1 means the select dropdown.
-    toggle: function() {
-        if (this.active === 0) {
-            this.updateValues();
-
-            document.getElementById("map_id").style.display = "block";
-            document.getElementById("map_file").style.display = "none";
-            this.active = 1;
-        } else {
-            document.getElementById("map_id").style.display = "none";
-            document.getElementById("map_file").style.display = "block";
-            this.active = 0;
-        }
-    },
-    updateValues: function() {
-        let func = function(data) {
-            if (!data.success) {
-                console.log("Something went wrong retrieving uploaded maps.");
-                return;
-            }
-
-            let map_options = document.getElementById("map_id")
-            map_options.innerHTML = "";
-            let div;
-            for (map of data.maps) {
-                div = document.createElement("option");
-                div.value = map.id;
-                div.innerHTML = map.name;
-
-                map_options.appendChild(div);
-            }
-        }
-
-        let data = {
-            playthrough_id: PLAYTHROUGH_ID,
-            map_id: currentMap.id
-        };
-
-        requestApiJsonData("/api/getmapdata", "POST", data, func);
-    }
-}
