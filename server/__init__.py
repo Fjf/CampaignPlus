@@ -16,7 +16,7 @@ def create_app(config) -> Flask:
     app.port = app_section['port']
     app.host = app_section['host']
     app.database_name = 'database.db'
-    app.map_storage = 'server/images'
+    app.map_storage = 'server/views/static/images/uploads/'
 
     app.secret_key = app_section['secret'].encode()
 

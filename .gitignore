@@ -1,8 +1,9 @@
 env/*
 .idea/*
-storage/*
 *.pyc
 *.mp3
 *.db
 *.jpg
+*.dump
 *.png
+!marker.png

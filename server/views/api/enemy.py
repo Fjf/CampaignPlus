@@ -14,13 +14,17 @@ def create_enemy():
 
     required_fields = ["name", "maxhp", "ac", "stre", "dex", "con", "inte", "wis", "cha"]
 
-    if not data or (False in [x in required_fields for x in data]):
+    if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
     user = session_user()
 
-    enemy_service.create_enemy(data["name"], data["maxhp"], data["ac"], data["stre"], data["dex"], data["con"], data["inte"], data["wis"], data["cha"], user)
-    return
+    error = enemy_service.create_enemy(data["name"], data["maxhp"], data["ac"], data["stre"], data["dex"], data["con"], data["inte"], data["wis"], data["cha"], user)
+    success = error == ""
+    return {
+        "success": success,
+        "error": error
+    }
 
 
 @api.route('/getenemies', methods=["GET"])

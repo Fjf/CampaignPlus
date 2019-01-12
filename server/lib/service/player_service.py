@@ -62,3 +62,8 @@ def update_player(pid: int, name: str, race: str, class_name: str, backstory: st
 
     player_repository.create_player(player)
     return ""
+
+
+def check_backstory(backstory: str) -> bool:
+
+    return True

@@ -83,10 +83,10 @@ function addNewEnemy(){
         }
 
         clearNewItems()
-        updateEnemies()
+        enemyList.update()
     }
 
-    response = requestApiJsonData("api/createenemy", "POST", data, updateEnemies)
+    response = requestApiJsonData("api/createenemy", "POST", data, func)
 }
 
 function clearNewItems() {
@@ -96,31 +96,6 @@ function clearNewItems() {
     }
 }
 
-var enemyObj = {}
-function updateEnemies(){
-    let func = function(data) {
-        str = "";
-        for (enemy of data){
-            // Add enemies to a dictionary with their name as key.
-            enemyObj[enemy.name] = {
-                hp: enemy.hp,
-                ac: enemy.ac,
-                stre: enemy.stre,
-                dex: enemy.dex,
-                wis: enemy.wis,
-                con: enemy.con,
-                inte: enemy.inte,
-                cha: enemy.cha,
-                id: enemy.id
-            }
-            console.log(enemyObj)
-            str += "<option value='" + enemy.name + "'>" + enemy.name + "</option>"
-        }
-        document.getElementById("content_selected_enemy").innerHTML = str;
-    }
-
-    response = requestApiJsonData("api/getenemies", "GET", {}, func)
-}
 
 function addTableRow(name, hp, initiative, type) {
     let rows = document.getElementById("encounter_list").getElementsByTagName("tr");
@@ -257,7 +232,7 @@ function EnemyList() {
         response = requestApiJsonData("api/getenemies", "GET", {}, func)
     };
 
-    this.deleteEnemy = function(name) {
+    this.deleteEnemy = function() {
         let enemy = this.getSelectedEnemy();
         enemy.requestDelete();
     };
@@ -307,28 +282,9 @@ function Enemy(enemy) {
 enemyList = new EnemyList();
 enemyList.update()
 
-function deleteEnemy() {
-
-    let enemyId = enemyObj[enemyName].id
-
-
-    let func = function(data) {
-        if (!data.success) {
-            console.log("Something went wrong deleting this enemy.")
-            return
-        }
-
-        updateEnemies()
-    }
-    let data = {
-        enemy_id: enemyId
-    }
-
-    requestApiJsonData("api/deleteenemy", "POST", data, func)
-}
 
 function buttonAddEnemy(){
-    updateEnemies();
+    enemyList.update()
     hideAll();
     document.getElementById("content_expanded_enemy").style.display = "block";
 }

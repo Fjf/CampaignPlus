@@ -9,6 +9,11 @@ def get_enemies(user: UserModel):
 
 
 def create_enemy(name, max_hp, ac, stre, dex, con, inte, wis, cha, user):
+    enemies = get_enemies(user)
+    for enemy in enemies:
+        if enemy.name == name:
+            return "You have already used this enemy name."
+
     enemy = EnemyModel.from_name_hp_ac(name, max_hp, ac, user.id)
 
     enemy.strength = stre
@@ -19,6 +24,7 @@ def create_enemy(name, max_hp, ac, stre, dex, con, inte, wis, cha, user):
     enemy.charisma = cha
 
     enemy_repository.create_enemy(enemy)
+    return ""
 
 
 def delete_enemy(enemy_id: int, user: UserModel):

@@ -4,6 +4,7 @@
     <div id="header">
         <div class="headerelem" id="currentuser"></div>
         <div class="headerelem" id="logout"><button onclick="window.location.href='/logout'">Log out</button></div>
+        <div class="headerelem" id="settings"><button onclick="window.location.href='/settings'">Settings</button></div>
         <div class="headerelem" id="toggleviews"><button onclick="toggleViews()">Toggle Encounter/Playthrough</button></div>
     </div>
     <div id="content">
@@ -12,7 +13,6 @@
                 <div class="playthrough" id="playthrough_options">
                     <ul>
                         <li class="custom_button" onclick="buttonExpandPlaythrough()">Playthroughs.</li>
-                        <li class="custom_button" onclick="">User settings?</li>
                     </ul>
                 </div>
                 <div class="encounter" id="encounter_options">
@@ -31,7 +31,7 @@
                         <select id='content_selected_enemy'></select><br>
 
                         <button onclick='enemyList.addEnemy()'>Add To Game</button>
-                        <button onclick='deleteEnemy()'>Delete</button><p>
+                        <button onclick='enemyList.deleteEnemy()'>Delete</button><p>
 
                         Add new enemy to the list of possible enemies.
                         <input class="new_item" id="new_enemy_name" type="text" placeholder="Naam">
@@ -81,7 +81,11 @@
 
                 <div>
                     <input id="playthrough_link_url" type="text" disabled style="width:70%">
-                    <input type="button" value="Copy URL" onclick="copyPlaythroughUrl()" style="width:20%">
+                    <input type="button" value="Copy URL" onclick="copyUrl('playthrough_link_url')" style="width:20%">
+                </div>
+                <div>
+                    <input id="playthrough_map_url" type="text" disabled style="width:70%">
+                    <input type="button" value="Copy URL" onclick="copyUrl('playthrough_map_url')" style="width:20%">
                 </div><br>
                 <div id="playthrough_content_wrapper">
                     <div id="playthrough_content_left">
@@ -111,7 +115,7 @@
             </div>
         </div>
     </div>
-    <div id="stats_popup">
+    <div class="popup" id="stats_popup">
         <button onclick="this.parentNode.style.display='none'" style="float: right">X</button><br>
         <div id="stats_container">
             <div id="stats_name">

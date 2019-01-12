@@ -40,6 +40,7 @@ function loadPlaythrough() {
             return
         }
         document.getElementById("playthrough_link_url").value = data.url
+        document.getElementById("playthrough_map_url").value = data.url.replace("join", "map")
 
         div = document.getElementById("content_selected_playthrough");
         PLAYTHROUGH_ID = div.value
@@ -59,8 +60,8 @@ function loadPlaythrough() {
     document.getElementById("playthrough_content").style.display = "block";
 }
 
-function copyPlaythroughUrl() {
-    let div = document.getElementById("playthrough_link_url")
+function copyUrl(name) {
+    let div = document.getElementById(name)
     copyTextToClipboard(div.value)
     div.style.borderColor = "green";
 }

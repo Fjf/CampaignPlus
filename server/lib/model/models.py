@@ -173,7 +173,7 @@ class PlayerModel(OrmModelBase):
 
 class MapModel(OrmModelBase):
     """
-    The mapmodel contanis data about maps and their location on their parent maps.
+    The mapmodel contanis data about maps regarding their location on their parent maps.
     """
 
     __tablename__ = 'map'
@@ -197,4 +197,27 @@ class MapModel(OrmModelBase):
         c.map_url = map_url
         c.x = x
         c.y = y
+        return c
+
+
+class MapDataModel(OrmModelBase):
+    """
+    The mapdatamodel contains all data not required for the map display, but rather the extra information about
+     this map.
+    """
+
+    __tablename__ = 'mapdata'
+
+    id = Column(Integer(), primary_key=True)
+
+    map_id = Column(Integer(), ForeignKey("map.id"), nullable=False)
+    map = relationship("MapModel")
+
+    name = Column(String(), nullable=True)
+    story = Column(String(), nullable=True)
+
+    @classmethod
+    def from_map(cls, map: MapModel):
+        c = cls()
+        c.map_id = map.id
         return c
