@@ -6,6 +6,7 @@ def get_args():
 
     parser.add_argument("--port", type=int, help="Force a port to run the sever on.", default=5000)
     parser.add_argument("--host", type=str, help="Change host to run the server on.", default='127.0.0.1')
+    parser.add_argument("--context", type=str, help="Allows to add ssl certificate.", default=None)
     return parser.parse_args()
 
 
@@ -14,4 +15,4 @@ if __name__ == "__main__":
 
     import server
 
-    server.app.run(ssl_context='adhoc', threaded=True, host=args.host, port=args.port)
+    server.app.run(ssl_context=args.context, threaded=True, host=args.host, port=args.port)

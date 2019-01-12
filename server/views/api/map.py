@@ -45,4 +45,3 @@ def get_map():
         raise BadRequest()
 
     return send_from_directory(path, '323UiB5KR0vAnmk.png')
-
