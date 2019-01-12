@@ -1,3 +1,5 @@
+import re
+
 import bcrypt as bcrypt
 from pip._vendor.pyparsing import Optional
 from werkzeug.security import generate_password_hash
@@ -13,13 +15,17 @@ def login(username, password):
         return "This username does not exist."
 
     if not(user.name == username and bcrypt.checkpw(password.encode(), user.password)):
-        return "Something went wrong logging in user {}.".format(username)
+        print("Something went wrong logging in user {}".format(username))
+        return "Password incorrect."
 
     session_user_set(user)
     return ""
 
 
 def create_user(username, password):
+    if not is_valid_username(username):
+        return "Your username contains invalid characters. Allowed characters are alphanumeric and underscores."
+
     if find_user_by_username(username) is not None:
         return "This username is already in use."
 
@@ -33,3 +39,9 @@ def create_user(username, password):
 
 def find_user_by_username(username: str):
     return user_repository.find_user_by_name(username)
+
+
+def is_valid_username(username: str) -> bool:
+    if re.match(r'^[\w.-]+$', username):
+        return True
+    return False
