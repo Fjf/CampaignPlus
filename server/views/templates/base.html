@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>TODO: title</title>
+        <title>DnDool</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     </head>
 
     <body>
@@ -10,6 +11,7 @@
         {% endblock %}
     </body>
     <script src="{{ url_for('static', filename='js/lib/requests.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/lib/resize.js') }}"></script>
     {% block javascripts %}
     {% endblock %}
 </html>

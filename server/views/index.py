@@ -55,7 +55,6 @@ def show_map(code):
 @app.route('/settings', methods=["GET"])
 @require_login()
 def settings():
-
     return render_template("settings.html")
 
 

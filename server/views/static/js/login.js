@@ -2,8 +2,16 @@ function login() {
     let username = document.forms[0].elements[0].value;
     let password = document.forms[0].elements[1].value;
 
-    if (username.length == 0 || password.length == 0) {
-        return false
+    let error = null;
+    if (username.length == 0) {
+        error = "Please enter a username.";
+    } else if (password.length == 0) {
+        error = "Please enter a password.";
+    }
+
+    if (error != null) {
+        document.getElementById("login_errorbox").innerHTML = error;
+        return;
     }
 
     let func = function(data) {
@@ -11,7 +19,7 @@ function login() {
         if (data.success)
             location.href = data.refer
         else {
-            document.getElementById("errorboxlogin").innerHTML = data.error;
+            document.getElementById("login_errorbox").innerHTML = data.error;
             console.log("Something went wrong logging in.")
         }
     }
@@ -28,9 +36,20 @@ function login() {
 function register() {
     let username = document.getElementById("register_name").value;
     let password = document.getElementById("register_pass").value;
+    let pass_confirm = document.getElementById("register_pass_confirm").value;
 
-    if (username.length == 0 || password.length == 0) {
-        return false
+    let error = null;
+    if (username.length == 0) {
+        error = "Please enter a username.";
+    } else if (password.length == 0) {
+        error = "Please enter a password.";
+    } else if (password != pass_confirm) {
+        error = "Please confirm your password.";
+    }
+
+    if (error != null) {
+        document.getElementById("register_errorbox").innerHTML = error;
+        return;
     }
 
     let func = function(data) {
@@ -38,7 +57,7 @@ function register() {
         if (data.success)
             location.href = data.refer
         else {
-            document.getElementById("errorboxregister").innerHTML = data.error;
+            document.getElementById("register_errorbox").innerHTML = data.error;
             console.log("Something went wrong trying to register.")
         }
     }
@@ -63,6 +82,6 @@ function show(divId) {
         }
     }
 
-    document.getElementById("errorboxlogin").innerHTML = "";
-    document.getElementById("errorboxregister").innerHTML = "";
+    document.getElementById("login_errorbox").innerHTML = "";
+    document.getElementById("register_errorbox").innerHTML = "";
 }

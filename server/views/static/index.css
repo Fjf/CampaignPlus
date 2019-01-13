@@ -1,12 +1,13 @@
 ::-webkit-scrollbar {
     display: none;
+
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    color: #151515;
+    font-family: Tahoma, Geneva, sans-serif;
+    color: #1d1d1d;
     margin: 0;
-    height: 100%;
+    height: 100vh;
     overflow-y: hidden;
     overflow-x: hidden;
 }
@@ -14,11 +15,12 @@ body {
 #header {
     display: flex;
     flex-direction: row;
+
     justify-content: center; /* align horizontal */
-    align-items: center; /* align vertical */
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #ffb366;
+    align-content: center; /* align vertical */
+
+    color: #cccccc;
+    background-color: #454545;
     position: fixed;
     top: 0px;
     height: 4%;
@@ -236,7 +238,7 @@ body {
 }
 
 .datadiv {
-    width: 50%;
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
 }
@@ -268,23 +270,21 @@ div[contenteditable] {
     width: 5%;
 }
 
-.logindiv {
-    background-color: grey;
-    width: 40%;
-    height: 100%;
-    padding: 10px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
 .clickabletext {
     cursor: pointer;
     color: blue;
 }
 
 .headerelem {
+    box-sizing: border-box;
+    height: 100%;
     text-align: center;
+
+    display: flex;
     flex: 1;
+    justify-content: center; /* align vertical */
+    align-content: center;
+    flex-direction: column;
     padding: 0px 2px;
 }
 
@@ -369,14 +369,16 @@ div[contenteditable] {
 #content_right_char {
     box-sizing:border-box;
 
-    width: 100%;
+    width: 70%;
+    margin-left: 15%;
     padding: inherit;
 }
 
 #content_right_chat {
     box-sizing:border-box;
 
-    width: 100%;
+    width: 70%;
+    margin-left: 15%;
     padding: inherit;
 }
 
@@ -398,19 +400,29 @@ input {
 }
 
 .header_button {
-    color: #994d00;
-
-    height: 100%;
-
-    border-radius: 3px;
+    padding: 2% 0%;
+    border-radius: 2px;
     border-style: solid;
-    border-color: #cc6600;
-    border-width: 0px 1px 1px 0px;
+    border-color: #888;
+    border-width: 0px 2px 1px 0px;
 
     width: 100%;
 }
 .header_button:hover {
-    color: #ffcc99;
-    border-color: #ffb366;
-    background-color: #cc6600;
+    color: #454545;
+    border-color: #787878;
+    background-color: #787878;
+}
+
+#create_log_text {
+    border-radius: 2px;
+    border-style: solid;
+    border-color: #888;
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 20px;
+    max-height: 500px;
+    resize: none;
+    border-width: 1px 1px 1px 1px;
+
 }
