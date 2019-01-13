@@ -18,23 +18,30 @@ body {
     align-items: center; /* align vertical */
     margin-left: auto;
     margin-right: auto;
-    background-color: blue;
-    height: 5%;
+    background-color: #ffb366;
+    position: fixed;
+    top: 0px;
+    height: 4%;
+    width: 100%;
+    z-index: 2;
 }
 
 #content {
     padding: inherit;
     width: 100%;
     background-color:grey;
-    height: 95%;
+    top: 4%;
+    height: 96%;
+    position: fixed;
     overflow-y:scroll;
 }
 
 #content_left {
+    box-sizing:border-box;
     padding: 5px;
     position: fixed;
     width: 25%;
-    height:100%;
+    height: 100%;
     float: left;
     background-color: #b3b3ff;
     overflow-y:scroll;
@@ -110,16 +117,14 @@ body {
     box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, 0.3);
 }
 
-input {
-    width:90%;
-}
-
 #content_right {
+    box-sizing:border-box;
+
     font-size: 18px;
     width: 75%;
+    padding: 5px 10px 20px 10px;
     display: block;
-    padding: 5px 5px 10px 5px;
-    height: 100%;
+    height: inherit;
     position: fixed;
     margin-left: 25%;
     margin-right: 0px;
@@ -201,6 +206,9 @@ input {
 #stats_abilities_list {
     list-style-type: none;
 }
+#stats_abilities_list li {
+    word-break: break-all;
+}
 
 .pc_table_left {
     padding: 2px;
@@ -277,6 +285,7 @@ div[contenteditable] {
 .headerelem {
     text-align: center;
     flex: 1;
+    padding: 0px 2px;
 }
 
 .popup_content_wrapper {
@@ -358,10 +367,50 @@ div[contenteditable] {
 }
 
 #content_right_char {
+    box-sizing:border-box;
+
     width: 100%;
+    padding: inherit;
 }
 
 #content_right_chat {
-    width: 100%;
+    box-sizing:border-box;
 
+    width: 100%;
+    padding: inherit;
+}
+
+button, input[type=submit], input[type=button] {
+    box-sizing:border-box
+    border-radius: 3px;
+    border-width: 1px;
+    background-color: #bfbfbf;
+    color: #333333;
+    width: 100%;
+}
+
+input {
+    box-sizing:border-box;
+    border-radius: 3px;
+    border-width: 1px;
+    color: black;
+    width:100%;
+}
+
+.header_button {
+    color: #994d00;
+
+    height: 100%;
+
+    border-radius: 3px;
+    border-style: solid;
+    border-color: #cc6600;
+    border-width: 0px 1px 1px 0px;
+
+    width: 100%;
+}
+.header_button:hover {
+    color: #ffcc99;
+    border-color: #ffb366;
+    background-color: #cc6600;
 }

@@ -285,7 +285,7 @@ function createMap() {
         }
         document.getElementById("create_map").style.display = "none";
 
-        loadMap()
+        loadMap(5)
         getAllMaps()
     }
 
@@ -346,7 +346,7 @@ function getAllMaps() {
     requestApiJsonData("/api/getmaps", "POST", data, func)
 }
 
-loadMap(1)
+loadMap(5)
 getAllMaps()
 
 function relMouseCoords(event){

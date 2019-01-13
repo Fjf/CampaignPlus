@@ -3,9 +3,9 @@
 {% block content %}
     <div id="header">
         <div class="headerelem" id="currentuser"></div>
-        <div class="headerelem" id="logout"><button onclick="window.location.href='/logout'">Log out</button></div>
-        <div class="headerelem" id="settings"><button onclick="window.location.href='/settings'">Settings</button></div>
-        <div class="headerelem" id="toggleviews"><button onclick="toggleViews()">Toggle Encounter/Playthrough</button></div>
+        <div class="headerelem" id="logout"><div class="header_button" onclick="window.location.href='/logout'">Log out</div></div>
+        <div class="headerelem" id="settings"><div class="header_button" onclick="window.location.href='/settings'">Settings</div></div>
+        <div class="headerelem" id="toggleviews"><div class="header_button" onclick="toggleViews()">Toggle Encounter/Playthrough</div></div>
     </div>
     <div id="content">
         <div id="content_left">
@@ -13,6 +13,7 @@
                 <div class="playthrough" id="playthrough_options">
                     <ul>
                         <li class="custom_button" onclick="buttonExpandPlaythrough()">Playthroughs.</li>
+                        <li class="custom_button" onclick="buttonExpandJoinedPlaythrough()">Joined Playthroughs.</li>
                     </ul>
                 </div>
                 <div class="encounter" id="encounter_options">
@@ -43,7 +44,7 @@
                         <input class="new_item" id="new_enemy_int" type="text" placeholder="Intelligence">
                         <input class="new_item" id="new_enemy_wis" type="text" placeholder="Wisdom">
                         <input class="new_item" id="new_enemy_cha" type="text" placeholder="Charisma">
-                        <input class="new_item" type="submit" value="Add" onclick="addNewEnemy()">
+                        <input type="submit" value="Add" onclick="addNewEnemy()">
                     </div>
 
                     <div id="content_expanded_player" style="display:none;">
@@ -59,15 +60,24 @@
                     </div>
                 </div>
                 <div class="playthrough" id="playthrough_expanded" style="display:none">
-                    Select the playthrough you want to continue with and click 'Load'.<br>
-                    <select id='content_selected_playthrough'></select><br>
+                    <div id="playthrough_host">
+                        Select the playthrough you want to continue with and click 'Load'.<br>
+                        <select id='content_selected_playthrough'></select><br>
 
-                    <button onclick='loadPlaythrough()'>Load</button><br>
+                        <button onclick='loadPlaythrough()'>Load</button><br>
 
-                    Creating a playthrough? Fill in a name and click 'Create'.<br>
+                        Creating a playthrough? Fill in a name and click 'Create'.<br>
 
-                    <input id="new_playthrough_name" type="text" placeholder="Naam">
-                    <input type="submit" value="Create" onclick="createPlaythrough()">
+                        <input id="new_playthrough_name" type="text" placeholder="Naam">
+                        <input type="submit" value="Create" onclick="createPlaythrough()">
+                    </div>
+                    <div id="playthrough_player">
+                        Select the playthrough for which you want to see the overview.<br>
+                        <select id='open_selected_playthrough_overview'></select><br>
+
+                        <button onclick='loadPlaythroughOverview()'>Open</button><br>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -116,7 +126,7 @@
         </div>
     </div>
     <div class="popup" id="stats_popup">
-        <button onclick="this.parentNode.style.display='none'" style="float: right">X</button><br>
+        <button onclick="this.parentNode.style.display='none'" style="float: right; width: 5%;">X</button><br>
         <div id="stats_container">
             <div id="stats_name">
                 test
@@ -148,7 +158,7 @@
     <div id="chatbox" style="display: none;">
         <div id="chat_header">
             Messages
-            <button onclick="toggleChat()" style="float: right">Minimize</button>
+            <button onclick="toggleChat()" style="float: right; width: 80px;">Minimize</button>
         </div>
         <div id="chat_messages">
         </div>
@@ -160,6 +170,9 @@
 {% endblock %}
 
 {% block javascripts %}
+    <script>
+        var HOST_ADDRESS = "{{ host }}"
+    </script>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
     <script src="{{ url_for('static', filename='js/playthrough.js') }}"></script>

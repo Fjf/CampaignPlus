@@ -118,7 +118,7 @@ function addTableRow(name, hp, initiative, type) {
 }
 
 function showStats(name) {
-    let obj = enemyObj[name];
+    let obj = enemyList.enemies[name];
 
     document.getElementById("stats_name").innerHTML = "<b>" + name + "</b>"
 

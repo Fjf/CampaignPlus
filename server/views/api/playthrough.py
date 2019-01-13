@@ -79,3 +79,23 @@ def get_playthrough_name():
         "success": success,
         "name": name
     }
+
+
+@api.route('/getjoinedplaythroughs', methods=["GET"])
+@json_api()
+@require_login()
+def get_joined_playthroughs():
+    user = session_user()
+
+    print("test")
+    playthroughs = playthrough_service.get_joined_playthroughs(user)
+
+    data = []
+    for playthrough, playthrough_code in playthroughs:
+        data.append({
+            "code": playthrough_code.code,
+            "name": playthrough.name,
+            "time": time.mktime(playthrough.date.timetuple()) * 1000  # Python does time in seconds.
+        })
+
+    return data

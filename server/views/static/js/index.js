@@ -15,6 +15,16 @@ function toggleViews() {
     }
 }
 
+function loadPlaythroughOverview() {
+    let selected_code = document.getElementById("open_selected_playthrough_overview").value
+
+    if (selected_code == null)
+        return;
+
+//    console.log("https://" + HOST_ADDRESS + "/join/" + selected_code)
+    location.href = "https://" + HOST_ADDRESS + "/join/" + selected_code
+}
+
 var PLAYTHROUGH_ID = null
 setUserData()
 

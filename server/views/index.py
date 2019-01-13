@@ -10,7 +10,7 @@ from server.lib.service import playthrough_service
 def index():
     if not session_is_authed():
         return login()
-    return render_template('index.html')
+    return render_template('index.html', host=app.host + ":" + app.port)
 
 
 @app.route('/login')

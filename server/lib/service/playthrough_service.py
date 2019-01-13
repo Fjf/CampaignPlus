@@ -13,6 +13,10 @@ def get_playthroughs(user) -> List[PlaythroughModel]:
     return playthrough_repository.get_playthroughs(user)
 
 
+def get_joined_playthroughs(user) -> List[PlaythroughModel]:
+    return playthrough_repository.get_joined_playthroughs(user)
+
+
 def get_playthrough_url(id: int, user: UserModel) -> Optional[str]:
     playthrough = playthrough_repository.get_playthrough_by_id(id)
 

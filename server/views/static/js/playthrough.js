@@ -1,6 +1,31 @@
 function buttonExpandPlaythrough() {
     document.getElementById("playthrough_expanded").style.display = "block";
+
+    document.getElementById("playthrough_host").style.display = "block";
+    document.getElementById("playthrough_player").style.display = "none"
     loadPlaythroughList()
+}
+
+function buttonExpandJoinedPlaythrough() {
+    document.getElementById("playthrough_expanded").style.display = "block";
+
+    document.getElementById("playthrough_player").style.display = "block"
+    document.getElementById("playthrough_host").style.display = "none";
+    loadJoinedPlaythroughList()
+}
+
+
+function loadJoinedPlaythroughList() {
+    let func = function(data) {
+        str = "";
+        for (obj of data){
+            str += "<option value='" + obj.code + "'>" + obj.name + "</option>"
+        }
+
+        document.getElementById("open_selected_playthrough_overview").innerHTML = str
+    }
+
+    requestApiJsonData("api/getjoinedplaythroughs", "GET", {}, func)
 }
 
 function loadPlaythroughList() {

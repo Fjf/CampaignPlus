@@ -52,6 +52,9 @@ def get_messages():
 
     message_list = []
     for message in messages:
+        if message.sender is None:
+            continue
+
         message_list.append({
             "time": message.time,
             "message": message.message,
