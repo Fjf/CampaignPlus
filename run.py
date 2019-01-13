@@ -10,6 +10,7 @@ def get_args():
     parser.add_argument("--context", type=str, help="Allows to add ssl certificate.", default=None)
     return parser.parse_args()
 
+
 if __name__ == "__main__":
     args = get_args()
 

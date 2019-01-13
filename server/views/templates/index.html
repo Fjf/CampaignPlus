@@ -145,10 +145,23 @@
             <br style="clear: both" />
         </div>
     </div>
+    <div id="chatbox" style="display: none;">
+        <div id="chat_header">
+            Messages
+            <button onclick="toggleChat()" style="float: right">Minimize</button>
+        </div>
+        <div id="chat_messages">
+        </div>
+
+    </div>
+    <div id="chatbox_expand" onclick="toggleChat()">
+        chat
+    </div>
 {% endblock %}
 
 {% block javascripts %}
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
     <script src="{{ url_for('static', filename='js/playthrough.js') }}"></script>
     <script src="{{ url_for('static', filename='js/encounter.js') }}"></script>
 {% endblock %}

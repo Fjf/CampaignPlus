@@ -36,7 +36,7 @@ def update_player():
 
     required_fields = ["pid", "name", "class_name", "code", "backstory", "race"]
 
-    if not data or (False in [x in required_fields for x in data]):
+    if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
     user = session_user()

@@ -17,34 +17,41 @@
         </div>
         <div id="content_right">
             <div id="playthrough_name"></div><br>
-            <div class="datadiv" id="update" style="display:none;">
-                Update your player character.
-                <div id="up_id" style="display:none;"></div>
-                <form class="dataform" action="javascript:updateCharacter();" method = "POST">
-                    Player Character Name<br>
-                    <input type="text" id="up_name"/><br>
-                    Race<br>
-                    <input type="text" id="up_race"/><br>
-                    Class<br>
-                    <input type="text" id="up_class"/><br>
-                    Backstory<br>
-                    <div contenteditable id="up_backstory"></div><br>
-                    <input id="update_pc" type="submit" value="Update"/>
-                </form>
+            <div id="content_right_char">
+                <div class="datadiv" id="update" style="display:none;">
+                    Update your player character.
+                    <div id="up_id" style="display:none;"></div>
+                    <form class="dataform" action="javascript:updateCharacter();" method = "POST">
+                        Player Character Name<br>
+                        <input type="text" id="up_name"/><br>
+                        Race<br>
+                        <input type="text" id="up_race"/><br>
+                        Class<br>
+                        <input type="text" id="up_class"/><br>
+                        Backstory<br>
+                        <div contenteditable id="up_backstory"></div><br>
+                        <input id="update_pc" type="submit" value="Update"/>
+                    </form>
+                </div>
+                <div class="datadiv" id="login">
+                    Create your player character.
+                    <form class="dataform" action="javascript:uploadCharacter();" method = "POST">
+                        Player Character Name<br>
+                        <input type="text" id="name" /><br>
+                        Race<br>
+                        <input type="text" id="race" /><br>
+                        Class<br>
+                        <input type="text" id="class" /><br>
+                        Backstory<br>
+                        <textarea id="backstory" placeholder="Er was eens..."></textarea><br>
+                        <input id="submit_pc" type="submit" value="Upload"/>
+                    </form>
+                </div>
             </div>
-            <div class="datadiv" id="login">
-                Create your player character.
-                <form class="dataform" action="javascript:uploadCharacter();" method = "POST">
-                    Player Character Name<br>
-                    <input type="text" id="name" /><br>
-                    Race<br>
-                    <input type="text" id="race" /><br>
-                    Class<br>
-                    <input type="text" id="class" /><br>
-                    Backstory<br>
-                    <textarea id="backstory" placeholder="Er was eens..."></textarea><br>
-                    <input id="submit_pc" type="submit" value="Upload"/>
-                </form>
+            <div id="content_right_chat">
+                Send a message to the DM.
+                <input id="chat_message" type="text" placeholder="Hello!">
+                <input type="button" value="Send!" onclick="sendMessage()">
             </div>
         </div>
     </div>

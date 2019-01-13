@@ -50,4 +50,5 @@ import server.views.api.user  # noqa
 import server.views.api.enemy  # noqa
 import server.views.api.playthrough  # noqa
 import server.views.api.map  # noqa
+import server.views.api.messages  # noqa
 

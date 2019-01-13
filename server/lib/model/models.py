@@ -203,3 +203,30 @@ class MapModel(OrmModelBase):
         c.name = name
         return c
 
+
+class MessageModel(OrmModelBase):
+    """
+    The mapmodel contanis data about maps regarding their location on their parent maps.
+    """
+
+    __tablename__ = 'message'
+
+    id = Column(Integer(), primary_key=True)
+
+    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"), nullable=False)
+    playthrough = relationship("PlaythroughModel")
+
+    sender_id = Column(Integer(), ForeignKey("player.id"), nullable=True)
+    sender = relationship("PlayerModel")
+
+    message = Column(String(), nullable=False)
+    time = Column(DateTime(), nullable=False)
+
+    @classmethod
+    def from_playthrough_sender_msg(cls, playthrough: PlaythroughModel, sender: PlayerModel, msg: str):
+        c = cls()
+        c.playthrough_id = playthrough.id
+        c.sender_id = sender.id
+        c.message = msg
+        c.time = datetime.datetime.now()
+        return c

@@ -336,5 +336,4 @@ function sortInitiative(){
     }
 }
 
-
 clearEncounter()

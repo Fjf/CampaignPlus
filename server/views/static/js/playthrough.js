@@ -9,11 +9,11 @@ function loadPlaythroughList() {
         for (obj of data){
             str += "<option value='" + obj.id + "'>" + obj.name + "</option>"
         }
+
         document.getElementById("content_selected_playthrough").innerHTML = str;
     }
 
     response = requestApiJsonData("api/getplaythroughs", "GET", {}, func)
-
 }
 
 function buttonCreatePlaythrough() {
@@ -43,7 +43,12 @@ function loadPlaythrough() {
         document.getElementById("playthrough_map_url").value = data.url.replace("join", "map")
 
         div = document.getElementById("content_selected_playthrough");
+
+        if (PLAYTHROUGH_ID == null)
+            setInterval(getMessages, 5000);
+
         PLAYTHROUGH_ID = div.value
+        getMessages()
     }
 
     let div = document.getElementById("content_selected_playthrough");

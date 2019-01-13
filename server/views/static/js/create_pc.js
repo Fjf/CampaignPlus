@@ -154,6 +154,28 @@ function getPlaythroughName(code) {
     response = requestApiJsonData("/api/getplaythroughname", "POST", {code: code}, func)
 }
 
+function sendMessage() {
+    let func = function(data) {
+        if (!data.success) {
+            console.log("Something went wrong sending this message. Error message: " + data.error);
+            return;
+        }
+        document.getElementById("chat_message").value = ""
+    }
+
+    let message = document.getElementById("chat_message").value;
+    if (message == "")
+        return;
+
+    console.log(PLAYTHROUGH_ID)
+    let data = {
+        playthrough_code: PLAYTHROUGH_ID,
+        message: message
+    }
+
+    requestApiJsonData("/api/createmessage", "POST", data, func)
+}
+
 getGameCharacters()
 getPlaythroughName(PLAYTHROUGH_ID)
 setUserData()
