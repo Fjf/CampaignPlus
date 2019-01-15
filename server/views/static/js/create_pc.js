@@ -1,6 +1,6 @@
 function toggleDisplays() {
     if (document.getElementById("content_log_wrapper").style.display == "none") {
-        document.getElementById("content_log_wrapper").style.display = "block";
+        document.getElementById("content_log_wrapper").style.display = "flex";
         document.getElementById("character_chat_wrapper").style.display = "none";
     } else {
         document.getElementById("content_log_wrapper").style.display = "none";
@@ -220,6 +220,7 @@ function createLog() {
 function LogBook() {
     this.allLogs = null;
     this.currentIndex = 0;
+    this.init = true;
 
     this.getLogs = function(show) {
         let func = function(data) {
@@ -230,9 +231,10 @@ function LogBook() {
             }
 
             logBook.allLogs = data.logs;
+            logBook.currentIndex = data.logs.length - 1;
             logBook.updateOverview()
-            if (show)
-                logBook.showLog(logBook.currentIndex);
+            logBook.showLog(logBook.currentIndex);
+            this.init = false;
         }
 
         let data = {
@@ -267,7 +269,7 @@ function LogBook() {
         if (this.allLogs == null)
             return;
 
-        if (document.getElementById("content_log_wrapper").style.display == "none") {
+        if (!this.init && document.getElementById("content_log_wrapper").style.display == "none") {
             toggleDisplays();
         }
 

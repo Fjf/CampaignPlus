@@ -5,6 +5,7 @@
         <div class="headerelem" id="currentuser"></div>
         <div class="headerelem" id="logout"><div class="header_button" onclick="window.location.href='/logout'">Log out</div></div>
         <div class="headerelem" id="settings"><div class="header_button" onclick="window.location.href='/settings'">Settings</div></div>
+        <div class="headerelem" id="toggle"><div class="header_button" onclick="toggleDisplays()">Logs/Home</div></div>
     </div>
     <div id="content">
         <div id="content_left">
@@ -23,7 +24,7 @@
         </div>
         <div id="content_right">
             <div id="playthrough_name"></div><br>
-            <div id="character_chat_wrapper" style="display: none;">
+            <div id="character_chat_wrapper">
                 <div id="content_right_char">
                     <div class="datadiv" id="update" style="display:none;">
                         Update your player character.
@@ -61,7 +62,7 @@
                     <input type="button" value="Send!" onclick="sendMessage()">
                 </div>
             </div>
-            <div id="content_log_wrapper">
+            <div id="content_log_wrapper" style="display: none;">
                 <div class="content_log_arrows" id="content_log_left_arrow"><div onclick="logBook.prevPage()"></div></div>
                 <div id="content_log_entries">
                     Log entries go here.
