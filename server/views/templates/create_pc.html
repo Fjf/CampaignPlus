@@ -14,6 +14,12 @@
             <ul id="characters" style="list-style-type: none">
 
             </ul>
+            <p>
+                The latest log entries:<br>
+                <ul id="latest_log_entries">
+
+                </ul>
+            </p>
         </div>
         <div id="content_right">
             <div id="playthrough_name"></div><br>
@@ -56,17 +62,24 @@
                 </div>
             </div>
             <div id="content_log_wrapper">
-                <p>
-                    Title<br>
-                    <input id="create_log_title" type="text" placeholder="Title">
-                </p>
-                <p>
-                    Log entry<br>
-                    <textarea id="create_log_text" placeholder="Information" onkeyup="auto_grow(this)"></textarea>
-                </p>
-                <p>
-                    <input id="create_log_submit" type="button" onclick="createLog()">
-                </p>
+                <div class="content_log_arrows" id="content_log_left_arrow"><div onclick="logBook.prevPage()"></div></div>
+                <div id="content_log_entries">
+                    Log entries go here.
+                </div>
+                <div class="content_log_arrows" id="content_log_right_arrow"><div onclick="logBook.nextPage()"></div></div>
+                <div id="content_log_create">
+                    <p>
+                        Title<br>
+                        <input id="create_log_title" type="text" placeholder="Title">
+                    </p>
+                    <p>
+                        Log entry<br>
+                        <textarea id="create_log_text" placeholder="Information" onkeyup="auto_grow(this)"></textarea>
+                    </p>
+                    <p>
+                        <input id="create_log_submit" type="button" value="Create Log" onclick="createLog()">
+                    </p>
+                </div>
             </div>
         </div>
     </div>

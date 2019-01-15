@@ -230,3 +230,34 @@ class MessageModel(OrmModelBase):
         c.message = msg
         c.time = datetime.datetime.now()
         return c
+
+
+class LogModel(OrmModelBase):
+    """
+    The mapmodel contanis data about maps regarding their location on their parent maps.
+    """
+
+    __tablename__ = 'log'
+
+    id = Column(Integer(), primary_key=True)
+
+    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"), nullable=False)
+    playthrough = relationship("PlaythroughModel")
+
+    creator_id = Column(Integer(), ForeignKey("player.id"), nullable=True)
+    creator = relationship("PlayerModel")
+
+    title = Column(String(), nullable=False)
+    text = Column(String(), nullable=False)
+
+    time = Column(DateTime(), nullable=False)
+
+    @classmethod
+    def from_playthrough_creator_content(cls, playthrough: PlaythroughModel, creator: PlayerModel, title: str, text: str):
+        c = cls()
+        c.playthrough_id = playthrough.id
+        c.creator_id = creator.id
+        c.title = title
+        c.text = text
+        c.time = datetime.datetime.now()
+        return c

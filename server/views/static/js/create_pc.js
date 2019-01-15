@@ -1,3 +1,14 @@
+function toggleDisplays() {
+    if (document.getElementById("content_log_wrapper").style.display == "none") {
+        document.getElementById("content_log_wrapper").style.display = "block";
+        document.getElementById("character_chat_wrapper").style.display = "none";
+    } else {
+        document.getElementById("content_log_wrapper").style.display = "none";
+        document.getElementById("character_chat_wrapper").style.display = "block";
+    }
+
+}
+
 function uploadCharacter() {
     let name = document.getElementById("name").value;
     let race = document.getElementById("race").value;
@@ -175,6 +186,139 @@ function sendMessage() {
 
     requestApiJsonData("/api/createmessage", "POST", data, func)
 }
+
+function createLog() {
+    let title = document.getElementById("create_log_title").value;
+    let text = document.getElementById("create_log_text").value;
+
+    if (title == "" || text == "")
+        return;
+
+    document.getElementById("create_log_submit").disabled = true;
+
+    let func = function(data) {
+        document.getElementById("create_log_submit").disabled = false;
+        if (!data.success) {
+            console.log("Something went wrong creating this log. Error message: " + data.error);
+            return;
+        }
+
+        document.getElementById("create_log_title").value = ""
+        document.getElementById("create_log_text").value = ""
+        logBook.getLogs()
+    }
+
+    let data = {
+        playthrough_code: PLAYTHROUGH_ID,
+        title: title,
+        text: text
+    }
+
+    requestApiJsonData("/api/createlog", "POST", data, func)
+}
+
+function LogBook() {
+    this.allLogs = null;
+    this.currentIndex = 0;
+
+    this.getLogs = function(show) {
+        let func = function(data) {
+
+            if (!data.success) {
+                console.log("Something went wrong retrieving logs. Error message: " + data.error);
+                return;
+            }
+
+            logBook.allLogs = data.logs;
+            logBook.updateOverview()
+            if (show)
+                logBook.showLog(logBook.currentIndex);
+        }
+
+        let data = {
+            playthrough_code: PLAYTHROUGH_ID
+        }
+
+        requestApiJsonData("/api/getlogs", "POST", data, func);
+    }
+
+    this.updateOverview = function() {
+        let ul = document.getElementById("latest_log_entries");
+        ul.innerHTML = "";
+
+        let li;
+        let minimum = Math.max(0, this.allLogs.length - 15);
+        minimum = 0;
+        for (let i = this.allLogs.length - 1; i >= minimum; i--) {
+            li = document.createElement("li");
+            li.innerHTML = this.allLogs[i].title + " van " + this.allLogs[i].creator_name;
+            li.classList.add("custom_button")
+            li.addEventListener("click", this.createShowLog(i), false);
+
+            ul.appendChild(li);
+        }
+    }
+
+    this.createShowLog = function(index) {
+        return function() { logBook.showLog(index); }
+    }
+
+    this.showLog = function(index) {
+        if (this.allLogs == null)
+            return;
+
+        if (document.getElementById("content_log_wrapper").style.display == "none") {
+            toggleDisplays();
+        }
+
+        let logs = document.getElementById("content_log_entries");
+        logs.innerHTML = "";
+
+        let log = this.allLogs[index];
+
+        let div = document.createElement("div");
+        let header = document.createElement("div");
+        let text = document.createElement("div");
+        let footer = document.createElement("div");
+
+        header.classList.add("log_entry_header");
+        header.innerHTML = log.title;
+
+        text.classList.add("log_entry_text");
+        text.innerHTML = log.text.replace(/\n/g, '<br>');
+
+        let date = new Date(log.time);
+        let datum = formatDate(date, "dddd d MMM yyyy");
+        let tijd = formatDate(date, "HH:mm")
+        footer.classList.add("log_entry_footer");
+        footer.innerHTML = "<br>Geschreven door  " + log.creator_name + " om " + tijd + " op " + datum;
+
+        div.appendChild(header);
+        div.appendChild(text);
+        div.appendChild(footer);
+
+        logs.appendChild(div);
+    }
+
+    this.prevPage = function() {
+        this.currentIndex -= 1;
+        if (this.currentIndex < 0)
+            this.currentIndex = 0;
+
+        this.showLog(this.currentIndex);
+    }
+
+    this.nextPage = function() {
+        this.currentIndex += 1;
+        if (this.currentIndex >= this.allLogs.length)
+            this.currentIndex = this.allLogs.length - 1;
+
+        this.showLog(this.currentIndex);
+    }
+}
+
+logBook = new LogBook();
+logBook.getLogs(true);
 
 getGameCharacters()
 getPlaythroughName(PLAYTHROUGH_ID)

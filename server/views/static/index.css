@@ -414,6 +414,7 @@ input {
     background-color: #787878;
 }
 
+
 #create_log_text {
     border-radius: 2px;
     border-style: solid;
@@ -424,5 +425,80 @@ input {
     max-height: 500px;
     resize: none;
     border-width: 1px 1px 1px 1px;
-
 }
+
+#content_log_wrapper {
+    display: flex;
+    flex-direction: row;
+    height: 95%;
+}
+
+#content_log_entries {
+    flex: 10;
+
+    font-family: 'Dancing Script', cursive;
+
+    box-sizing:border-box;
+    padding: 30px 30px 0 30px;
+
+    overflow-y: auto;
+
+    background-image: url('images/base/perkament.jpg');
+    background-position: 0px 0px;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+#content_log_create {
+    flex: 10;
+
+    box-sizing:border-box;
+    padding: 30px;
+}
+
+.content_log_arrows {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#content_log_left_arrow div {
+    height: 70px;
+
+    background-image: url('images/base/left_arrow.png');
+    background-position: 0px 0px;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+
+#content_log_right_arrow div {
+    height: 70px;
+
+    background-image: url('images/base/right_arrow.png');
+    background-position: 0px 0px;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+.log_entry_header {
+    font-style: normal;
+    font-size: 30px;
+}
+
+.log_entry_text {
+    font-size: 20px;
+}
+
+.log_entry_footer {
+    font-style: normal;
+    font-size: 22px;
+    margin-bottom: 30px;
+}
+
+#latest_log_entries {
+    max-height: 60%;
+    overflow-y: auto;
+}
+
