@@ -7,4 +7,5 @@ env/*
 *.dump
 *.png
 *.exe
-!marker.png
+!server/views/static/images/base/*
+

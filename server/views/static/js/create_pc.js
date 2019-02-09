@@ -255,6 +255,7 @@ function LogBook() {
             li = document.createElement("li");
             li.innerHTML = this.allLogs[i].title + " van " + this.allLogs[i].creator_name;
             li.classList.add("custom_button")
+            li.classList.add("log_scroll_button")
             li.addEventListener("click", this.createShowLog(i), false);
 
             ul.appendChild(li);
