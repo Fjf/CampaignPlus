@@ -46,7 +46,7 @@ body {
     height: 100%;
     float: left;
     background-color: #b3b3ff;
-    overflow-y:scroll;
+    overflow-y: auto;
 }
 
 #content_left ul {
@@ -83,9 +83,9 @@ body {
 }
 
 .textbox {
-    width: 99%;
-    max-width: 99%;
-    min-width: 99%;
+    width: 96%;
+    max-width: 96%;
+    min-width: 96%;
     min-height: 20px;
     border: solid 1px grey;
 }
@@ -449,6 +449,19 @@ input {
     background-repeat: no-repeat;
 }
 
+.log_delete_button {
+    width: 18px;
+    height: 18px;
+    float: right;
+
+    box-sizing:border-box;
+
+    background-image: url('images/base/trash_bin.svg');
+    background-position: 0px 0px;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
 #content_log_create {
     flex: 10;
 
@@ -503,10 +516,22 @@ input {
 }
 
 .log_scroll_button {
-
-
     background-image: url('images/base/scroll_rolled.png');
     background-position: 0px 0px;
     background-size: 100% 100%;
     background-repeat: no-repeat;
+}
+
+.no_overflow {
+    overflow-y: hidden;
+}
+
+.menu_toggle {
+    height: 40px;
+    width: 40px;
+    background-image: url('images/base/menu_icon.svg');
+    background-position: 0px 0px;
+    background-repeat: no-repeat;
+
+    display: none;
 }

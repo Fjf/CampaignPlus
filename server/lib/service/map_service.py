@@ -47,7 +47,11 @@ def get_all_maps(playthrough_id: str) -> List[MapModel]:
     return map_repository.get_all_maps(playthrough_id)
 
 
-def update_map(map, x, y, parent_id, name, story):
+def update_map(map_id: int, x=None, y=None, parent_id=None, name=None, story=None):
+    map = get_map(map_id)
+    if map == None:
+        return "This map id does not exist."
+
     if name is not None:
         map.name = name
     if story is not None:

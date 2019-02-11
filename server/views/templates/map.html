@@ -2,29 +2,26 @@
 
 {% block content %}
     <div id="header">
+        <div class="menu_toggle"></div>
         <div class="headerelem" id="currentuser"></div>
     </div>
     <div id="content">
         <div id="content_left">
             <div id="map_content">
-                <div id="functions" class="map_content_element">
+                <div id="functions" class="map_content_element no_overflow">
                     <button onclick="document.getElementById('create_map').style.display='block'">Create Map</button>
-                    <button onclick="curAction = actions.zoomIn">Zoom In</button>
-                    <button onclick="curAction = actions.zoomOut">Zoom out</button>
-                    <button onclick="curAction = actions.move">Move</button>
                     <button onclick="resize()">Resize</button>
                     <button onclick="addMarker()">Add place</button>
                 </div>
-                <div id="placeswrapper" class="map_content_element">
+                <div id="placeswrapper" class="map_content_element no_overflow">
                     <center><b>Places:</b></center>
                     <div id="places">
                     </div>
                 </div>
-                <div id="map_data" class="map_content_element">
+                <div id="map_data" class="map_content_element no_overflow">
                     <input class="textbox" id="map_name" type="text" placeholder="Location name here."><br>
                     <textarea class="textbox" id="map_story" placeholder="Location story here."></textarea><br>
-                    <button id="button_update">Update this data.</button>
-                    <button id="button_loadmap">Load this map.</button>
+                    <button id="button_update" onclick="updateMapData()">Update this data.</button>
                 </div>
             </div>
         </div>

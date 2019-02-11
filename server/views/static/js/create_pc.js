@@ -234,7 +234,7 @@ function LogBook() {
             logBook.currentIndex = data.logs.length - 1;
             logBook.updateOverview()
             logBook.showLog(logBook.currentIndex);
-            this.init = false;
+            logBook.init = false;
         }
 
         let data = {
@@ -258,6 +258,14 @@ function LogBook() {
             li.classList.add("log_scroll_button")
             li.addEventListener("click", this.createShowLog(i), false);
 
+            if (this.allLogs[i].creator_user_name == USERNAME) {
+                trash = document.createElement("div");
+                trash.classList.add("log_delete_button");
+                trash.addEventListener("click", this.createDeleteLog(this.allLogs[i].id), false);
+
+                li.appendChild(trash);
+            }
+
             ul.appendChild(li);
         }
     }
@@ -266,8 +274,12 @@ function LogBook() {
         return function() { logBook.showLog(index); }
     }
 
+    this.createDeleteLog = function(index) {
+        return function() { logBook.deleteLog(index); }
+    }
+
     this.showLog = function(index) {
-        if (this.allLogs == null)
+        if (this.allLogs == null || this.allLogs.length == 0)
             return;
 
         if (!this.init && document.getElementById("content_log_wrapper").style.display == "none") {
@@ -301,6 +313,24 @@ function LogBook() {
         div.appendChild(footer);
 
         logs.appendChild(div);
+    }
+
+    this.deleteLog = function(i) {
+         let func = function(data) {
+            if (!data.success) {
+                console.log("Something went wrong deleting your log. Error message: " + data.error);
+                return;
+            }
+
+            logBook.getLogs();
+        }
+
+        let data = {
+            playthrough_code: PLAYTHROUGH_ID,
+            log_id: i
+        }
+
+        requestApiJsonData("/api/deletelog", "POST", data, func);
     }
 
     this.prevPage = function() {

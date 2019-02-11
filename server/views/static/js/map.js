@@ -1,6 +1,167 @@
 let canvas = document.getElementById("map");
-canvas.width = 1920
 canvas.height = 1080
+canvas.width = 1920
+
+canvas.addEventListener('wheel', function(event){
+    if (event.deltaY < 0) {
+        zoomIn(event);
+    } else {
+        zoomOut(event);
+    }
+    event.preventDefault();
+    return false;
+}, false);
+
+canvas.addEventListener('click', function(event) {
+
+    event.preventDefault();
+    return false;
+}, false);
+
+
+function relMouseCoords(event){
+    var totalOffsetX = 0;
+    var totalOffsetY = 0;
+    var canvasX = 0;
+    var canvasY = 0;
+    var currentElement = this;
+
+    do{
+        totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
+        totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
+    }
+    while(currentElement = currentElement.offsetParent)
+
+    canvasX = event.pageX - totalOffsetX;
+    canvasY = event.pageY - totalOffsetY;
+
+    return {x:canvasX, y:canvasY}
+}
+HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
+
+
+function zoomIn(e) {
+    let zoomPercent = 0.1;
+    zoomCentre = canvas.relMouseCoords(e);
+
+    newWidth = currentMap.width * (1 - zoomPercent);
+    newHeight = currentMap.height * (1 - zoomPercent);
+
+    diffX = currentMap.width - newWidth;
+    diffY = currentMap.height - newHeight;
+
+    xPercent = zoomCentre.x / canvas.clientWidth;
+    yPercent = zoomCentre.y / canvas.clientHeight;
+
+    currentMap.x += diffX * xPercent;
+    currentMap.y += diffY * yPercent;
+
+    currentMap.width = newWidth;
+    currentMap.height = newHeight;
+
+    currentMap.draw();
+}
+
+function zoomOut(e) {
+    let zoomPercent = 0.1;
+    zoomCentre = canvas.relMouseCoords(e);
+
+    newWidth = currentMap.width * 1 / (1 - zoomPercent);
+    newHeight = currentMap.height * 1 / (1 - zoomPercent);
+
+    diffX = currentMap.width - newWidth;
+    diffY = currentMap.height - newHeight;
+
+    xPercent = zoomCentre.x / canvas.clientWidth;
+    yPercent = zoomCentre.y / canvas.clientHeight;
+
+    currentMap.x += diffX * xPercent;
+    currentMap.y += diffY * yPercent;
+
+    currentMap.width = newWidth;
+    currentMap.height = newHeight;
+
+    currentMap.draw();
+}
+
+function resize() {
+    currentMap.resize();
+    currentMap.draw();
+}
+
+
+function isInRectangle(pos, x, y, width, height) {
+    return pos.x < x + width && pos.x > x && pos.y < y + height && pos.y > y;
+}
+
+
+canvas.onclick = function(e) {
+    if (curAction == actions.placeMarker) {
+        pos = canvas.relMouseCoords(e);
+
+        pos.x = currentMap.width * pos.x / canvas.clientWidth + currentMap.x;
+        pos.y = currentMap.height * pos.y / canvas.clientHeight + currentMap.y;
+
+        currentMap.markers.push({x: pos.x, y: pos.y});
+
+        curAction = actions.none;
+        document.getElementById("select_map_x").value = Math.round(pos.x);
+        document.getElementById("select_map_y").value = Math.round(pos.y);
+        document.getElementById("select_map_pid").value = currentMap.id;
+        document.getElementById("select_map").style.display = "block";
+    } else if (curAction == actions.move) {
+        pos = canvas.relMouseCoords(e);
+
+        pos.x = currentMap.width * pos.x / canvas.clientWidth;
+        pos.y = currentMap.height * pos.y / canvas.clientHeight;
+
+        let i;
+        if((i = currentMap.isInMarker(pos)) != -1) {
+            loadMap(i)
+        }
+    }
+}
+
+canvas.onmousedown = function(e) {
+    if (curAction == actions.move) {
+        currentMap.startMoveEvent = e;
+    }
+}
+
+function moveMap(e) {
+    currentMap.x += currentMap.startMoveEvent.x - e.x;
+    currentMap.y += currentMap.startMoveEvent.y - e.y;
+
+    currentMap.draw();
+    currentMap.startMoveEvent = e;
+}
+
+function addMarker() {
+    curAction = actions.placeMarker;
+}
+
+canvas.onmousemove = function(e) {
+    if (curAction == actions.move && currentMap.startMoveEvent != null) {
+        moveMap(e)
+    } else if (curAction == actions.placeMarker) {
+        pos = canvas.relMouseCoords(e);
+
+        newMarker.x = canvas.width * pos.x / canvas.clientWidth;
+        newMarker.y = canvas.height * pos.y / canvas.clientHeight;
+
+        // Redraw map so you dont see snaking marker.
+        currentMap.draw();
+        newMarker.draw();
+    }
+}
+
+document.onmouseup = function(e) {
+    if (curAction == actions.move && currentMap.startMoveEvent != null) {
+        currentMap.startMoveEvent = null;
+    }
+}
+
+
 let context = canvas.getContext("2d")
 
 
@@ -90,55 +251,17 @@ let newMarker = {
         context.drawImage(this.img, this.x - this.width / 2, this.y - this.height, this.width, this.height);
     }
 }
-newMarker.img.src = "/static/images/marker.png";
-currentMap.markerImg.src = "/static/images/marker.png";
+newMarker.img.src = "/static/images/base/marker.png";
+currentMap.markerImg.src = "/static/images/base/marker.png";
 
 let actions = {
-    zoomIn: 1,
-    zoomOut: 2,
     placeMarker: 3,
-    move: 4,
-    none: 5
+    move: 4
 }
 
-let curAction = actions.none;
-
-
-function loadMapData(map_id) {
-    let func = function(data) {
-        if (!data.success) {
-            console.log("Something went wrong retrieving map data.")
-        } else {
-            document.getElementById("map_name").value = data.name;
-            document.getElementById("map_story").value = data.story;
-        }
-
-        // This removes the eventlisteners from the button.
-        var old_element = document.getElementById("button_loadmap");
-        var new_element = old_element.cloneNode(true);
-        old_element.parentNode.replaceChild(new_element, old_element);
-
-        document.getElementById("button_loadmap").addEventListener("click", createLoadMap(map_id), false);
-
-        // This removes the eventlisteners from the button.
-        var old_element = document.getElementById("button_update");
-        var new_element = old_element.cloneNode(true);
-        old_element.parentNode.replaceChild(new_element, old_element);
-
-        document.getElementById("button_update").addEventListener("click", createSetMapData(map_id), false);
-    }
-
-    let data = {
-        playthrough_id: PLAYTHROUGH_ID,
-        map_id: map_id
-    }
-
-    requestApiJsonData("/api/getmapdata", "POST", data, func)
-}
-
+let curAction = actions.move;
 
 function setMapData(map_id) {
-    console.log("This function is called now.")
     name = document.getElementById("map_name").value;
     story = document.getElementById("map_story").value;
 
@@ -160,7 +283,12 @@ function setMapData(map_id) {
         story: story
     }
 
-    requestApiJsonData("/api/setmapdata", "POST", data, func)
+    requestApiJsonData("/api/updatemapdata", "POST", data, func)
+}
+
+
+function updateMapData() {
+    setMapData(currentMap.id);
 }
 
 
@@ -170,10 +298,6 @@ function createSetMapData(map_id) {
 
 function createLoadMap(i) {
     return function() { loadMap(i); }
-}
-
-function createLoadMapData(i) {
-    return function() { loadMapData(i); }
 }
 
 
@@ -194,18 +318,23 @@ function loadMap(map_id) {
         let places = document.getElementById("places");
         places.innerHTML = "";
 
+        // Add information about this map.
+        console.log(data);
+        document.getElementById("map_name").value = data.map_name;
+        document.getElementById("map_story").innerHTML = data.map_story;
+
         if (data.parent_id != "") {
             div = document.createElement("div");
             div.classList.add("custom_button")
             div.innerHTML = "Parent map";
-            div.addEventListener("click", createLoadMapData(currentMap.parent_id), false);
+            div.addEventListener("click", createLoadMap(currentMap.parent_id), false);
             places.appendChild(div);
         }
 
         div = document.createElement("div");
         div.classList.add("custom_button")
         div.innerHTML = "Currently opened map";
-        div.addEventListener("click", createLoadMapData(currentMap.id), false);
+        div.addEventListener("click", createLoadMap(currentMap.id), false);
         places.appendChild(div);
 
         for (marker of data.markers) {
@@ -214,7 +343,7 @@ function loadMap(map_id) {
             div = document.createElement("div");
             div.classList.add("custom_button")
 
-            div.addEventListener("click", createLoadMapData(marker.id), false);
+            div.addEventListener("click", createLoadMap(marker.id), false);
 
             if (marker.name == "")
                 marker.name = "Unmarked location";
@@ -349,149 +478,4 @@ function getAllMaps() {
 loadMap(5)
 getAllMaps()
 
-function relMouseCoords(event){
-    var totalOffsetX = 0;
-    var totalOffsetY = 0;
-    var canvasX = 0;
-    var canvasY = 0;
-    var currentElement = this;
-
-    do{
-        totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
-        totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
-    }
-    while(currentElement = currentElement.offsetParent)
-
-    canvasX = event.pageX - totalOffsetX;
-    canvasY = event.pageY - totalOffsetY;
-
-    return {x:canvasX, y:canvasY}
-}
-HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
-
-
-function zoomIn(e) {
-    let zoomPercent = 0.1;
-    zoomCentre = canvas.relMouseCoords(e);
-
-    newWidth = currentMap.width * (1 - zoomPercent);
-    newHeight = currentMap.height * (1 - zoomPercent);
-
-    diffX = currentMap.width - newWidth;
-    diffY = currentMap.height - newHeight;
-
-    xPercent = zoomCentre.x / canvas.clientWidth;
-    yPercent = zoomCentre.y / canvas.clientHeight;
-
-    currentMap.x += diffX * xPercent;
-    currentMap.y += diffY * yPercent;
-
-    currentMap.width = newWidth;
-    currentMap.height = newHeight;
-
-    currentMap.draw();
-}
-
-function zoomOut(e) {
-    let zoomPercent = 0.1;
-    zoomCentre = canvas.relMouseCoords(e);
-
-    newWidth = currentMap.width * 1/(1 - zoomPercent);
-    newHeight = currentMap.height * 1/(1 - zoomPercent);
-
-    diffX = currentMap.width - newWidth;
-    diffY = currentMap.height - newHeight;
-
-    xPercent = zoomCentre.x / canvas.clientWidth;
-    yPercent = zoomCentre.y / canvas.clientHeight;
-
-    currentMap.x += diffX * xPercent;
-    currentMap.y += diffY * yPercent;
-
-    currentMap.width = newWidth;
-    currentMap.height = newHeight;
-
-    currentMap.draw();
-}
-
-function resize() {
-    currentMap.resize();
-    currentMap.draw();
-}
-
-
-function isInRectangle(pos, x, y, width, height) {
-    return pos.x < x + width && pos.x > x && pos.y < y + height && pos.y > y;
-}
-
-
-canvas.onclick = function(e) {
-    if (curAction == actions.zoomIn) {
-        zoomIn(e);
-    } else if (curAction == actions.zoomOut) {
-        zoomOut(e);
-    } else if (curAction == actions.placeMarker) {
-        pos = canvas.relMouseCoords(e);
-
-        pos.x = currentMap.width * pos.x / canvas.clientWidth + currentMap.x;
-        pos.y = currentMap.height * pos.y / canvas.clientHeight + currentMap.y;
-
-        currentMap.markers.push({x: pos.x, y: pos.y});
-
-        curAction = actions.none;
-        document.getElementById("select_map_x").value = Math.round(pos.x);
-        document.getElementById("select_map_y").value = Math.round(pos.y);
-        document.getElementById("select_map_pid").value = currentMap.id;
-        document.getElementById("select_map").style.display = "block";
-    } else if (curAction == actions.none) {
-        pos = canvas.relMouseCoords(e);
-
-        pos.x = currentMap.width * pos.x / canvas.clientWidth;
-        pos.y = currentMap.height * pos.y / canvas.clientHeight;
-
-        let i;
-        if((i = currentMap.isInMarker(pos)) != -1) {
-            loadMap(i)
-        }
-    }
-}
-
-canvas.onmousedown = function(e) {
-    if (curAction == actions.move) {
-        currentMap.startMoveEvent = e;
-    }
-}
-
-function moveMap(e) {
-    currentMap.x -= currentMap.startMoveEvent.x - e.x;
-    currentMap.y -= currentMap.startMoveEvent.y - e.y;
-
-    currentMap.draw();
-    currentMap.startMoveEvent = e;
-}
-
-function addMarker() {
-    curAction = actions.placeMarker;
-}
-
-canvas.onmousemove = function(e) {
-    if (curAction == actions.move && currentMap.startMoveEvent != null) {
-        moveMap(e)
-    } else if (curAction == actions.placeMarker) {
-        pos = canvas.relMouseCoords(e);
-
-        newMarker.x = canvas.width * pos.x / canvas.clientWidth;
-        newMarker.y = canvas.height * pos.y / canvas.clientHeight;
-
-        // Redraw map so you dont see snaking marker.
-        currentMap.draw();
-        newMarker.draw();
-    }
-}
-
-document.onmouseup = function(e) {
-    if (curAction == actions.move && currentMap.startMoveEvent != null) {
-        currentMap.startMoveEvent = null;
-    }
-}
 

@@ -1,8 +1,8 @@
-from typing import List
+from typing import List, Optional
 
 from server.lib.model.models import UserModel, LogModel
 from server.lib.repository import log_repository
-from server.lib.service import playthrough_service
+from server.lib.service import playthrough_service, player_service
 
 
 def get_logs(playthrough_code: str, user: UserModel) -> (str, List[LogModel]):
@@ -17,9 +17,6 @@ def get_logs(playthrough_code: str, user: UserModel) -> (str, List[LogModel]):
     if playthrough is None:
         return "This playthrough does not exist.", []
 
-    if playthrough.user_id != user.id:
-        return "This is not your playthrough.", []
-
     return "", log_repository.get_logs(playthrough.id)
 
 
@@ -28,7 +25,29 @@ def create_log(user: UserModel, playthrough_code: str, title: str, text: str) ->
     if playthrough is None:
         return "This playthrough does not exist."
 
-    message_model = LogModel.from_playthrough_creator_content(playthrough, user, title, text)
+    player = player_service.get_player(user, playthrough.id)
+    message_model = LogModel.from_playthrough_creator_content(playthrough, player, title, text)
 
     log_repository.create_log(message_model)
+    return ""
+
+
+def get_log(log_id: int) -> Optional[LogModel]:
+    return log_repository.get_log(log_id)
+
+
+def delete_log(user: UserModel, playthrough_code: str, log_id: int):
+    log = get_log(int(log_id))
+    playthrough = playthrough_service.find_playthrough_with_code(playthrough_code)
+
+    if log is None:
+        return "This log does not exist."
+
+    if log.creator.user != user:
+        return "This is not your log to delete."
+
+    if log.playthrough_id != playthrough.id:
+        return "This log does not belong to this playthrough."
+
+    log_repository.delete_log(log)
     return ""

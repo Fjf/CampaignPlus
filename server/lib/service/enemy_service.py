@@ -46,8 +46,6 @@ def get_enemy(enemy_id: int):
 def add_ability(enemy_id: int, text: str, user: UserModel):
     enemy = get_enemy(enemy_id)
 
-    print(enemy_id)
-
     if enemy is None:
         return "This enemy does not exist."
 

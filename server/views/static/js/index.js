@@ -21,8 +21,8 @@ function loadPlaythroughOverview() {
     if (selected_code == null)
         return;
 
-//    console.log("https://" + HOST_ADDRESS + "/join/" + selected_code)
-    location.href = "https://" + HOST_ADDRESS + "/join/" + selected_code
+//    console.log(HOST_ADDRESS + "/join/" + selected_code)
+    location.href = "http://" + HOST_ADDRESS + "/join/" + selected_code
 }
 
 var PLAYTHROUGH_ID = null

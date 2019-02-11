@@ -41,8 +41,6 @@ def update_player():
 
     user = session_user()
 
-    print(data)
-
     error = player_service.update_player(data["pid"], data["name"], data["race"], data["class_name"], data["backstory"], data["code"], user)
 
     success = error == ""

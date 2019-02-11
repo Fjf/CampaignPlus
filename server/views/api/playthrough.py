@@ -87,7 +87,6 @@ def get_playthrough_name():
 def get_joined_playthroughs():
     user = session_user()
 
-    print("test")
     playthroughs = playthrough_service.get_joined_playthroughs(user)
 
     data = []

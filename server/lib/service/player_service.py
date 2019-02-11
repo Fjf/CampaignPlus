@@ -64,6 +64,14 @@ def update_player(pid: int, name: str, race: str, class_name: str, backstory: st
     return ""
 
 
+def get_player(user: UserModel, playthrough_id: int) -> Optional[PlayerModel]:
+    players = player_repository.get_players(playthrough_id)
+    for player in players:
+        if player.user == user:
+            return player
+    return None
+
+
 def check_backstory(backstory: str) -> bool:
 
     return True

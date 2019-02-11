@@ -51,7 +51,6 @@ def get_map():
             "error": "This map does not exist."
         }
 
-    print(map.id)
     children = map_service.get_children(map)
 
     markers = []
@@ -61,7 +60,8 @@ def get_map():
     return {
         "success": True,
         "id": map.id,
-        "mapdata": map.name,
+        "map_name": map.name,
+        "map_story": map.story,
         "parent_id": map.parent_map_id,
         "image": os.path.join("/static/images/uploads", map.map_url),
         "markers": markers
@@ -79,8 +79,6 @@ def set_map_data():
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
-    map = map_service.get_map(data["map_id"])
-
     name = story = x = y = parent_id = None
 
     if "name" in data:
@@ -94,8 +92,7 @@ def set_map_data():
     if "parent_id" in data:
         parent_id = data["parent_id"]
 
-    print(data)
-    error = map_service.update_map(map, x, y, parent_id, name, story)
+    error = map_service.update_map(data["map_id"], x, y, parent_id, name, story)
 
     success = error == ""
 
