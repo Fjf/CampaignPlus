@@ -110,7 +110,7 @@ def get_all_maps():
 
     required_fields = ["playthrough_id"]
 
-    if not data or (False in [x in required_fields for x in data]):
+    if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
     maps = map_service.get_all_maps(data["playthrough_id"])
@@ -123,6 +123,53 @@ def get_all_maps():
         maps_list.append({
             "map_id": map.id,
             "map_name": map.name
+        })
+
+    return {
+        "success": True,
+        "maps": maps_list
+    }
+
+
+@api.route('/uploadbattlemap', methods=["POST"])
+@json_api()
+@require_login()
+def create_battlemap():
+    data = request.get_json()
+
+    required_fields = ["playthrough_id", "battlemap", "name"]
+
+    if not data or (False in [x in data for x in required_fields]):
+        raise BadRequest()
+
+    user = session_user()
+
+    error = map_service.create_battlemap(user, data["playthrough_id"], data["name"], data["battlemap"])
+    success = error == ""
+    return {
+        "success": success,
+        "error": error
+    }
+
+
+@api.route('/getbattlemaps', methods=["POST"])
+@json_api()
+@require_login()
+def get_all_battlemaps():
+    data = request.get_json()
+
+    required_fields = ["playthrough_id"]
+
+    if not data or (False in [x in data for x in required_fields]):
+        raise BadRequest()
+
+    maps = map_service.get_all_battlemaps(data["playthrough_id"])
+
+    maps_list = []
+    for map in maps:
+        maps_list.append({
+            "name": map.name,
+            "data": map.data
         })
 
     return {
