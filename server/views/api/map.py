@@ -91,8 +91,10 @@ def set_map_data():
         y = data["y"]
     if "parent_id" in data:
         parent_id = data["parent_id"]
+    if "image_id" in data:
+        image_id = data["image_id"]
 
-    error = map_service.update_map(data["map_id"], x, y, parent_id, name, story)
+    error = map_service.update_map(data["map_id"], x, y, parent_id, name, story, image_id)
 
     success = error == ""
 
