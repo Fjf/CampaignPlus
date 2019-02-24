@@ -9,6 +9,37 @@ from server.lib.repository import map_repository
 
 ALLOWED_CHARS = string.digits + string.ascii_letters
 
+import exifread
+from PIL import Image
+
+def rotate_file(filename: str) -> None:
+    f = open(filename, "rb")
+
+    tags = exifread.process_file(f, details=False, stop_tag='Image Orientation')
+
+    f.close()
+    rot = str(tags["Image Orientation"])
+    if not rot.startswith("Rotated "):
+        return
+
+    data = rot.split(" ")
+
+    image = Image.open(filename)
+
+    r = 0
+    if data[1] == "90":
+        r = Image.ROTATE_270
+    elif data[1] == "180":
+        r = Image.ROTATE_180
+    elif data[1] == "270":
+        r = Image.ROTATE_90
+    else:
+        raise ValueError("Something went wrong reading EXIF data.")
+
+    image = image.transpose(r)
+
+    image.save(filename)
+
 
 def create_map(playthrough_id: int, map_img, x: int, y: int, name: str, parent_map: MapModel=None):
     # Generate random file names until you get a unique one in the uploads.
@@ -21,6 +52,8 @@ def create_map(playthrough_id: int, map_img, x: int, y: int, name: str, parent_m
             break
 
     map_img.save(path)
+    rotate_file(path)
+
     # TODO: Check if the given image is an allowed image format.
 
     mapmodel = MapModel.from_name_date(playthrough_id, filename, x, y, name)
