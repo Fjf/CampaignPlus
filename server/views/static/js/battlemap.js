@@ -40,6 +40,68 @@ function get_battlemaps() {
 }
 
 
+function getNSquares(sizewidth, sizeheight, squares){
+    margin =  1.8 * 2
+
+    a4 = {
+        x: Math.floor((21.0 - margin) / squares),
+        y: Math.floor((29.7 - margin) / squares)
+    }
+
+    return a4
+}
+
+function makeBattleMap() {
+    a4 = {x: 2, y: 2};
+    let dim = getNSquares(a4.x, a4.y, 3);
+
+    xSteps = dim.x;
+    ySteps = dim.y;
+
+    for (let i = 0; i < a4.x; i++) {
+        for (let j = 0; j < a4.y; j++) {
+//            page = new CanvasFrame()
+        }
+    }
+    xStepSize = battlemap.width / xSteps;
+    yStepSize = battlemap.height / ySteps;
+    for (let x = 0; x < xSteps; x++) {
+        for (let y = 0; y < ySteps; y++) {
+            let battleSquare = new CanvasFrame(x*xStepSize, y*yStepSize, xStepSize, yStepSize);
+
+            // Add a line below the square.
+            battleSquare.addLine(0, yStepSize - 1, xStepSize, yStepSize - 1);
+            // Add a line to the right of the square.
+            battleSquare.addLine(xStepSize - 1, 0, xStepSize - 1, yStepSize);
+
+            battleSquare.mouseHandler = function(e) {
+                if (selectedImage == null)
+                    return;
+
+                if (this.image == null) {
+                    this.image = new Image();
+                    this.image.src = selectedImage.src;
+                    this.image.width = this.width * selectedImage._widthMultiplier;
+                    this.image.height = this.height * selectedImage._heightMultiplier;
+                } else {
+                    this.image = null;
+                }
+                canvas.draw();
+                return true;
+            }
+
+            battlemap.addChild(battleSquare);
+        }
+    }
+
+    battlemap.scrollHandler = function(e) {
+        console.log("Zoommm");
+        return true;
+    }
+}
+
+
+
 class CanvasFrame {
     constructor(x, y, width, height) {
         this.x = x;
@@ -50,6 +112,11 @@ class CanvasFrame {
 
         this.children = [];
         this.lines = [];
+        this.text = [];
+    }
+
+    addText(text, x, y) {
+        this.text.push({text: text, x: x + this.x, y: y + this.y});
     }
 
     addLine(x, y, endX, endY) {
@@ -135,11 +202,26 @@ class CanvasFrame {
             ctx.drawImage(this.image, this.x, this.y, this.image.width, this.image.height);
         }
 
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "black";
         for (const line of this.lines) {
             ctx.beginPath();
             ctx.moveTo(line.x, line.y);
             ctx.lineTo(line.endX, line.endY);
             ctx.stroke();
+        }
+
+        ctx.font = "25px Verdana";
+        ctx.fillStyle = "black";
+
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "white";
+        for (const o of this.text) {
+            ctx.strokeText(o.text, o.x, o.y);
+            ctx.fillText(o.text, o.x, o.y);
+
+            ctx.stroke();
+            ctx.fill();
         }
 
         for (const child of this.children) {
@@ -238,41 +320,6 @@ let menu = new CanvasFrame(
     1  * canvas.height
 )
 
-
-xSteps = 10;
-ySteps = 15;
-xStepSize = battlemap.width / xSteps;
-yStepSize = battlemap.height / ySteps;
-for (let x = 0; x < xSteps; x++) {
-    for (let y = 0; y < ySteps; y++) {
-        let battleSquare = new CanvasFrame(x*xStepSize, y*yStepSize, xStepSize, yStepSize);
-
-        // Add a line below the square.
-        battleSquare.addLine(0, yStepSize - 1, xStepSize, yStepSize - 1);
-        // Add a line to the right of the square.
-        battleSquare.addLine(xStepSize - 1, 0, xStepSize - 1, yStepSize);
-
-        battleSquare.mouseHandler = function(e) {
-            if (selectedImage == null)
-                return;
-
-            if (this.image == null) {
-                this.image = new Image();
-                this.image.src = selectedImage.src;
-                this.image.width = this.width * selectedImage._widthMultiplier;
-                this.image.height = this.height * selectedImage._heightMultiplier;
-            } else {
-                this.image = null;
-            }
-            canvas.draw();
-            return true;
-        }
-
-        battlemap.addChild(battleSquare);
-    }
-}
-
-
 menu.color = "#000000";
 menu.scrollHandler = function(e) {
     minChild = "Infinity";
@@ -322,6 +369,8 @@ for (let i = 0; i < images.length; i += 2) {
 
     let count = 0;
     for (button of buttons) {
+        menu.addChild(button);
+
         let str = "You clicked button " + (i + count);
 
         button.image = new Image();
@@ -332,6 +381,7 @@ for (let i = 0; i < images.length; i += 2) {
         button.image._widthMultiplier = images[i + count][1];
         button.image._heightMultiplier = images[i + count][2];
 
+        button.addText(images[i + count][1] + " " + images[i + count][2], 2, button.height - 5);
         button.image.onload = function() {
             canvas.draw();
         }
@@ -340,12 +390,12 @@ for (let i = 0; i < images.length; i += 2) {
             selectedImage = this.image;
             return true;
         }
-        menu.addChild(button);
         count += 1;
     }
 }
 canvas.addChild(menu);
 canvas.addChild(battlemap);
+makeBattleMap();
 
 canvas.draw();
 

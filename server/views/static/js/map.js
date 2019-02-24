@@ -386,11 +386,6 @@ function selectMap() {
     y = 1 * document.getElementById("select_map_y").value
     id = 1 * document.getElementById("select_map_id").value
 
-    if (name == "") {
-        console.log("Map title may not be empty")
-        return
-    }
-
     data = {
         map_id: id,
         x: x,
