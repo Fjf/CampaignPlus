@@ -4,8 +4,9 @@ from random import randint
 from typing import Optional, List
 
 from server import app
-from server.lib.model.models import MapModel
+from server.lib.model.models import MapModel, UserModel, BattlemapModel
 from server.lib.repository import map_repository
+from server.lib.service import playthrough_service
 
 ALLOWED_CHARS = string.digits + string.ascii_letters
 
@@ -82,7 +83,7 @@ def get_all_maps(playthrough_id: str) -> List[MapModel]:
 
 def update_map(map_id: int, x=None, y=None, parent_id=None, name=None, story=None):
     map = get_map(map_id)
-    if map == None:
+    if map is None:
         return "This map id does not exist."
 
     if name is not None:
@@ -98,3 +99,18 @@ def update_map(map_id: int, x=None, y=None, parent_id=None, name=None, story=Non
 
     map_repository.commit()
     return ""
+
+
+def create_battlemap(user: UserModel, playthrough_id: int, name: str, data: str):
+    playthrough = playthrough_service.find_playthrough_with_id(playthrough_id)
+    if playthrough is None:
+        return "This playthrough does not exist."
+
+    battlemap = BattlemapModel.from_name_data(playthrough, user, name, data)
+
+    map_repository.create_map(battlemap)
+    return ""
+
+
+def get_all_battlemaps(playthrough_id: int):
+    return map_repository.get_all_battlemaps(playthrough_id)

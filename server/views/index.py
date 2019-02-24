@@ -52,6 +52,17 @@ def show_map(code):
     return render_template('map.html', pid=playthrough.id)
 
 
+@app.route('/battlemap/<code>', methods=["GET"])
+def battlemap(code):
+    try:
+        session_user()
+    except ValueError:
+        return login(refer="battlemap/" + code)
+
+    playthrough = playthrough_service.find_playthrough_with_code(code)
+    return render_template('battlemap.html', pid=playthrough.id)
+
+
 @app.route('/settings', methods=["GET"])
 @require_login()
 def settings():

@@ -20,6 +20,11 @@ def create_app(config) -> Flask:
 
     app.secret_key = app_section['secret'].encode()
 
+    email_section = config['email']
+    app.email_server = email_section['server']
+    app.email_address = email_section['address']
+    app.email_password = email_section['password']
+
     return app
 
 

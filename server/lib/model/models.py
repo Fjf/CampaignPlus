@@ -261,3 +261,32 @@ class LogModel(OrmModelBase):
         c.text = text
         c.time = datetime.datetime.now()
         return c
+
+
+class BattlemapModel(OrmModelBase):
+    """
+    The mapmodel contanis data about maps regarding their location on their parent maps.
+    """
+
+    __tablename__ = 'battlemap'
+
+    id = Column(Integer(), primary_key=True)
+
+    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"), nullable=False)
+    playthrough = relationship("PlaythroughModel")
+
+    creator_id = Column(Integer(), ForeignKey("player.id"), nullable=True)
+    creator = relationship("PlayerModel")
+
+    name = Column(String(), nullable=False)
+    data = Column(String(), nullable=False)
+
+    @classmethod
+    def from_name_data(cls, playthrough: PlaythroughModel, creator: PlayerModel, name: str, data: str):
+        c = cls()
+        c.playthrough_id = playthrough.id
+        c.creator_id = creator.id
+        c.name = name
+        c.data = data
+        return c
+

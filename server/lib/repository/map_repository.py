@@ -1,7 +1,7 @@
 from typing import Optional, List
 
 from server.lib.database import request_session
-from server.lib.model.models import EnemyModel, MapModel
+from server.lib.model.models import EnemyModel, MapModel, BattlemapModel
 
 
 def get_map(map_id: int) -> Optional[MapModel]:
@@ -37,4 +37,12 @@ def get_all_maps(playthrough_id: str) -> List[MapModel]:
 
     return db.query(MapModel) \
         .filter(MapModel.playthrough_id == playthrough_id) \
+        .all()
+
+
+def get_all_battlemaps(playthrough_id: int):
+    db = request_session()
+
+    return db.query(BattlemapModel) \
+        .filter(BattlemapModel.playthrough_id == playthrough_id) \
         .all()
