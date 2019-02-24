@@ -48,7 +48,7 @@ def get_all_maps(playthrough_id: str) -> List[MapModel]:
     return map_repository.get_all_maps(playthrough_id)
 
 
-def update_map(map_id: int, x=None, y=None, parent_id=None, name=None, story=None):
+def update_map(map_id: int, x=None, y=None, parent_id=None, name=None, story=None, image_id=None):
     map = get_map(map_id)
     if map is None:
         return "This map id does not exist."
@@ -63,6 +63,9 @@ def update_map(map_id: int, x=None, y=None, parent_id=None, name=None, story=Non
         map.y = y
     if parent_id is not None:
         map.parent_map_id = parent_id
+    if image_id is not None:
+        # image =
+        map.map_url = ""
 
     map_repository.commit()
     return ""

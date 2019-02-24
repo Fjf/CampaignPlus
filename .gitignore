@@ -8,4 +8,5 @@ env/*
 *.png
 *.exe
 !server/views/static/images/base/*
+!server/views/static/images/battlemap/*
 

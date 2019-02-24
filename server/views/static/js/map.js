@@ -372,13 +372,16 @@ function selectMap() {
     let func = function(data) {
         document.getElementById("submit_selected").disabled = false;
         if (!data.success) {
-            console.log("Something went wrong uploading the map.")
+            alert("Something went wrong uploading the map. Check the console for more information.")
             console.log("The following error was thrown: " + data.error)
+
             return
         }
+        alert("Uploading map done successfully.")
         document.getElementById("select_map").style.display = "none";
 
         loadMap(currentMap.id)
+
     }
 
     parent_id = currentMap.id;
@@ -409,7 +412,7 @@ function createMap() {
         }
         document.getElementById("create_map").style.display = "none";
 
-        loadMap(5)
+        loadMap(ROOT_MAP)
         getAllMaps()
     }
 
@@ -470,7 +473,7 @@ function getAllMaps() {
     requestApiJsonData("/api/getmaps", "POST", data, func)
 }
 
-loadMap(5)
+loadMap(ROOT_MAP)
 getAllMaps()
 
 
