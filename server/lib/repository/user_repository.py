@@ -3,16 +3,16 @@ from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formataddr
+from typing import Optional
 
 import flask
-from pip._vendor.pyparsing import Optional
 
 from server import app
 from server.lib.database import request_session
-from server.lib.model.models import UserModel
+from server.lib.model.models import UserModel, EmailResetModel
 
 
-def register(user: UserModel):
+def add(user: UserModel):
     db = request_session()
 
     db.add(user)
@@ -33,6 +33,13 @@ def find_user_by_name(user_name: str):
         .filter(UserModel.name == user_name).one_or_none()
 
 
+def find_user_by_email(email: str) -> Optional[UserModel]:
+    db = request_session()
+
+    return db.query(UserModel)\
+        .filter(UserModel.email == email).one_or_none()
+
+
 def send_email(user_model: UserModel, content: str, title: str):
     """
     Generates an email with a link and sends it to the reset requester.
@@ -41,11 +48,11 @@ def send_email(user_model: UserModel, content: str, title: str):
     :param content: The body of the email to be send.
     :param title: The title of the email.
     """
-    email = user_model.credentials.email
+    email = user_model.email
     msg = MIMEMultipart('alternative')
     msg.attach(MIMEText(content, 'html'))
 
-    msg["From"] = formataddr((str(Header('Conexus', 'utf-8')), app.mail_address))
+    msg["From"] = formataddr((str(Header('DnDool', 'utf-8')), app.email_address))
     msg["To"] = email
     msg["Subject"] = title
 
@@ -59,3 +66,11 @@ def send_email(user_model: UserModel, content: str, title: str):
         print("Successfully sent email")
     except Exception:
         print('Failed to send mail: ' + title)
+
+
+def find_reset_with_code(code: str) -> Optional[EmailResetModel]:
+    db = request_session()
+
+    return db.query(EmailResetModel) \
+        .filter(EmailResetModel.code == code) \
+        .one_or_none()

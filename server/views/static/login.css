@@ -24,41 +24,26 @@
     height: 30px;
 }
 
-#login_input_name {
-    background-image: url('images/base/user.png');
-    background-position: 7px 7px;
-    background-size: 16px 16px;
-    background-repeat: no-repeat;
-}
-
-#login_input_pass {
-    background-image: url('images/base/pass.png');
-    background-position: 7px 7px;
-    background-size: 16px 16px;
-    background-repeat: no-repeat;
-}
-
 .errorbox {
     color: #980000;
 }
 
-
-#register_name {
-    background-image: url('images/base/user.png');
-    background-position: 7px 7px;
-    background-size: 16px 16px;
-    background-repeat: no-repeat;
-}
-
-#register_pass {
+.input_password {
     background-image: url('images/base/pass.png');
     background-position: 7px 7px;
     background-size: 16px 16px;
     background-repeat: no-repeat;
 }
 
+.input_name {
+    background-image: url('images/base/user.png');
+    background-position: 7px 7px;
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+}
 
-#register_pass_confirm{
+
+.input_confirm {
     background-image: url('images/base/confirm_pass.png');
     background-position: 7px 7px;
     background-size: 16px 16px;

@@ -70,6 +70,70 @@ function register() {
     requestApiJsonData("/api/register", "POST", data, func)
 }
 
+function forgot() {
+    let email = document.getElementById("forgot_email").value;
+
+    let error = null;
+    if (email.length == 0) {
+        error = "Please enter an email.";
+     }
+
+    if (error != null) {
+        document.getElementById("forgot_errorbox").innerHTML = error;
+        return;
+    }
+
+    let func = function(data) {
+        console.log(data)
+        if (data.success)
+            show('login')
+        else {
+            document.getElementById("forgot_errorbox").innerHTML = data.error;
+            console.log("Something went wrong trying to request password reset.")
+        }
+    }
+
+    let data = {
+        "email": email
+    }
+    requestApiJsonData("/api/forgot_password", "POST", data, func)
+}
+
+function reset() {
+    let password = document.getElementById("reset_pass").value;
+    let confirm = document.getElementById("confirm_pass").value;
+
+    let error = "";
+    if (password.length == 0) {
+        error += "Please enter a password.<br>";
+    } if (confirm != password) {
+        error += "Make sure your password matches.<br>"
+    }
+
+    if (error != "") {
+        document.getElementById("reset_errorbox").innerHTML = error;
+        return;
+    }
+
+    let func = function(data) {
+        console.log(data)
+        if (data.success)
+            location.href = "/"
+        else {
+            document.getElementById("reset_errorbox").innerHTML = data.error;
+            console.log("Something went wrong trying to reset password.")
+        }
+    }
+
+    let data = {
+        "password": password,
+        "code": code
+    }
+    requestApiJsonData("/api/reset_password", "POST", data, func)
+}
+
+
+
 
 function show(divId) {
     let divs = document.getElementsByClassName("logindiv")

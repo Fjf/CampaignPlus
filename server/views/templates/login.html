@@ -7,27 +7,44 @@
                 <div style="font-size: 20px; font-weight: bold;">Log in to your account</div><p>
                 <form action="javascript:login();" method = "POST">
                     Name<br>
-                    <input id="login_input_name" type="text" name="Name"/><p>
+                    <input id="login_input_name" type="text" class="input_name"/><p>
                     Password<br>
-                    <input id="login_input_pass" type="password" name="Password" /><p><br>
+                    <input id="login_input_pass" type="password" class="input_password" /><p><br>
                     <input type = "submit" value = "submit" /><br>
                 </form>
                 <div class="errorbox" id="login_errorbox"></div><p>
-                Don't have an account yet? Register <b class="clickabletext" onclick="show('register')">here.</b>
+                <p>Don't have an account yet? Register <b class="clickabletext" onclick="show('register')">here.</b></p>
+                <p>Forgot your password? Reset <b class="clickabletext" onclick="show('forgot')">here.</b></p>
             </div>
+
             <div class="logindiv" id="register" style="display:none;">
                 <div style="font-size: 20px; font-weight: bold;">Register a new account</div><p>
                 <form action="javascript:register();" method = "POST">
                     Name<br>
-                    <input id="register_name" type="text" name="name"/><p>
+                    <input id="register_name" type="text" class="input_name"/><p>
                     Password<br>
-                    <input id="register_pass" type="password" name="pw"/><p>
+                    <input id="register_pass" type="password" class="input_password"/><p>
                     Confirm Password<br>
-                    <input id="register_pass_confirm" type="password" name="pwconfirm"/><p><br>
+                    <input id="register_pass_confirm" type="password" class="input_confirm"/><p><br>
                 <input type="submit" value="submit" /><p>
                 </form>
                 <div class="errorbox" id="register_errorbox"></div><p>
-                Already have an account? Login <b class="clickabletext" onclick="show('login')">here.</b>
+                <p>Already have an account? Login <b class="clickabletext" onclick="show('login')">here.</b></p>
+                <p>Forgot your password? Reset <b class="clickabletext" onclick="show('forgot')">here.</b></p>
+            </div>
+
+            <div class="logindiv" id="forgot" style="display:none;">
+                <div style="font-size: 20px; font-weight: bold;">Reset your password</div><p>
+                <form action="javascript:forgot();" method = "POST">
+                    Email<br>
+                    <input id="forgot_email" type="text" class="input_name"/><p>
+
+                    <input type="submit" value="reset" /><p>
+                </form>
+                <div class="errorbox" id="forgot_errorbox"></div><p>
+
+                <p>Already have an account? Login <b class="clickabletext" onclick="show('login')">here.</b><p>
+                <p>Don't have an account yet? Register <b class="clickabletext" onclick="show('register')">here.</b></p>
             </div>
         </div>
     </body>

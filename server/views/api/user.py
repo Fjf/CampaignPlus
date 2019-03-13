@@ -45,7 +45,9 @@ def register():
 def login():
     data = request.get_json()
 
-    if not data or "name" not in data or "password" not in data:
+    required_fields = ["name", "password"]
+
+    if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
     error = user_service.login(data["name"], data["password"])
@@ -75,3 +77,51 @@ def session():
     return {
         "name": data
     }
+
+
+@api.route('/forgot_password', methods=["POST"])
+@json_api()
+def forgot_password():
+    data = request.get_json()
+
+    required_fields = ["email"]
+
+    if not data or (False in [x in data for x in required_fields]):
+        raise BadRequest()
+
+    error = user_service.reset_password(data["email"])
+
+    success = error == ""
+
+    return {
+        "success": success,
+        "error": error
+    }
+
+
+@api.route('/reset_password', methods=["POST"])
+@json_api()
+def reset_password():
+    data = request.get_json()
+
+    required_fields = ["password", "code"]
+
+    if not data or (False in [x in data for x in required_fields]):
+        raise BadRequest()
+
+    error, user = user_service.find_usermodel_with_code(data["code"])
+
+    success = error == ""
+    if not success:
+        return {
+            "success": success,
+            "error": error
+        }
+
+    error = user_service.set_password(user, data["password"])
+
+    return {
+        "success": success,
+        "error": error
+    }
+
