@@ -1,12 +1,19 @@
+import datetime
 import re
+import string
+from random import randint
+from typing import Optional
 
 import bcrypt as bcrypt
-from pip._vendor.pyparsing import Optional
-from werkzeug.security import generate_password_hash
+import flask
 
-from server.lib.model.models import UserModel
+from server import app
+from server.lib.model.models import UserModel, EmailResetModel
 from server.lib.repository import user_repository
 from server.lib.user_session import session_user_set
+
+
+ALLOWED_CHARS = string.digits + string.ascii_letters
 
 
 def login(username, password):
@@ -33,7 +40,7 @@ def create_user(username, password):
 
     user = UserModel.from_name_password(username, hashed_pw)
 
-    user_repository.register(user)
+    user_repository.add(user)
     return ""
 
 
@@ -45,3 +52,50 @@ def is_valid_username(username: str) -> bool:
     if re.match(r'^[\w.-]+$', username):
         return True
     return False
+
+
+def find_user_by_email(email: str):
+    return user_repository.find_user_by_email(email)
+
+
+def reset_password(email: str) -> str:
+    user = find_user_by_email(email)
+    if user is None:
+        return "This email is not linked to any account."
+
+    code = _generate_reset_code()
+
+    reset_model = EmailResetModel.from_user_code_date(user, code, datetime.datetime.now())
+    user_repository.add(reset_model)
+
+    content = flask.render_template("reset_email.html", code=code, host=app.host, port=app.port)
+
+    user_repository.send_email(user, content, "Reset your password")
+    return ""
+
+
+def _generate_reset_code() -> str:
+    return "".join(ALLOWED_CHARS[randint(0, len(ALLOWED_CHARS)-1)] for _ in range(8))
+
+
+def find_usermodel_with_code(code: str) -> (str, Optional[UserModel]):
+    reset_model = user_repository.find_reset_with_code(code)
+
+    if reset_model is None:
+        return "This reset code is not in use.", None
+
+    timedelta = datetime.datetime.now() - reset_model.date
+    if timedelta.seconds > 60 * 60:
+        return "This password reset code has expired.", None
+
+    user = reset_model.user
+
+    return "", user
+
+
+def set_password(user: UserModel, password: str) -> str:
+    hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+    user.password = hashed_pw
+
+    user_repository.add(user)
+    return ""

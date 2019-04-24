@@ -3,7 +3,7 @@ from flask import render_template
 from server import app
 from server.lib.user_session import session_is_authed, session_user_set, session_user
 from server.views.api import require_login
-from server.lib.service import playthrough_service
+from server.lib.service import playthrough_service, user_service
 
 
 @app.route('/')
@@ -61,6 +61,11 @@ def battlemap(code):
 
     playthrough = playthrough_service.find_playthrough_with_code(code)
     return render_template('battlemap.html', pid=playthrough.id)
+
+
+@app.route('/reset/<code>', methods=["GET"])
+def reset(code):
+    return render_template('reset.html', code=code)
 
 
 @app.route('/settings', methods=["GET"])

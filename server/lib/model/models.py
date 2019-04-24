@@ -17,12 +17,38 @@ class UserModel(OrmModelBase):
 
     name = Column(String(), unique=True, nullable=False)
     password = deferred(Column(LargeBinary(), nullable=False))
+    email = Column(String(), unique=True, nullable=True)
 
     @classmethod
-    def from_name_password(cls, name: str, password: str):
+    def from_name_password(cls, name: str, password: str, email: str = None):
         c = cls()
         c.name = name
         c.password = password
+        c.email = email
+        return c
+
+
+class EmailResetModel(OrmModelBase):
+    """
+    A model where codes for users are stored for the purpose of resetting the user's password.
+    """
+
+    __tablename__ = 'email_reset'
+
+    id = Column(Integer(), primary_key=True)
+
+    user_id = Column(Integer(), ForeignKey("user.id"))
+    user = relationship("UserModel")
+
+    code = Column(String(), unique=True, nullable=False)
+    date = Column(DateTime(), nullable=False)
+
+    @classmethod
+    def from_user_code_date(cls, user: UserModel, code: str, date: datetime):
+        c = cls()
+        c.user_id = user.id
+        c.code = code
+        c.date = date
         return c
 
 
@@ -253,7 +279,8 @@ class LogModel(OrmModelBase):
     time = Column(DateTime(), nullable=False)
 
     @classmethod
-    def from_playthrough_creator_content(cls, playthrough: PlaythroughModel, creator: PlayerModel, title: str, text: str):
+    def from_playthrough_creator_content(cls, playthrough: PlaythroughModel, creator: PlayerModel, title: str,
+                                         text: str):
         c = cls()
         c.playthrough_id = playthrough.id
         c.creator_id = creator.id
@@ -289,4 +316,3 @@ class BattlemapModel(OrmModelBase):
         c.name = name
         c.data = data
         return c
-
