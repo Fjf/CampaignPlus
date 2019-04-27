@@ -51,8 +51,10 @@ function createPlaythrough() {
         return 0
 
     let func = function(data) {
+
         // TODO: Error checking, for now assuming the creation went correctly.
         loadPlaythroughList()
+        document.getElementById("new_playthrough_name").value = "";
     }
 
     response = requestApiJsonData("api/createplaythrough", "POST", {name: name}, func)

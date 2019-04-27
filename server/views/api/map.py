@@ -79,7 +79,7 @@ def set_map_data():
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
-    name = story = x = y = parent_id = None
+    image_id = name = story = x = y = parent_id = None
 
     if "name" in data:
         name = data["name"]

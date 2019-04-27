@@ -29,16 +29,20 @@ def login(username, password):
     return ""
 
 
-def create_user(username, password):
+def create_user(username, password, email):
     if not is_valid_username(username):
         return "Your username contains invalid characters. Allowed characters are alphanumeric and underscores."
 
     if find_user_by_username(username) is not None:
         return "This username is already in use."
 
+    if not _check_email(email):
+        return "This email address is invalid."
+
     hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
     user = UserModel.from_name_password(username, hashed_pw)
+    user.email = email
 
     user_repository.add(user)
     return ""
@@ -76,6 +80,11 @@ def reset_password(email: str) -> str:
 
 def _generate_reset_code() -> str:
     return "".join(ALLOWED_CHARS[randint(0, len(ALLOWED_CHARS)-1)] for _ in range(8))
+
+
+def _check_email(email: str) -> bool:
+    regex = re.compile(r'[^@]+@[^@]+\.[^@]+')
+    return regex.match(email) is not None
 
 
 def find_usermodel_with_code(code: str) -> (str, Optional[UserModel]):

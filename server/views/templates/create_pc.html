@@ -5,13 +5,13 @@
         <div class="menu_toggle"></div>
         <div class="headerelem" id="currentuser"></div>
         <div class="headerelem" id="logout"><div class="header_button" onclick="window.location.href='/logout'">Log out</div></div>
+        <div class="headerelem" id="home"><div class="header_button" onclick="window.location.href='/'">Home</div></div>
         <div class="headerelem" id="settings"><div class="header_button" onclick="window.location.href='/settings'">Settings</div></div>
-        <div class="headerelem" id="toggle"><div class="header_button" onclick="toggleDisplays()">Logs/Home</div></div>
     </div>
     <div id="content">
         <div id="content_left">
             <div id="charactertext">
-                These characters have already joined this game:<br>
+                <br>
             </div>
             <ul id="characters" style="list-style-type: none">
 
@@ -42,7 +42,7 @@
                             <input id="update_pc" type="submit" value="Update"/>
                         </form>
                     </div>
-                    <div class="datadiv" id="login">
+                    <div class="datadiv" id="create">
                         Create your player character.
                         <form class="dataform" action="javascript:uploadCharacter();" method = "POST">
                             Player Character Name<br>

@@ -70,6 +70,7 @@
 {% block javascripts %}
     <script>
         var PLAYTHROUGH_ID = "{{ pid }}"
+        var ROOT_MAP = "{{ mid }}";
     </script>
     <script src="{{ url_for('static', filename='js/map.js') }}"></script>
 {% endblock %}

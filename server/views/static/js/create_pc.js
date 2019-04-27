@@ -1,19 +1,8 @@
-function toggleDisplays() {
-    if (document.getElementById("content_log_wrapper").style.display == "none") {
-        document.getElementById("content_log_wrapper").style.display = "flex";
-        document.getElementById("character_chat_wrapper").style.display = "none";
-    } else {
-        document.getElementById("content_log_wrapper").style.display = "none";
-        document.getElementById("character_chat_wrapper").style.display = "block";
-    }
-
-}
-
 function uploadCharacter() {
     let name = document.getElementById("name").value;
     let race = document.getElementById("race").value;
     let class_name = document.getElementById("class").value;
-    let backstory = document.getElementById("backstory").innerHTML;
+    let backstory = document.getElementById("backstory").value;
 
     if (name == "" || race == "" || class_name == "")
         return
@@ -49,7 +38,7 @@ function cleanFields() {
     document.getElementById("name").value = "";
     document.getElementById("race").value = "";
     document.getElementById("class").value  = "";
-    document.getElementById("backstory").innerHTML  = "";
+    document.getElementById("backstory").value  = "";
 }
 
 function getGameCharacters() {
@@ -59,7 +48,11 @@ function getGameCharacters() {
         let li;
 
         if (data.length == 0)
-            document.getElementById("charactertext").innerHTML = "Nobody has yet joined this game..."
+            playerInfoText = "Nobody has yet joined this game..."
+        else
+            playerInfoText = "These players have already joined this game:"
+        document.getElementById("charactertext").innerHTML = playerInfoText
+
         for (let i = 0; i < data.length; i++) {
             li = document.createElement("li")
             li.setAttribute("class", "custom_list")
@@ -76,15 +69,22 @@ function getGameCharacters() {
     response = requestApiJsonData("/api/getplayers", "POST", {playthrough_code: PLAYTHROUGH_ID}, func)
 }
 
-function toggleUpload() {
-    if (document.getElementById("update").style.display == "none") {
-        document.getElementById("login").style.display = "none";
-        document.getElementById("update").style.display = "block";
-    } else {
-        document.getElementById("update").style.display = "none";
-        document.getElementById("login").style.display = "block";
-    }
+function show(id) {
+    if (id == "update" || id == "create") {
+        document.getElementById("content_log_wrapper").style.display = "none";
+        document.getElementById("character_chat_wrapper").style.display = "block";
 
+        if (id == "update") {
+            document.getElementById("create").style.display = "none";
+            document.getElementById("update").style.display = "block";
+        } else {
+            document.getElementById("update").style.display = "none";
+            document.getElementById("create").style.display = "block";
+        }
+    } else if (id == "log") {
+        document.getElementById("content_log_wrapper").style.display = "flex";
+        document.getElementById("character_chat_wrapper").style.display = "none";
+    }
 }
 
 function editCharacter(pid) {
@@ -100,7 +100,7 @@ function editCharacter(pid) {
         document.getElementById("up_class").value = data.class;
         document.getElementById("up_backstory").innerHTML = data.backstory;
 
-        toggleUpload()
+        show("update")
     }
     console.log("Retrieving data for id: " + pid)
     response = requestApiJsonData("/api/getplayerdata", "POST", {player_id: pid}, func)
@@ -131,7 +131,7 @@ function updateCharacter() {
 
         console.log("Your player character was updated successfully.")
         getGameCharacters()
-        toggleUpload()
+        show("create")
     }
 
     data = {
@@ -282,8 +282,8 @@ function LogBook() {
         if (this.allLogs == null || this.allLogs.length == 0)
             return;
 
-        if (!this.init && document.getElementById("content_log_wrapper").style.display == "none") {
-            toggleDisplays();
+        if (!this.init) {
+            show("log");
         }
 
         let logs = document.getElementById("content_log_entries");

@@ -14,12 +14,15 @@ from server.lib.service import user_service
 def register():
     data = request.get_json()
 
-    if not data or "name" not in data or "password" not in data:
+    required_fields = ["name", "password", "email"]
+
+    if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
     name = data["name"]
+    email = data["email"].lower().strip(" \n\t")
     pw = data["password"]
-    error = user_service.create_user(name, pw)
+    error = user_service.create_user(name, pw, email)
 
     success = error == ""
 
@@ -44,7 +47,7 @@ def register():
 @json_api()
 def login():
     data = request.get_json()
-
+	
     required_fields = ["name", "password"]
 
     if not data or (False in [x in data for x in required_fields]):
