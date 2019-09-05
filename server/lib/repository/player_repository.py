@@ -1,7 +1,7 @@
 from typing import Optional
 
 from server.lib.database import request_session
-from server.lib.model.models import PlayerModel, PlaythroughModel
+from server.lib.model.models import PlayerModel, PlaythroughModel, PlayerInfoModel
 
 
 def get_players(playthrough_id: int):
@@ -25,6 +25,14 @@ def find_player(pid: int) -> Optional[PlayerModel]:
 
     return db.query(PlayerModel) \
         .filter(PlayerModel.id == pid) \
+        .one_or_none()
+
+
+def get_player_info(player: PlayerModel) -> Optional[PlayerInfoModel]:
+    db = request_session()
+
+    return db.query(PlayerInfoModel) \
+        .filter(PlayerInfoModel.id == player.id) \
         .one_or_none()
 
 

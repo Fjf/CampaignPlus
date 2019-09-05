@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import Column, Integer, String, ForeignKey, LargeBinary, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, LargeBinary, DateTime, Boolean
 from sqlalchemy.orm import relationship, deferred
 
 from server.lib.database import OrmModelBase
@@ -315,4 +315,44 @@ class BattlemapModel(OrmModelBase):
         c.creator_id = creator.id
         c.name = name
         c.data = data
+        return c
+
+
+class PlayerInfoModel(OrmModelBase):
+    """
+    The player info model contains all additional data about a player.
+    This only refers to static information like HP/Speed etc.
+
+    Player spells, items and weapons are linked by playerID in a different table.
+    """
+
+    __tablename__ = 'player_info'
+
+    id = Column(Integer(), primary_key=True)
+
+    player_id = Column(Integer(), ForeignKey("player.id"), nullable=False)
+    player = relationship("PlayerModel")
+
+    strength = Column(Integer(), nullable=True)
+    dexterity = Column(Integer(), nullable=True)
+    constitution = Column(Integer(), nullable=True)
+    intelligence = Column(Integer(), nullable=True)
+    wisdom = Column(Integer(), nullable=True)
+    charisma = Column(Integer(), nullable=True)
+
+    saving_throws_str = Column(Boolean(), nullable=True)
+    saving_throws_dex = Column(Boolean(), nullable=True)
+    saving_throws_con = Column(Boolean(), nullable=True)
+    saving_throws_int = Column(Boolean(), nullable=True)
+    saving_throws_wis = Column(Boolean(), nullable=True)
+    saving_throws_cha = Column(Boolean(), nullable=True)
+
+    max_hp = Column(Integer(), nullable=True)
+    armor_class = Column(Integer(), nullable=True)
+    speed = Column(Integer(), nullable=True)
+
+    @classmethod
+    def from_player(cls, player: PlayerModel):
+        c = cls()
+        c.player_id = player.id
         return c

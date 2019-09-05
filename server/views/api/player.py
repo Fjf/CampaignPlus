@@ -102,6 +102,32 @@ def delete_player():
     }
 
 
+@api.route('/setplayerinfo', methods=["POST"])
+@json_api()
+@require_login()
+def set_player_info():
+    data = request.get_json()
+    user = session_user()
+
+    required_fields = ["player_id"]
+
+    if not data or (False in [x in data for x in required_fields]):
+        raise BadRequest()
+
+    error = player_service.set_player_info(user, data["player_id"], data["strength"], data["dexterity"], data["constitution"],
+                                   data["intelligence"], data["wisdom"], data["charisma"], data["saving_throws_str"],
+                                   data["saving_throws_dex"], data["saving_throws_con"], data["saving_throws_int"],
+                                   data["saving_throws_wis"], data["saving_throws_cha"], data["max_hp"],
+                                   data["armor_class"], data["speed"])
+
+    success = error == ""
+
+    return {
+        "success": success,
+        "error": error
+    }
+
+
 @api.route('/getplayerdata', methods=["POST"])
 @json_api()
 @require_login()
@@ -115,6 +141,28 @@ def get_player():
 
     success = player is not None
 
+    if success:
+        player_info = player_service.get_player_info(player)
+        info = {
+            "strength": player_info.strength,
+            "dexterity": player_info.dexterity,
+            "constitution": player_info.constitution,
+            "intelligence": player_info.intelligence,
+            "wisdom": player_info.wisdom,
+            "charisma": player_info.charisma,
+            "saving_throws_str": player_info.saving_throws_str,
+            "saving_throws_dex": player_info.saving_throws_dex,
+            "saving_throws_con": player_info.saving_throws_con,
+            "saving_throws_int": player_info.saving_throws_int,
+            "saving_throws_wis": player_info.saving_throws_wis,
+            "saving_throws_cha": player_info.saving_throws_cha,
+            "max_hp": player_info.max_hp,
+            "armor_class": player_info.armor_class,
+            "speed": player_info.speed
+        }
+    else:
+        info = None
+
     if not success:
         return {"success": success}
     else:
@@ -124,5 +172,6 @@ def get_player():
             "class": player.class_name,
             "race": player.race_name,
             "user_name": player.user.name,
-            "backstory": player.backstory
+            "backstory": player.backstory,
+            "info": info
         }
