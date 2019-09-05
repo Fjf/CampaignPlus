@@ -36,11 +36,14 @@ function login() {
 function register() {
     let username = document.getElementById("register_name").value;
     let password = document.getElementById("register_pass").value;
+    let email = document.getElementById("register_email").value;
     let pass_confirm = document.getElementById("register_pass_confirm").value;
 
     let error = null;
     if (username.length == 0) {
         error = "Please enter a username.";
+    } else if (email.length == 0) {
+        error = "Please enter an email.";
     } else if (password.length == 0) {
         error = "Please enter a password.";
     } else if (password != pass_confirm) {
@@ -64,6 +67,7 @@ function register() {
 
     let data = {
         "name": username,
+        "email": email,
         "password": password,
         "redirect": redirect
     }

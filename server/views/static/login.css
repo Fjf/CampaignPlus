@@ -49,3 +49,10 @@
     background-size: 16px 16px;
     background-repeat: no-repeat;
 }
+
+.input_email {
+    background-image: url('images/base/email_icon.png');
+    background-position: 7px 7px;
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+}

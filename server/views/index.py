@@ -49,7 +49,7 @@ def show_map(code):
         return login(refer="map/" + code)
 
     playthrough = playthrough_service.find_playthrough_with_code(code)
-    return render_template('map.html', pid=playthrough.id)
+    return render_template('map.html', pid=playthrough.id, mid=1)
 
 
 @app.route('/battlemap/<code>', methods=["GET"])
