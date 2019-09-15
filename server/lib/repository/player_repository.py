@@ -1,7 +1,8 @@
 from typing import Optional, List
 
 from server.lib.database import request_session
-from server.lib.model.models import PlayerModel, PlaythroughModel, PlayerInfoModel, PlayerEquipmentModel
+from server.lib.model.models import PlayerModel, PlaythroughModel, PlayerInfoModel, PlayerEquipmentModel, ItemModel, \
+    PlayerSpellModel
 
 
 def get_players(playthrough_id: int):
@@ -56,4 +57,20 @@ def get_all_players():
 
     return db.query(PlayerModel) \
         .join(PlaythroughModel) \
+        .all()
+
+
+def get_item(item_id: int) -> Optional[ItemModel]:
+    db = request_session()
+
+    return db.query(ItemModel) \
+        .filter(ItemModel.id == item_id) \
+        .one_or_none()
+
+
+def get_player_spells(player: PlayerModel) -> List[PlayerSpellModel]:
+    db = request_session()
+
+    return db.query(PlayerSpellModel) \
+        .filter(PlayerSpellModel.player_id == player.id) \
         .all()

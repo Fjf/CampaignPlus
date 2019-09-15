@@ -451,3 +451,67 @@ class PlayerEquipmentModel(OrmModelBase):
         c.player_id = player.id
         c.item_id = item.id
         return c
+
+
+class SpellModel(OrmModelBase):
+    """
+    Contains all information about a spell.
+    All spells with playthrough id of -1 are from the base game.
+    """
+
+    __tablename__ = 'spell'
+
+    id = Column(Integer(), primary_key=True)
+
+    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"), nullable=True)
+    playthrough = relationship("PlaythroughModel")
+
+    name = Column(String(), nullable=True)
+    phb_page = Column(Integer(), nullable=True)
+
+    description = Column(String(), nullable=False)
+    higher_level = Column(String(), nullable=True)
+    level = Column(Integer(), nullable=True)
+
+    spell_range = Column(String(), nullable=False)
+
+    components = Column(String(), nullable=False)
+    material = Column(String(), nullable=True)
+
+    ritual = Column(Boolean(), nullable=False)
+    concentration = Column(Boolean(), nullable=False)
+
+    duration = Column(String(), nullable=False)
+    casting_time = Column(String(), nullable=False)
+
+    school = Column(String(), nullable=False)
+
+    @classmethod
+    def from_name(cls, name: String):
+        c = cls()
+        c.name = name
+        return c
+
+
+class PlayerSpellModel(OrmModelBase):
+    """
+    The player data model contains the spells a player knows.
+    It refers to the SpellModel by id.
+    """
+
+    __tablename__ = 'player_spell'
+
+    id = Column(Integer(), primary_key=True)
+
+    player_id = Column(Integer(), ForeignKey("player.id"), nullable=False)
+    player = relationship("PlayerModel")
+
+    spell_id = Column(Integer(), ForeignKey("spell.id"), nullable=False)
+    spell: SpellModel = relationship("SpellModel")
+
+    @classmethod
+    def from_player(cls, player: PlayerModel, spell: SpellModel):
+        c = cls()
+        c.player_id = player.id
+        c.spell_id = spell.id
+        return c

@@ -1,10 +1,9 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
-from server.lib.database import request_session
-from server.lib.model.models import PlayerModel, UserModel, PlayerInfoModel, PlayerEquipmentModel
+from server.lib.model.models import PlayerInfoModel, PlayerEquipmentModel, SpellModel, PlayerSpellModel
 from server.lib.model.models import PlayerModel, UserModel, PlaythroughModel
 from server.lib.repository import player_repository
-from server.lib.service import playthrough_service
+from server.lib.service import playthrough_service, item_service
 
 
 def get_players(playthrough: PlaythroughModel) -> List[PlayerModel]:
@@ -45,7 +44,7 @@ def delete_player(pid: int, user: UserModel) -> str:
     return ""
 
 
-def update_player(pid: int, name: str, race: str, class_name: str, backstory: str, code: str, user: UserModel):
+def update_player(pid: int, name: str, race: str, class_name: str, backstory: str, user: UserModel):
     player = find_player(pid)
     if not player:
         return "This player was not found."
@@ -72,8 +71,13 @@ def get_player(user: UserModel, playthrough_id: int) -> Optional[PlayerModel]:
     return None
 
 
-def get_player_info(player: PlayerModel) -> Optional[PlayerInfoModel]:
-    return player_repository.get_player_info(player)
+def get_player_info(user: UserModel, player: PlayerModel) -> Optional[PlayerInfoModel]:
+    result = player_repository.get_player_info(player)
+    if result is None:
+        set_player_info(user, player.id, 1, 1, 1, 1, 1, 1, False, False, False, False, False, False, 1, 1, 60)
+        result = player_repository.get_player_info(player)
+
+    return result
 
 
 def get_player_items(player: PlayerModel) -> List[PlayerEquipmentModel]:
@@ -93,7 +97,7 @@ def set_player_info(user, player_id, strength, dexterity, constitution, intellig
     if player.user != user:
         return "This player character does not belong to you."
 
-    player_info = get_player_info(player)
+    player_info = get_player_info(user, player)
     if player_info is None:
         player_info = PlayerInfoModel.from_player(player)
 
@@ -120,16 +124,30 @@ def set_player_info(user, player_id, strength, dexterity, constitution, intellig
     return ""
 
 
-def add_item(user, player, name, extra_info, amount, is_weapon, damage_type, dice_amount, dice_type, flat_damage):
+def player_add_item(user, player, item_id, amount: int):
     if player.user is not user:
         return "This player does not belong to you."
 
-    player_item = PlayerEquipmentModel.from_player(player)
+    item = item_service.get_item(item_id)
 
-    player_item.name = name
-    player_item.extra_info = extra_info
+    if item is None:
+        return "This item does not exist."
+
+    try:
+        amount = int(amount)
+    except:
+        amount = 1
+
+    player_item = PlayerEquipmentModel.from_player(player, item)
     player_item.amount = amount
-    # TODO: Add all other data to the item model.
 
     player_repository.add_and_commit(player_item)
     return ""
+
+
+def get_player_spells(user: UserModel, player: PlayerModel) -> Tuple[str, List[PlayerSpellModel]]:
+    if player.user is not user:
+        return "This player does not belong to you.", []
+
+    print(player_repository.get_player_spells(player))
+    return "", player_repository.get_player_spells(player)

@@ -202,8 +202,8 @@ function updateAbilities(id) {
         for (var i = 0; i < data.fields.length; i++) {
             li = document.createElement("li");
 
-            removeButton = "<img class='delete_button small_button' onclick='removeAbility(" + data.fields[i].id + ")'></img>"
-            editButton = "<img class='edit_button small_button' onclick=\"editAbility(" + data.fields[i].id + ",\'" + data.fields[i].text + "\')\"></img>"
+            removeButton = "<div class='delete_button small_button' onclick='removeAbility(" + data.fields[i].id + ")'></div>"
+            editButton = "<div class='edit_button small_button' onclick=\"editAbility(" + data.fields[i].id + ",\'" + data.fields[i].text + "\')\"></div>"
 
             splitIdx = data.fields[i].text.lastIndexOf(" ");
             lastWord = data.fields[i].text.substring(splitIdx) + " ";

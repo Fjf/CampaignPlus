@@ -1,6 +1,8 @@
 from flask import request
 from werkzeug.exceptions import BadRequest
-from server.lib.service import player_service, playthrough_service
+
+from server.lib.model.models import PlayerEquipmentModel
+from server.lib.service import player_service, playthrough_service, item_service
 from server.lib.user_session import session_user
 
 from server.views.api import api, json_api, require_login
@@ -43,7 +45,7 @@ def update_player():
     user = session_user()
 
     error = player_service.update_player(data["pid"], data["name"], data["race"], data["class_name"], data["backstory"],
-                                         data["code"], user)
+                                         user)
 
     success = error == ""
     return {
@@ -149,7 +151,7 @@ def add_player_item():
     data = request.get_json()
     user = session_user()
 
-    required_fields = ["player_id"]
+    required_fields = ["player_id", "item_id"]
 
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
@@ -158,18 +160,11 @@ def add_player_item():
 
     success = player is not None
 
-    error = player_service.add_item(
+    error = player_service.player_add_item(
         user,
         player,
-        data.get("name"),
-        data.get("extra_info"),
-        data.get("amount", 1),
-        data.get("is_weapon", False),
-
-        data.get("damage_type"),
-        data.get("dice_amount"),
-        data.get("dice_type"),
-        data.get("flat_damage")
+        data.get("item_id"),
+        data.get("amount", 1)
     )
 
     return {
@@ -198,15 +193,8 @@ def get_player_items():
         player_items = player_service.get_player_items(player)
         for player_item in player_items:
             items.append({
-                "name": player_item.name,
-                "extra_info": player_item.extra_info,
-                "amount": player_item.amount,
-                "is_weapon": player_item.is_weapon,
-
-                "damage_type": player_item.damage_type,
-                "dice_amount": player_item.dice_amount,
-                "dice_type": player_item.dice_type,
-                "flat_damage": player_item.flat_damage
+                "name": player_item.item.name,
+                "amount": int(player_item.amount)
             })
 
     return {
@@ -215,11 +203,47 @@ def get_player_items():
     }
 
 
+@api.route('/getplayerspells', methods=["POST"])
+@json_api()
+@require_login()
+def get_player_spells():
+    data = request.get_json()
+    user = session_user()
+
+    required_fields = ["player_id"]
+
+    if not data or (False in [x in data for x in required_fields]):
+        raise BadRequest()
+
+    player = player_service.find_player(data["player_id"])
+
+    success = player is not None
+
+    spells = []
+    if success:
+        error, player_spells = player_service.get_player_spells(user, player)
+        print(player_spells)
+        success = error == ""
+        for player_spell in player_spells:
+            spell = player_spell.spell
+            spells.append({
+                "name": spell.name,
+                "level": int(spell.level),
+                "phb_page": int(spell.phb_page)
+            })
+
+    return {
+        "success": success,
+        "spells": spells
+    }
+
+
 @api.route('/getplayerdata', methods=["POST"])
 @json_api()
 @require_login()
 def get_player():
     data = request.get_json()
+    user = session_user()
 
     if not data or "player_id" not in data:
         raise BadRequest()
@@ -229,7 +253,7 @@ def get_player():
     success = player is not None
 
     if success:
-        player_info = player_service.get_player_info(player)
+        player_info = player_service.get_player_info(user, player)
         if player_info is not None:
             info = {
                 "strength": player_info.strength,

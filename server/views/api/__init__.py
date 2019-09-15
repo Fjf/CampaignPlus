@@ -52,4 +52,5 @@ import server.views.api.playthrough  # noqa
 import server.views.api.map  # noqa
 import server.views.api.messages  # noqa
 import server.views.api.logs  # noqa
+import server.views.api.items  # noqa
 
