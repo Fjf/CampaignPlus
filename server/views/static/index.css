@@ -209,7 +209,7 @@ body {
     list-style-type: none;
 }
 #stats_abilities_list li {
-    word-break: break-all;
+    word-break: break-word;
 }
 
 .pc_table_left {
