@@ -165,6 +165,29 @@ function addAbility() {
     requestApiJsonData("api/addability", "POST", data, func)
 }
 
+
+function editAbility(id, orig_text) {
+    let text = prompt("Update the text below.", orig_text)
+    let enemy_id = document.getElementById("stats_id").value;
+
+    let func = function(data) {
+        if (!data.success) {
+            console.log("Something went wrong updating this ability.")
+            return
+        }
+
+        updateAbilities(enemy_id)
+    }
+
+    let data = {
+        ability_id: id,
+        text: text
+    }
+
+    requestApiJsonData("api/editability", "POST", data, func)
+}
+
+
 function updateAbilities(id) {
     let func = function(data) {
         if (!data.success) {
@@ -179,9 +202,15 @@ function updateAbilities(id) {
         for (var i = 0; i < data.fields.length; i++) {
             li = document.createElement("li");
 
-            removeButton = "<button onclick='removeAbility(" + data.fields[i].id + ")'>Del</button>"
+            removeButton = "<img class='delete_button small_button' onclick='removeAbility(" + data.fields[i].id + ")'></img>"
+            editButton = "<img class='edit_button small_button' onclick=\"editAbility(" + data.fields[i].id + ",\'" + data.fields[i].text + "\')\"></img>"
 
-            li.innerHTML = data.fields[i].text + removeButton;
+            splitIdx = data.fields[i].text.lastIndexOf(" ");
+            lastWord = data.fields[i].text.substring(splitIdx) + " ";
+            mainText = data.fields[i].text.substring(splitIdx, -1);
+
+
+            li.innerHTML = "<span><span style='width:fit-content; '>" + mainText + "</span><span>" + lastWord + editButton + removeButton + "</span></span>";
             ul.appendChild(li)
         }
     }
@@ -192,6 +221,7 @@ function updateAbilities(id) {
 
     requestApiJsonData("api/getabilities", "POST", data, func)
 }
+
 
 function removeAbility(id) {
     let enemy_id = document.getElementById("stats_id").value;

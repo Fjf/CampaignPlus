@@ -1,7 +1,7 @@
-from typing import Optional
+from typing import Optional, List
 
 from server.lib.database import request_session
-from server.lib.model.models import PlayerModel, PlaythroughModel, PlayerInfoModel
+from server.lib.model.models import PlayerModel, PlaythroughModel, PlayerInfoModel, PlayerEquipmentModel
 
 
 def get_players(playthrough_id: int):
@@ -13,7 +13,7 @@ def get_players(playthrough_id: int):
         .all()
 
 
-def create_player(player):
+def add_and_commit(player):
     db = request_session()
 
     db.add(player)
@@ -32,8 +32,16 @@ def get_player_info(player: PlayerModel) -> Optional[PlayerInfoModel]:
     db = request_session()
 
     return db.query(PlayerInfoModel) \
-        .filter(PlayerInfoModel.id == player.id) \
+        .filter(PlayerInfoModel.player_id == player.id) \
         .one_or_none()
+
+
+def get_player_items(player: PlayerModel) -> List[PlayerEquipmentModel]:
+    db = request_session()
+
+    return db.query(PlayerEquipmentModel) \
+        .filter(PlayerEquipmentModel.player_id == player.id) \
+        .all()
 
 
 def delete_player(player: PlayerModel):

@@ -2,6 +2,7 @@ import datetime
 
 from sqlalchemy import Column, Integer, String, ForeignKey, LargeBinary, DateTime, Boolean
 from sqlalchemy.orm import relationship, deferred
+from sqlalchemy.util import symbol
 
 from server.lib.database import OrmModelBase
 
@@ -103,7 +104,7 @@ class EnemyAbilityModel(OrmModelBase):
     """
 
     enemy_id = Column(Integer(), ForeignKey("enemy.id"), nullable=False)
-    enemy = relationship("EnemyModel")
+    enemy: EnemyModel = relationship("EnemyModel")
 
     text = Column(String(), nullable=False)
 
@@ -355,4 +356,98 @@ class PlayerInfoModel(OrmModelBase):
     def from_player(cls, player: PlayerModel):
         c = cls()
         c.player_id = player.id
+        return c
+
+
+class ItemModel(OrmModelBase):
+    """
+    The datamodel which stores items.
+
+    Left join with WeaponModel to add possible weapon attributes to the items.
+    """
+
+    __tablename__ = 'item'
+
+    id = Column(Integer(), primary_key=True)
+
+    name = Column(String(), nullable=False)
+
+    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"), nullable=True)
+    playthrough = relationship("PlaythroughModel")
+
+    # Weapon or item
+    category = Column(String(), nullable=False)
+
+    # Price of item in copper pieces
+    # A value of 100+ is then silver, 10000+ is gold
+    cost = Column(Integer(), nullable=False)
+
+    # Weight in lbs, as defined in the phb.
+    weight = Column(Integer(), nullable=True)
+
+    @classmethod
+    def from_name(cls, name: String):
+        c = cls()
+        c.name = name
+        return c
+
+
+class WeaponModel(OrmModelBase):
+    """
+        The player data model contains information about weapons and items,
+        and is linked via a player_id.
+
+        """
+
+    __tablename__ = 'weapon'
+
+    id = Column(Integer(), primary_key=True)
+
+    item_id = Column(Integer(), ForeignKey("item.id"), nullable=False)
+    item = relationship("ItemModel")
+
+    dice_amount = Column(Integer(), nullable=True)
+    dice_type = Column(Integer(), nullable=True)
+    damage_type = Column(String(), nullable=True)
+
+    range_normal = Column(Integer(), nullable=True)
+    range_long = Column(Integer(), nullable=True)
+
+    throw_range_normal = Column(Integer(), nullable=True)
+    throw_range_long = Column(Integer(), nullable=True)
+
+    # flat_damage = Column(Integer(), nullable=True)
+
+    @classmethod
+    def from_item(cls, item: ItemModel):
+        c = cls()
+        c.item_id = item.id
+        return c
+
+
+class PlayerEquipmentModel(OrmModelBase):
+    """
+    The player data model contains information about weapons and items,
+    and is linked via a player_id.
+
+    """
+
+    __tablename__ = 'player_equipment'
+
+    id = Column(Integer(), primary_key=True)
+
+    player_id = Column(Integer(), ForeignKey("player.id"), nullable=False)
+    player = relationship("PlayerModel")
+
+    item_id = Column(Integer(), ForeignKey("item.id"), nullable=False)
+    item = relationship("ItemModel")
+
+    amount = Column(Integer(), nullable=False)
+    extra_info = Column(String(), nullable=True)
+
+    @classmethod
+    def from_player(cls, player: PlayerModel, item: ItemModel):
+        c = cls()
+        c.player_id = player.id
+        c.item_id = item.id
         return c

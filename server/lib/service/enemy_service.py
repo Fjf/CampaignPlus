@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from server.lib.model.models import EnemyModel, EnemyAbilityModel, UserModel
-from server.lib.repository import enemy_repository
+from server.lib.repository import enemy_repository, repository
 
 
 def get_enemies(user: UserModel):
@@ -81,4 +81,15 @@ def delete_ability(ability_id: int, enemy_id: int, user: UserModel):
         return "This ability does not belong to this enemy"
 
     enemy_repository.delete_ability(ability)
+    return ""
+
+
+def edit_ability(ability_id, text, user):
+    ability = enemy_repository.get_ability(ability_id)
+    if ability.enemy.user != user:
+        return "The ability you are trying to edit does not belong to an enemy created by you."
+
+    ability.text = text
+    repository.add_and_commit(ability)
+
     return ""

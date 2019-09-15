@@ -74,6 +74,27 @@ def add_ability():
     }
 
 
+@api.route('/editability', methods=["POST"])
+@json_api()
+@require_login()
+def edit_ability():
+    data = request.get_json()
+
+    required_fields = ["ability_id", "text"]
+
+    if not data or (False in [x in required_fields for x in data]):
+        raise BadRequest()
+
+    user = session_user()
+    error = enemy_service.edit_ability(data["ability_id"], data["text"], user)
+
+    success = error == ""
+    return {
+        "success": success,
+        "error": error
+    }
+
+
 @api.route('/getabilities', methods=["POST"])
 @json_api()
 @require_login()

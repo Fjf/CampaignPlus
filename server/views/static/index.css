@@ -542,3 +542,27 @@ input {
     flex-direction: row;
     margin: 5px;
 }
+
+.edit_button {
+    background-image: url('images/base/edit_icon.svg');
+    background-position: 0px 0px;
+    background-repeat: no-repeat;
+    height: 40px;
+    width: 40px;
+}
+
+
+.delete_button {
+    background-image: url('images/base/trash_bin.svg');
+    background-position: 0px 0px;
+    background-repeat: no-repeat;
+    height: 40px;
+    width: 40px;
+}
+
+.small_button {
+    width: 20px;
+    height: 20px;
+    margin: 2px;
+    cursor: pointer;
+}

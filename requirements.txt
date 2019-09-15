@@ -7,3 +7,4 @@ opencv-python>=4.0.0.21
 matplotlib>=3.0.3
 ExifRead>=2.1.2
 Pillow>=6.0.0
+requests>=2.22.0

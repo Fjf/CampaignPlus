@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from server.lib.database import request_session
-from server.lib.model.models import PlayerModel, UserModel, PlayerInfoModel
+from server.lib.model.models import PlayerModel, UserModel, PlayerInfoModel, PlayerEquipmentModel
 from server.lib.model.models import PlayerModel, UserModel, PlaythroughModel
 from server.lib.repository import player_repository
 from server.lib.service import playthrough_service
@@ -25,7 +25,7 @@ def create_player(name: str, race: str, class_name: str, backstory: str, code: s
     player.backstory = backstory
     player.class_name = class_name
 
-    player_repository.create_player(player)
+    player_repository.add_and_commit(player)
     return ""
 
 
@@ -60,7 +60,7 @@ def update_player(pid: int, name: str, race: str, class_name: str, backstory: st
     player.race_name = race
     player.class_name = class_name
 
-    player_repository.create_player(player)
+    player_repository.add_and_commit(player)
     return ""
 
 
@@ -74,6 +74,10 @@ def get_player(user: UserModel, playthrough_id: int) -> Optional[PlayerModel]:
 
 def get_player_info(player: PlayerModel) -> Optional[PlayerInfoModel]:
     return player_repository.get_player_info(player)
+
+
+def get_player_items(player: PlayerModel) -> List[PlayerEquipmentModel]:
+    return player_repository.get_player_items(player)
 
 
 def check_backstory(backstory: str) -> bool:
@@ -111,6 +115,21 @@ def set_player_info(user, player_id, strength, dexterity, constitution, intellig
     player_info.armor_class = armor_class if armor_class is not None else player_info.armor_class
     player_info.speed = speed if speed is not None else player_info.speed
 
-    player_repository.create_player(player_info)
+    player_repository.add_and_commit(player_info)
 
+    return ""
+
+
+def add_item(user, player, name, extra_info, amount, is_weapon, damage_type, dice_amount, dice_type, flat_damage):
+    if player.user is not user:
+        return "This player does not belong to you."
+
+    player_item = PlayerEquipmentModel.from_player(player)
+
+    player_item.name = name
+    player_item.extra_info = extra_info
+    player_item.amount = amount
+    # TODO: Add all other data to the item model.
+
+    player_repository.add_and_commit(player_item)
     return ""
