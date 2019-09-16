@@ -2,7 +2,7 @@ from typing import List, Optional, Tuple
 
 from server.lib.model.models import PlayerInfoModel, PlayerEquipmentModel, SpellModel, PlayerSpellModel
 from server.lib.model.models import PlayerModel, UserModel, PlaythroughModel
-from server.lib.repository import player_repository
+from server.lib.repository import player_repository, repository
 from server.lib.service import playthrough_service, item_service
 
 
@@ -145,9 +145,46 @@ def player_add_item(user, player, item_id, amount: int):
     return ""
 
 
-def get_player_spells(user: UserModel, player: PlayerModel) -> Tuple[str, List[PlayerSpellModel]]:
+def get_player_spells(user: UserModel, player: PlayerModel) -> Tuple[str, List[SpellModel]]:
     if player.user is not user:
         return "This player does not belong to you.", []
 
-    print(player_repository.get_player_spells(player))
     return "", player_repository.get_player_spells(player)
+
+
+def get_spells(user, player):
+    if player.user is not user:
+        return "This player does not belong to you.", []
+
+    return "", player_repository.get_spells(player)
+
+
+def get_spell(player: PlayerModel, spell_id: int):
+    return player_repository.get_spell(player, spell_id)
+
+
+def player_add_spell(user: UserModel, player: PlayerModel, spell_id: int):
+    if player.user is not user:
+        return "This player does not belong to you."
+
+    spell = get_spell(player, spell_id)
+    if spell is None:
+        return "This spell does not exist."
+
+    player_spell = PlayerSpellModel.from_player_spell(player, spell)
+    repository.add_and_commit(player_spell)
+
+    return ""
+
+
+def delete_player_spell(user: UserModel, player: PlayerModel, spell_id: int):
+    if player.user is not user:
+        return "This player does not belong to you."
+
+    spell = get_spell(player, spell_id)
+    if spell is None:
+        return "This spell does not exist."
+
+    player_repository.delete_spell(player, spell)
+
+    return ""

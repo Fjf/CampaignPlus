@@ -173,6 +173,37 @@ def add_player_item():
     }
 
 
+@api.route('/addplayerspell', methods=["POST"])
+@json_api()
+@require_login()
+def add_player_spell():
+    data = request.get_json()
+    user = session_user()
+
+    required_fields = ["player_id", "spell_id"]
+
+    if not data or (False in [x in data for x in required_fields]):
+        raise BadRequest()
+
+    player = player_service.find_player(data["player_id"])
+
+    success = player is not None
+    error = "Player is not found."
+
+    if success:
+        error = player_service.player_add_spell(
+            user,
+            player,
+            data.get("spell_id")
+        )
+
+    success = error == ""
+    return {
+        "success": success,
+        "error": error
+    }
+
+
 @api.route('/getplayeritems', methods=["POST"])
 @json_api()
 @require_login()
@@ -203,6 +234,34 @@ def get_player_items():
     }
 
 
+@api.route('/deleteplayerspell', methods=["POST"])
+@json_api()
+@require_login()
+def delete_player_spell():
+    data = request.get_json()
+    user = session_user()
+
+    required_fields = ["player_id", "spell_id"]
+
+    if not data or (False in [x in data for x in required_fields]):
+        raise BadRequest()
+
+    player = player_service.find_player(data["player_id"])
+
+    success = player is not None
+
+    if success:
+        error = player_service.delete_player_spell(user, player, data.get("spell_id", -1))
+    else:
+        error = "This player does not exist."
+
+    return {
+        "success": success,
+        "error": error
+    }
+
+
+
 @api.route('/getplayerspells', methods=["POST"])
 @json_api()
 @require_login()
@@ -227,6 +286,41 @@ def get_player_spells():
         for player_spell in player_spells:
             spell = player_spell.spell
             spells.append({
+                "id": spell.id,
+                "name": spell.name,
+                "level": int(spell.level),
+                "phb_page": int(spell.phb_page)
+            })
+
+    return {
+        "success": success,
+        "spells": spells
+    }
+
+
+@api.route('/getspells', methods=["POST"])
+@json_api()
+@require_login()
+def get_spells():
+    data = request.get_json()
+    user = session_user()
+
+    required_fields = ["player_id"]
+
+    if not data or (False in [x in data for x in required_fields]):
+        raise BadRequest()
+
+    player = player_service.find_player(data["player_id"])
+
+    success = player is not None
+
+    spells = []
+    if success:
+        error, spells_list = player_service.get_spells(user, player)
+        success = error == ""
+        for spell in spells_list:
+            spells.append({
+                "id": spell.id,
                 "name": spell.name,
                 "level": int(spell.level),
                 "phb_page": int(spell.phb_page)

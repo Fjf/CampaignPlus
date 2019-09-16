@@ -2,7 +2,7 @@ from typing import Optional, List
 
 from server.lib.database import request_session
 from server.lib.model.models import PlayerModel, PlaythroughModel, PlayerInfoModel, PlayerEquipmentModel, ItemModel, \
-    PlayerSpellModel
+    PlayerSpellModel, SpellModel
 
 
 def get_players(playthrough_id: int):
@@ -74,3 +74,33 @@ def get_player_spells(player: PlayerModel) -> List[PlayerSpellModel]:
     return db.query(PlayerSpellModel) \
         .filter(PlayerSpellModel.player_id == player.id) \
         .all()
+
+
+def get_spells(player: PlayerModel) -> List[PlayerSpellModel]:
+    db = request_session()
+
+    return db.query(SpellModel) \
+        .filter(player.playthrough_id == SpellModel.playthrough_id or SpellModel.playthrough_id == -1) \
+        .all()
+
+
+def get_spell(player: PlayerModel, spell_id: int) -> Optional[SpellModel]:
+    db = request_session()
+
+    return db.query(SpellModel) \
+        .filter(player.playthrough_id == SpellModel.playthrough_id or SpellModel.playthrough_id == -1) \
+        .filter(SpellModel.id == spell_id) \
+        .one_or_none()
+
+
+def delete_spell(player: PlayerModel, spell: SpellModel):
+    db = request_session()
+
+    psm_list = db.query(PlayerSpellModel) \
+        .filter(PlayerSpellModel.spell_id == spell.id and PlayerSpellModel.player_id == player.id) \
+        .all()
+
+    for psm in psm_list:
+        db.delete(psm)
+
+    db.commit()

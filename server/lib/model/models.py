@@ -510,7 +510,7 @@ class PlayerSpellModel(OrmModelBase):
     spell: SpellModel = relationship("SpellModel")
 
     @classmethod
-    def from_player(cls, player: PlayerModel, spell: SpellModel):
+    def from_player_spell(cls, player: PlayerModel, spell: SpellModel):
         c = cls()
         c.player_id = player.id
         c.spell_id = spell.id
