@@ -9,4 +9,5 @@ env/*
 *.exe
 !server/views/static/images/base/*
 !server/views/static/images/battlemap/*
-
+app/*
+app

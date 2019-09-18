@@ -1,7 +1,7 @@
 from flask import request
 from werkzeug.exceptions import BadRequest
 
-from server.lib.model.models import PlayerEquipmentModel
+from server.lib.model.models import PlayerEquipmentModel, SpellModel
 from server.lib.service import player_service, playthrough_service, item_service
 from server.lib.user_session import session_user
 
@@ -261,7 +261,6 @@ def delete_player_spell():
     }
 
 
-
 @api.route('/getplayerspells', methods=["POST"])
 @json_api()
 @require_login()
@@ -284,11 +283,21 @@ def get_player_spells():
         print(player_spells)
         success = error == ""
         for player_spell in player_spells:
-            spell = player_spell.spell
+            spell: SpellModel = player_spell.spell
             spells.append({
                 "id": spell.id,
                 "name": spell.name,
                 "level": int(spell.level),
+                "duration": spell.duration,
+                "higher_level": spell.higher_level,
+                "casting_time": spell.casting_time,
+                "concentration": spell.concentration,
+                "ritual": spell.ritual,
+                "material": spell.material,
+                "components": spell.components,
+                "spell_range": spell.spell_range,
+                "description": spell.description,
+                "school": spell.school,
                 "phb_page": int(spell.phb_page)
             })
 

@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, send_from_directory
 
 from server import app
 from server.lib.user_session import session_is_authed, session_user_set, session_user
@@ -72,6 +72,11 @@ def reset(code):
 @require_login()
 def settings():
     return render_template("settings.html")
+
+
+@app.route('/app', methods=['GET'])
+def download():
+    return send_from_directory(directory="app", filename="DnDool.apk")
 
 
 print("Loaded index successfully.")
