@@ -1,3 +1,6 @@
+import qrcode
+import os
+
 from flask import render_template, send_from_directory
 
 from server import app
@@ -38,6 +41,8 @@ def join_playthrough(code):
 
     playthrough_service.join_playthrough(user, code)
 
+    playthrough_service.generate_qr(code)
+
     return render_template('create_pc.html', code=code, username=user.name)
 
 
@@ -76,7 +81,10 @@ def settings():
 
 @app.route('/app', methods=['GET'])
 def download():
-    return send_from_directory(directory="app", filename="DnDool.apk")
+    import os
+    uploads = os.path.join(app.root_path, "app")
+    print(uploads)
+    return send_from_directory(directory=uploads, filename="app-debug.apk", as_attachment=True)
 
 
 print("Loaded index successfully.")

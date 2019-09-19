@@ -1,7 +1,7 @@
 import string
 from datetime import datetime
 from random import randint
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from sqlalchemy.exc import IntegrityError
 
@@ -74,6 +74,15 @@ def find_playthrough_with_id(pid: int) -> Optional[PlaythroughModel]:
     db = request_session()
 
     return db.query(PlaythroughModel) \
+        .filter(PlaythroughModel.id == pid) \
+        .one_or_none()
+
+
+def get_playthrough_code(pid: int) -> Optional[Tuple[PlaythroughModel, PlaythroughJoinCodeModel]]:
+    db = request_session()
+
+    return db.query(PlaythroughModel, PlaythroughJoinCodeModel) \
+        .join(PlaythroughJoinCodeModel) \
         .filter(PlaythroughModel.id == pid) \
         .one_or_none()
 

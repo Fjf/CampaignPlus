@@ -68,6 +68,7 @@ function loadPlaythrough() {
         }
         document.getElementById("playthrough_link_url").value = data.url
         document.getElementById("playthrough_map_url").value = data.url.replace("join", "map")
+        document.getElementById("playthrough_qr_image").src = data.image_src
 
         div = document.getElementById("content_selected_playthrough");
 

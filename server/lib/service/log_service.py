@@ -25,7 +25,7 @@ def create_log(user: UserModel, playthrough_code: str, title: str, text: str) ->
     if playthrough is None:
         return "This playthrough does not exist."
 
-    player = player_service.get_player(user, playthrough.id)
+    player = player_service.get_user_players(user, playthrough.id)[0]
     message_model = LogModel.from_playthrough_creator_content(playthrough, player, title, text)
 
     log_repository.create_log(message_model)

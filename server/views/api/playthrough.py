@@ -52,10 +52,15 @@ def get_playthrough_url():
     if not data or "id" not in data:
         raise BadRequest()
 
-    id = data["id"]
-    url = playthrough_service.get_playthrough_url(id, user)
+    pid = data["id"]
+    url = playthrough_service.get_playthrough_url(pid, user)
+    playthrough, code_model = playthrough_service.get_playthrough_code(pid)
+    playthrough_service.generate_qr(code_model.code)
 
-    return {"url": url}
+    return {
+        "url": url,
+        "image_src": "/static/images/qr_codes/" + code_model.code + ".png"
+    }
 
 
 @api.route('/getplaythroughname', methods=["POST"])
@@ -78,6 +83,26 @@ def get_playthrough_name():
     return {
         "success": success,
         "name": name
+    }
+
+
+@api.route('/joinplaythrough', methods=["POST"])
+@json_api()
+@require_login()
+def join_playthrough():
+    user = session_user()
+    data = request.get_json()
+
+    required_fields = ["playthrough_code"]
+
+    if not data or (False in [x in data for x in required_fields]):
+        raise BadRequest()
+
+    error = playthrough_service.join_playthrough(user, data.get("playthrough_code").upper())
+    success = error == ""
+    return {
+        "success": success,
+        "error": error
     }
 
 

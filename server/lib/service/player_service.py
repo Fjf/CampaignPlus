@@ -63,18 +63,44 @@ def update_player(pid: int, name: str, race: str, class_name: str, backstory: st
     return ""
 
 
-def get_player(user: UserModel, playthrough_id: int) -> Optional[PlayerModel]:
+def get_player(user: UserModel):
+    pass
+
+
+def get_user_players(user: UserModel, playthrough_id: int) -> List[PlayerModel]:
     players = player_repository.get_players(playthrough_id)
+    user_players = []
     for player in players:
         if player.user == user:
-            return player
-    return None
+            user_players.append(player)
+    return user_players
 
 
 def get_player_info(user: UserModel, player: PlayerModel) -> Optional[PlayerInfoModel]:
     result = player_repository.get_player_info(player)
     if result is None:
-        set_player_info(user, player.id, 1, 1, 1, 1, 1, 1, False, False, False, False, False, False, 1, 1, 60)
+        player_info = PlayerInfoModel.from_player(player)
+
+        player_info.strength = 1
+        player_info.dexterity = 1
+        player_info.constitution = 1
+        player_info.intelligence = 1
+        player_info.wisdom = 1
+        player_info.charisma = 1
+
+        player_info.saving_throws_str = False
+        player_info.saving_throws_dex = False
+        player_info.saving_throws_con = False
+        player_info.saving_throws_int = False
+        player_info.saving_throws_wis = False
+        player_info.saving_throws_cha = False
+
+        player_info.max_hp = 10
+        player_info.armor_class = 10
+        player_info.speed = 60
+
+        player_repository.add_and_commit(player_info)
+
         result = player_repository.get_player_info(player)
 
     return result

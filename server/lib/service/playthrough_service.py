@@ -1,7 +1,12 @@
-from typing import List, Optional
+import os
+from typing import List, Optional, Tuple
 
-from server.lib.model.models import PlaythroughModel, UserModel
-from server.lib.repository import playthrough_repository
+import qrcode
+
+from server import app
+from server.lib.model.models import PlaythroughModel, UserModel, PlaythroughJoinCodeModel
+from server.lib.repository import playthrough_repository, player_repository
+from server.lib.service import player_service
 
 
 def create_playthrough(name, datetime, user: UserModel):
@@ -27,10 +32,18 @@ def get_playthrough_url(id: int, user: UserModel) -> Optional[str]:
 
 
 def join_playthrough(user: UserModel, code: str):
-    # Check if user already joined the playthrough, if so, do not let the player add a new player character.
+    playthrough = find_playthrough_with_code(code)
+    if playthrough is None:
+        return "This playthrough does not exist."
 
-    # Create an empty player character for the user and refer them to a new page
-    return None
+    players = player_service.get_user_players(user, playthrough.id)
+
+    # Only create a new player if no players are yet created for this playthrough.
+    if len(players) == 0:
+        # Create an empty player character for the user and refer them to a new page
+        player_service.create_player(user.name, "", "", "", code, user)
+
+    return ""
 
 
 def find_playthrough_with_code(code: str) -> Optional[PlaythroughModel]:
@@ -39,3 +52,15 @@ def find_playthrough_with_code(code: str) -> Optional[PlaythroughModel]:
 
 def find_playthrough_with_id(pid: int) -> Optional[PlaythroughModel]:
     return playthrough_repository.find_playthrough_with_id(pid)
+
+
+def get_playthrough_code(pid: int) -> Optional[Tuple[PlaythroughModel, PlaythroughJoinCodeModel]]:
+    return playthrough_repository.get_playthrough_code(pid)
+
+
+def generate_qr(code: str):
+    qr_filename = "views/static/images/qr_codes/%s.png" % code
+    qr_filename = os.path.join(app.root_path, qr_filename)
+    if not os.path.isfile(qr_filename):
+        img = qrcode.make(code)
+        img.get_image().save(qr_filename)

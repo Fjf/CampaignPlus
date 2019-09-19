@@ -8,3 +8,4 @@ matplotlib>=3.0.3
 ExifRead>=2.1.2
 Pillow>=6.0.0
 requests>=2.22.0
+qrcode>=6.1
