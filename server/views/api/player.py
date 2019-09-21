@@ -1,7 +1,7 @@
 from flask import request
 from werkzeug.exceptions import BadRequest
 
-from server.lib.model.models import PlayerEquipmentModel, SpellModel
+from server.lib.model.models import PlayerEquipmentModel, SpellModel, ItemModel, WeaponModel
 from server.lib.service import player_service, playthrough_service, item_service
 from server.lib.user_session import session_user
 
@@ -84,6 +84,50 @@ def get_players():
         })
 
     return data
+
+
+@api.route('/getuserplayers', methods=["GET"])
+@json_api()
+@require_login()
+def get_user_players():
+    user = session_user()
+
+    data = []
+
+    players = player_service.get_user_players(user)
+    for player in players:
+        data.append({
+            "id": player.id,
+            "user_name": player.user.name,
+            "name": player.name,
+            "class": player.class_name
+        })
+
+    return {
+        "success": True,
+        "players": data
+    }
+
+
+@api.route('/setplayerplaythrough', methods=["POST"])
+@json_api()
+@require_login()
+def set_player_playthrough():
+    user = session_user()
+    data = request.get_json()
+
+    required_fields = ["player_id", "playthrough_code"]
+
+    if not data or (False in [x in data for x in required_fields]):
+        raise BadRequest()
+
+    error = player_service.update_player_playthrough(user, data.get("player_id"), data.get("playthrough_code"))
+
+    success = error == ""
+    return {
+        "success": success,
+        "error": error
+    }
 
 
 @api.route('/deleteplayer', methods=["POST"])
@@ -221,12 +265,32 @@ def get_player_items():
 
     items = []
     if success:
-        player_items = player_service.get_player_items(player)
-        for player_item in player_items:
-            items.append({
+        data = player_service.get_player_items(player)
+        player_item: PlayerEquipmentModel
+        weapon: WeaponModel
+        for player_item, weapon in data:
+            data = {
+                "id": player_item.item.id,
+                "category": player_item.item.category,
+
                 "name": player_item.item.name,
-                "amount": int(player_item.amount)
-            })
+                "amount": int(player_item.amount),
+                "weight": int(player_item.item.weight),
+                "value": player_item.item.cost
+            }
+
+            if weapon is not None:
+                data.update({
+                    "dice_amount": weapon.dice_amount,
+                    "dice_type": weapon.dice_type,
+                    "damage_type": weapon.damage_type,
+                    "range_normal": weapon.range_normal,
+                    "range_long": weapon.range_long,
+                    "throw_range_normal": weapon.throw_range_normal,
+                    "throw_range_long": weapon.throw_range_long
+                })
+
+            items.append(data)
 
     return {
         "success": success,
@@ -280,7 +344,6 @@ def get_player_spells():
     spells = []
     if success:
         error, player_spells = player_service.get_player_spells(user, player)
-        print(player_spells)
         success = error == ""
         for player_spell in player_spells:
             spell: SpellModel = player_spell.spell

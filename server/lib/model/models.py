@@ -193,8 +193,10 @@ class PlayerModel(OrmModelBase):
     def from_name_playthrough_user(cls, name: str, playthrough: PlaythroughModel, user: UserModel):
         c = cls()
         c.name = name
-        c.playthrough_id = playthrough.id
         c.user_id = user.id
+
+        if playthrough is not None:
+            c.playthrough_id = playthrough.id
         return c
 
 
@@ -440,7 +442,7 @@ class PlayerEquipmentModel(OrmModelBase):
     player = relationship("PlayerModel")
 
     item_id = Column(Integer(), ForeignKey("item.id"), nullable=False)
-    item = relationship("ItemModel")
+    item: ItemModel = relationship("ItemModel")
 
     amount = Column(Integer(), nullable=False)
     extra_info = Column(String(), nullable=True)

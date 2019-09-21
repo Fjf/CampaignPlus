@@ -36,7 +36,7 @@ def join_playthrough(user: UserModel, code: str):
     if playthrough is None:
         return "This playthrough does not exist."
 
-    players = player_service.get_user_players(user, playthrough.id)
+    players = player_service.get_user_players_by_id(user, playthrough.id)
 
     # Only create a new player if no players are yet created for this playthrough.
     if len(players) == 0:

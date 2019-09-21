@@ -1,8 +1,8 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple
 
 from server.lib.database import request_session
 from server.lib.model.models import PlayerModel, PlaythroughModel, PlayerInfoModel, PlayerEquipmentModel, ItemModel, \
-    PlayerSpellModel, SpellModel
+    PlayerSpellModel, SpellModel, UserModel, WeaponModel
 
 
 def get_players(playthrough_id: int):
@@ -37,11 +37,12 @@ def get_player_info(player: PlayerModel) -> Optional[PlayerInfoModel]:
         .one_or_none()
 
 
-def get_player_items(player: PlayerModel) -> List[PlayerEquipmentModel]:
+def get_player_items(player: PlayerModel) -> List[Tuple[PlayerEquipmentModel, WeaponModel]]:
     db = request_session()
 
-    return db.query(PlayerEquipmentModel) \
+    return db.query(PlayerEquipmentModel, WeaponModel) \
         .filter(PlayerEquipmentModel.player_id == player.id) \
+        .join(WeaponModel, PlayerEquipmentModel.item_id == WeaponModel.item_id, isouter=True) \
         .all()
 
 
@@ -104,3 +105,19 @@ def delete_spell(player: PlayerModel, spell: SpellModel):
         db.delete(psm)
 
     db.commit()
+
+
+def get_user_players(user: UserModel) -> List[PlayerModel]:
+    db = request_session()
+
+    return db.query(PlayerModel) \
+        .filter(PlayerModel.user_id == user.id) \
+        .all()
+
+
+def get_player(player_id: int) -> PlayerModel:
+    db = request_session()
+
+    return db.query(PlayerModel) \
+        .filter(PlayerModel.id == player_id) \
+        .one_or_none()

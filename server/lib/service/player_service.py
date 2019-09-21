@@ -1,6 +1,7 @@
 from typing import List, Optional, Tuple
 
-from server.lib.model.models import PlayerInfoModel, PlayerEquipmentModel, SpellModel, PlayerSpellModel
+from server.lib.model.models import PlayerInfoModel, PlayerEquipmentModel, SpellModel, PlayerSpellModel, ItemModel, \
+    WeaponModel
 from server.lib.model.models import PlayerModel, UserModel, PlaythroughModel
 from server.lib.repository import player_repository, repository
 from server.lib.service import playthrough_service, item_service
@@ -14,9 +15,6 @@ def get_players(playthrough: PlaythroughModel) -> List[PlayerModel]:
 
 def create_player(name: str, race: str, class_name: str, backstory: str, code: str, user: UserModel):
     playthrough = playthrough_service.find_playthrough_with_code(code)
-
-    if not playthrough:
-        return "This playthrough does not exist."
 
     player = PlayerModel.from_name_playthrough_user(name, playthrough, user)
 
@@ -67,7 +65,11 @@ def get_player(user: UserModel):
     pass
 
 
-def get_user_players(user: UserModel, playthrough_id: int) -> List[PlayerModel]:
+def get_user_players(user: UserModel) -> List[PlayerModel]:
+    return player_repository.get_user_players(user)
+
+
+def get_user_players_by_id(user: UserModel, playthrough_id: int) -> List[PlayerModel]:
     players = player_repository.get_players(playthrough_id)
     user_players = []
     for player in players:
@@ -106,7 +108,7 @@ def get_player_info(user: UserModel, player: PlayerModel) -> Optional[PlayerInfo
     return result
 
 
-def get_player_items(player: PlayerModel) -> List[PlayerEquipmentModel]:
+def get_player_items(player: PlayerModel) -> List[Tuple[PlayerEquipmentModel, WeaponModel]]:
     return player_repository.get_player_items(player)
 
 
@@ -127,23 +129,23 @@ def set_player_info(user, player_id, strength, dexterity, constitution, intellig
     if player_info is None:
         player_info = PlayerInfoModel.from_player(player)
 
-    player_info.strength = strength if strength is not None else player_info.strength
-    player_info.dexterity = dexterity if dexterity is not None else player_info.dexterity
-    player_info.constitution = constitution if constitution is not None else player_info.constitution
-    player_info.intelligence = intelligence if intelligence is not None else player_info.intelligence
-    player_info.wisdom = wisdom if wisdom is not None else player_info.wisdom
-    player_info.charisma = charisma if charisma is not None else player_info.charisma
+    player_info.strength = strength or player_info.strength
+    player_info.dexterity = dexterity or player_info.dexterity
+    player_info.constitution = constitution or player_info.constitution
+    player_info.intelligence = intelligence or player_info.intelligence
+    player_info.wisdom = wisdom or player_info.wisdom
+    player_info.charisma = charisma or player_info.charisma
 
-    player_info.saving_throws_str = saving_throws_str if saving_throws_str is not None else player_info.saving_throws_str
-    player_info.saving_throws_dex = saving_throws_dex if saving_throws_dex is not None else player_info.saving_throws_dex
-    player_info.saving_throws_con = saving_throws_con if saving_throws_con is not None else player_info.saving_throws_con
-    player_info.saving_throws_int = saving_throws_int if saving_throws_int is not None else player_info.saving_throws_int
-    player_info.saving_throws_wis = saving_throws_wis if saving_throws_wis is not None else player_info.saving_throws_wis
-    player_info.saving_throws_cha = saving_throws_cha if saving_throws_cha is not None else player_info.saving_throws_cha
+    player_info.saving_throws_str = saving_throws_str or player_info.saving_throws_str
+    player_info.saving_throws_dex = saving_throws_dex or player_info.saving_throws_dex
+    player_info.saving_throws_con = saving_throws_con or player_info.saving_throws_con
+    player_info.saving_throws_int = saving_throws_int or player_info.saving_throws_int
+    player_info.saving_throws_wis = saving_throws_wis or player_info.saving_throws_wis
+    player_info.saving_throws_cha = saving_throws_cha or player_info.saving_throws_cha
 
-    player_info.max_hp = max_hp if max_hp is not None else player_info.max_hp
-    player_info.armor_class = armor_class if armor_class is not None else player_info.armor_class
-    player_info.speed = speed if speed is not None else player_info.speed
+    player_info.max_hp = max_hp or player_info.max_hp
+    player_info.armor_class = armor_class or player_info.armor_class
+    player_info.speed = speed or player_info.speed
 
     player_repository.add_and_commit(player_info)
 
@@ -212,5 +214,22 @@ def delete_player_spell(user: UserModel, player: PlayerModel, spell_id: int):
         return "This spell does not exist."
 
     player_repository.delete_spell(player, spell)
+
+    return ""
+
+
+def update_player_playthrough(user: UserModel, player_id: int, playthrough_code: str) -> str:
+    player = player_repository.get_player(player_id)
+    if player is None:
+        return "This player does not exist."
+    if player.user_id != user.id:
+        return "This player does not belong to you."
+
+    playthrough = playthrough_service.find_playthrough_with_code(playthrough_code)
+    if playthrough is None:
+        return "This playthrough does not exist."
+
+    player.playthrough_id = playthrough.id
+    repository.add_and_commit(player)
 
     return ""
