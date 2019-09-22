@@ -121,3 +121,25 @@ def get_player(player_id: int) -> PlayerModel:
     return db.query(PlayerModel) \
         .filter(PlayerModel.id == player_id) \
         .one_or_none()
+
+
+def player_get_item(player, item_id):
+    db = request_session()
+
+    return db.query(ItemModel) \
+        .filter(player.playthrough_id == ItemModel.playthrough_id or ItemModel.playthrough_id == -1) \
+        .filter(ItemModel.id == item_id) \
+        .one_or_none()
+
+
+def delete_item(player: PlayerModel, item: ItemModel):
+    db = request_session()
+
+    pim_list = db.query(PlayerEquipmentModel) \
+        .filter(PlayerEquipmentModel.item_id == item.id and PlayerEquipmentModel.player_id == player.id) \
+        .all()
+
+    for pim in pim_list:
+        db.delete(pim)
+
+    db.commit()

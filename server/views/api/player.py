@@ -325,6 +325,34 @@ def delete_player_spell():
     }
 
 
+@api.route('/deleteplayeritem', methods=["POST"])
+@json_api()
+@require_login()
+def delete_player_item():
+    data = request.get_json()
+    user = session_user()
+
+    required_fields = ["player_id", "item_id"]
+
+    if not data or (False in [x in data for x in required_fields]):
+        raise BadRequest()
+
+    player = player_service.find_player(data["player_id"])
+
+    success = player is not None
+
+    if success:
+        error = player_service.delete_player_item(user, player, data.get("item_id", -1))
+    else:
+        error = "This player does not exist."
+
+    return {
+        "success": success,
+        "error": error
+    }
+
+
+
 @api.route('/getplayerspells', methods=["POST"])
 @json_api()
 @require_login()

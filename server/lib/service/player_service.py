@@ -191,6 +191,10 @@ def get_spell(player: PlayerModel, spell_id: int):
     return player_repository.get_spell(player, spell_id)
 
 
+def get_item(player: PlayerModel, item_id: int):
+    return player_repository.player_get_item(player, item_id)
+
+
 def player_add_spell(user: UserModel, player: PlayerModel, spell_id: int):
     if player.user is not user:
         return "This player does not belong to you."
@@ -214,6 +218,19 @@ def delete_player_spell(user: UserModel, player: PlayerModel, spell_id: int):
         return "This spell does not exist."
 
     player_repository.delete_spell(player, spell)
+
+    return ""
+
+
+def delete_player_item(user, player, item_id):
+    if player.user is not user:
+        return "This player does not belong to you."
+
+    item = get_item(player, item_id)
+    if item is None:
+        return "This item does not exist."
+
+    player_repository.delete_item(player, item)
 
     return ""
 
