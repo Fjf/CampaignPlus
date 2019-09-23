@@ -1,3 +1,4 @@
+import re
 from typing import List, Optional, Tuple
 
 from server.lib.model.models import PlayerInfoModel, PlayerEquipmentModel, SpellModel, PlayerSpellModel, ItemModel, \
@@ -10,7 +11,15 @@ from server.lib.service import playthrough_service, item_service
 def get_players(playthrough: PlaythroughModel) -> List[PlayerModel]:
     if playthrough.name == "test--":
         return player_repository.get_all_players()
-    return player_repository.get_players(playthrough.id)
+    players = player_repository.get_players(playthrough.id)
+    for player in players:
+        player.backstory = striphtml(player.backstory)
+    return players
+
+
+def striphtml(data):
+    p = re.compile(r'<.*?>')
+    return p.sub('', data)
 
 
 def create_player(name: str, race: str, class_name: str, backstory: str, code: str, user: UserModel):
