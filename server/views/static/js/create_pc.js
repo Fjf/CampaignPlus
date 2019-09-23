@@ -28,7 +28,7 @@ function uploadCharacter() {
         code: PLAYTHROUGH_ID,
         name: name,
         race: race,
-        class_name: class_name,
+        class: class_name,
         backstory: backstory
     }
     requestApiJsonData("/api/createplayer", "POST", data, func)
@@ -138,7 +138,7 @@ function updateCharacter() {
         code: PLAYTHROUGH_ID,
         name: name,
         race: race,
-        class_name: class_name,
+        class: class_name,
         backstory: backstory,
         pid: pid
     }

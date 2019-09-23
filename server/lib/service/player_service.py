@@ -50,8 +50,6 @@ def update_player(pid: int, name: str, race: str, class_name: str, backstory: st
     if player.user != user:
         return "This player does not belong to you."
 
-    # TODO: Use the code??
-
     player.backstory = backstory
     player.name = name
     player.race_name = race

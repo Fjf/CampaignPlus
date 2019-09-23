@@ -14,14 +14,14 @@ from server.views.api import api, json_api, require_login
 def create_player():
     data = request.get_json()
 
-    required_fields = ["name", "class_name", "code", "backstory", "race"]
+    required_fields = ["name", "class", "code", "backstory", "race"]
 
     if not data or (False in [x in required_fields for x in data]):
         raise BadRequest()
 
     user = session_user()
 
-    error = player_service.create_player(data["name"], data["race"], data["class_name"], data["backstory"],
+    error = player_service.create_player(data["name"], data["race"], data["class"], data["backstory"],
                                          data["code"], user)
 
     success = error == ""
@@ -37,14 +37,14 @@ def create_player():
 def update_player():
     data = request.get_json()
 
-    required_fields = ["pid", "name", "class_name", "code", "backstory", "race"]
+    required_fields = ["id", "name", "class", "backstory", "race"]
 
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
     user = session_user()
 
-    error = player_service.update_player(data["pid"], data["name"], data["race"], data["class_name"], data["backstory"],
+    error = player_service.update_player(data["id"], data["name"], data["race"], data["class"], data["backstory"],
                                          user)
 
     success = error == ""
@@ -80,10 +80,15 @@ def get_players():
             "id": player.id,
             "user_name": player.user.name,
             "name": player.name,
+            "race": player.race_name,
+            "backstory": player.backstory,
             "class": player.class_name
         })
 
-    return data
+    return {
+        "success": True,
+        "players": data
+    }
 
 
 @api.route('/getuserplayers', methods=["GET"])
@@ -100,6 +105,7 @@ def get_user_players():
             "id": player.id,
             "user_name": player.user.name,
             "name": player.name,
+            "race": player.race_name,
             "class": player.class_name
         })
 
