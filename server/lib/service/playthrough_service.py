@@ -41,7 +41,7 @@ def join_playthrough(user: UserModel, code: str):
     # Only create a new player if no players are yet created for this playthrough.
     if len(players) == 0:
         # Create an empty player character for the user and refer them to a new page
-        player_service.create_player(user.name, "", "", "", code, user)
+        player_service.create_player(user.name + "'s character", "-", "-", "-", code, user)
 
     return ""
 

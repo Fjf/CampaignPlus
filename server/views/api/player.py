@@ -16,7 +16,7 @@ def create_player():
 
     required_fields = ["name", "class", "code", "backstory", "race"]
 
-    if not data or (False in [x in required_fields for x in data]):
+    if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
     user = session_user()
