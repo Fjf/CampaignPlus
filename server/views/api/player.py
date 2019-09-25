@@ -1,7 +1,7 @@
 from flask import request
 from werkzeug.exceptions import BadRequest
 
-from server.lib.model.models import PlayerEquipmentModel, SpellModel, ItemModel, WeaponModel
+from server.lib.model.models import PlayerEquipmentModel, SpellModel, ItemModel, WeaponModel, PlayerProficiencyModel
 from server.lib.service import player_service, playthrough_service, item_service
 from server.lib.user_session import session_user
 
@@ -438,52 +438,90 @@ def get_spells():
     }
 
 
-@api.route('/getplayerdata', methods=["POST"])
+@api.route('/player/<int:player_id>/data', methods=["GET"])
 @json_api()
 @require_login()
-def get_player():
+def get_player(player_id):
+    user = session_user()
+
+    player = player_service.find_player(player_id)
+
+    if player is None:
+        raise BadRequest("This player does not exist.")
+    if player.user is not user:
+        raise BadRequest("This player is not yours.")
+
+    info = None
+
+    player_info = player_service.get_player_info(user, player)
+    if player_info is not None:
+        info = {
+            "strength": player_info.strength,
+            "dexterity": player_info.dexterity,
+            "constitution": player_info.constitution,
+            "intelligence": player_info.intelligence,
+            "wisdom": player_info.wisdom,
+            "charisma": player_info.charisma,
+            "saving_throws_str": player_info.saving_throws_str,
+            "saving_throws_dex": player_info.saving_throws_dex,
+            "saving_throws_con": player_info.saving_throws_con,
+            "saving_throws_int": player_info.saving_throws_int,
+            "saving_throws_wis": player_info.saving_throws_wis,
+            "saving_throws_cha": player_info.saving_throws_cha,
+            "max_hp": player_info.max_hp,
+            "armor_class": player_info.armor_class,
+            "speed": player_info.speed
+        }
+
+    return {
+        "success": True,
+        "name": player.name,
+        "class": player.class_name,
+        "race": player.race_name,
+        "user_name": player.user.name,
+        "backstory": player.backstory,
+        "info": info
+    }
+
+
+@api.route('/player/<int:player_id>/proficiencies', methods=["GET"])
+@json_api()
+@require_login()
+def get_player_proficiencies(player_id: int):
+    user = session_user()
+
+    player = player_service.find_player(player_id)
+
+    if player is None:
+        raise BadRequest("This player does not exist.")
+    if player.user is not user:
+        raise BadRequest("This player is not yours.")
+
+    player_proficiencies: PlayerProficiencyModel = player_service.get_player_proficiencies(player)
+
+    return {
+        "success": True,
+        "proficiencies": player_proficiencies.to_json()            
+    }
+
+
+@api.route('/player/<int:player_id>/proficiencies', methods=["PUT"])
+@json_api()
+@require_login()
+def set_player_proficiencies(player_id: int):
     data = request.get_json()
     user = session_user()
 
-    if not data or "player_id" not in data:
-        raise BadRequest()
+    player = player_service.find_player(player_id)
 
-    player = player_service.find_player(data["player_id"])
+    if player is None:
+        raise BadRequest("This player does not exist.")
+    if player.user is not user:
+        raise BadRequest("This player is not yours.")
 
-    success = player is not None
+    error = player_service.update_proficiencies(player, data)
 
-    if success:
-        player_info = player_service.get_player_info(user, player)
-        if player_info is not None:
-            info = {
-                "strength": player_info.strength,
-                "dexterity": player_info.dexterity,
-                "constitution": player_info.constitution,
-                "intelligence": player_info.intelligence,
-                "wisdom": player_info.wisdom,
-                "charisma": player_info.charisma,
-                "saving_throws_str": player_info.saving_throws_str,
-                "saving_throws_dex": player_info.saving_throws_dex,
-                "saving_throws_con": player_info.saving_throws_con,
-                "saving_throws_int": player_info.saving_throws_int,
-                "saving_throws_wis": player_info.saving_throws_wis,
-                "saving_throws_cha": player_info.saving_throws_cha,
-                "max_hp": player_info.max_hp,
-                "armor_class": player_info.armor_class,
-                "speed": player_info.speed
-            }
-        else:
-            info = None
-
-    if not success:
-        return {"success": success}
-    else:
-        return {
-            "success": success,
-            "name": player.name,
-            "class": player.class_name,
-            "race": player.race_name,
-            "user_name": player.user.name,
-            "backstory": player.backstory,
-            "info": info
-        }
+    return {
+        "success": True,
+        "error": error
+    }

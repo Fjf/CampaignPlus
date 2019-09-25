@@ -2,7 +2,7 @@ from typing import Optional, List, Tuple
 
 from server.lib.database import request_session
 from server.lib.model.models import PlayerModel, PlaythroughModel, PlayerInfoModel, PlayerEquipmentModel, ItemModel, \
-    PlayerSpellModel, SpellModel, UserModel, WeaponModel
+    PlayerSpellModel, SpellModel, UserModel, WeaponModel, PlayerProficiencyModel
 
 
 def get_players(playthrough_id: int):
@@ -143,3 +143,11 @@ def delete_item(player: PlayerModel, item: ItemModel):
         db.delete(pim)
 
     db.commit()
+
+
+def get_player_proficiencies(player: PlayerModel) -> Optional[PlayerProficiencyModel]:
+    db = request_session()
+
+    return db.query(PlayerProficiencyModel) \
+        .filter(PlayerProficiencyModel.player_id == player.id) \
+        .one_or_none()

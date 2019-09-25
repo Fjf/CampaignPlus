@@ -2,7 +2,7 @@ import re
 from typing import List, Optional, Tuple
 
 from server.lib.model.models import PlayerInfoModel, PlayerEquipmentModel, SpellModel, PlayerSpellModel, ItemModel, \
-    WeaponModel
+    WeaponModel, PlayerProficiencyModel
 from server.lib.model.models import PlayerModel, UserModel, PlaythroughModel
 from server.lib.repository import player_repository, repository
 from server.lib.service import playthrough_service, item_service
@@ -256,4 +256,40 @@ def update_player_playthrough(user: UserModel, player_id: int, playthrough_code:
     player.playthrough_id = playthrough.id
     repository.add_and_commit(player)
 
+    return ""
+
+
+def get_player_proficiencies(player: PlayerModel) -> PlayerProficiencyModel:
+    proficiencies = player_repository.get_player_proficiencies(player)
+
+    if proficiencies is None:
+        proficiencies = PlayerProficiencyModel.from_player(player)
+        repository.add_and_commit(proficiencies)
+
+    return proficiencies
+
+
+def update_proficiencies(player, data):
+    pp: PlayerProficiencyModel = get_player_proficiencies(player)
+
+    pp.acrobatics = data.get("acrobatics", pp.acrobatics)
+    pp.animal_handling = data.get("animal_handling", pp.animal_handling)
+    pp.arcana = data.get("arcana", pp.arcana)
+    pp.athletics = data.get("athletics", pp.athletics)
+    pp.deception = data.get("deception", pp.deception)
+    pp.history = data.get("history", pp.history)
+    pp.insight = data.get("insight", pp.insight)
+    pp.intimidation = data.get("intimidation", pp.intimidation)
+    pp.investigation = data.get("investigation", pp.investigation)
+    pp.medicine = data.get("medicine", pp.medicine)
+    pp.nature = data.get("nature", pp.nature)
+    pp.perception = data.get("perception", pp.perception)
+    pp.performance = data.get("performance", pp.performance)
+    pp.persuasion = data.get("persuasion", pp.persuasion)
+    pp.religion = data.get("religion", pp.religion)
+    pp.sleight_of_hand = data.get("sleight_of_hand", pp.sleight_of_hand)
+    pp.stealth = data.get("stealth", pp.stealth)
+    pp.survival = data.get("survival", pp.survival)
+
+    repository.add_and_commit(pp)
     return ""

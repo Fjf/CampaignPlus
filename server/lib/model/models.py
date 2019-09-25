@@ -517,3 +517,67 @@ class PlayerSpellModel(OrmModelBase):
         c.player_id = player.id
         c.spell_id = spell.id
         return c
+
+
+class PlayerProficiencyModel(OrmModelBase):
+    """
+    A data container for player proficiencies
+    """
+
+    __tablename__ = 'proficiencies'
+
+    id = Column(Integer(), primary_key=True)
+
+    """
+    The user to whom this player character belongs.
+    """
+
+    player_id = Column(Integer(), ForeignKey("player.id"))
+    player = relationship("PlayerModel")
+
+    acrobatics = Column(Boolean(), default=False)
+    animal_handling = Column(Boolean(), default=False)
+    arcana = Column(Boolean(), default=False)
+    athletics = Column(Boolean(), default=False)
+    deception = Column(Boolean(), default=False)
+    history = Column(Boolean(), default=False)
+    insight = Column(Boolean(), default=False)
+    intimidation = Column(Boolean(), default=False)
+    investigation = Column(Boolean(), default=False)
+    medicine = Column(Boolean(), default=False)
+    nature = Column(Boolean(), default=False)
+    perception = Column(Boolean(), default=False)
+    performance = Column(Boolean(), default=False)
+    persuasion = Column(Boolean(), default=False)
+    religion = Column(Boolean(), default=False)
+    sleight_of_hand = Column(Boolean(), default=False)
+    stealth = Column(Boolean(), default=False)
+    survival = Column(Boolean(), default=False)
+
+    def to_json(self):
+        return {
+            "acrobatics": self.acrobatics,
+            "animal_handling": self.animal_handling,
+            "arcana": self.arcana,
+            "athletics": self.athletics,
+            "deception": self.deception,
+            "history": self.history,
+            "insight": self.insight,
+            "intimidation": self.intimidation,
+            "investigation": self.investigation,
+            "medicine": self.medicine,
+            "nature": self.nature,
+            "perception": self.perception,
+            "performance": self.performance,
+            "persuasion": self.persuasion,
+            "religion": self.religion,
+            "sleight_of_hand": self.sleight_of_hand,
+            "stealth": self.stealth,
+            "survival": self.survival
+        }
+
+    @classmethod
+    def from_player(cls, player: PlayerModel):
+        c = cls()
+        c.player_id = player.id
+        return c
