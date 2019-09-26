@@ -348,7 +348,7 @@ def delete_player_item(player_id, item_id):
     }
 
 
-@api.route('/player/<int:player_id>/spell', methods=["POST"])
+@api.route('/player/<int:player_id>/spell', methods=["GET"])
 @json_api()
 @require_login()
 def get_player_spells(player_id):
