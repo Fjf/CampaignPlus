@@ -92,7 +92,8 @@
 
 {% block javascripts %}
     <script>
-        var PLAYTHROUGH_ID = "{{ code }}"
+        var PLAYTHROUGH_ID = "{{ id }}"
+        var PLAYTHROUGH_CODE = "{{ code }}"
         var USERNAME = "{{ username }}"
     </script>
     <script src="{{ url_for('static', filename='js/create_pc.js') }}"></script>

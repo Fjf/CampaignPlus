@@ -77,11 +77,11 @@ def get_player_spells(player: PlayerModel) -> List[PlayerSpellModel]:
         .all()
 
 
-def get_spells(player: PlayerModel) -> List[PlayerSpellModel]:
+def get_spells(playthrough: PlaythroughModel) -> List[PlayerSpellModel]:
     db = request_session()
 
     return db.query(SpellModel) \
-        .filter(player.playthrough_id == SpellModel.playthrough_id or SpellModel.playthrough_id == -1) \
+        .filter(playthrough.id == SpellModel.playthrough_id or SpellModel.playthrough_id == -1) \
         .all()
 
 

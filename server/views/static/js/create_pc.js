@@ -25,13 +25,12 @@ function uploadCharacter() {
     }
 
     data = {
-        code: PLAYTHROUGH_ID,
         name: name,
         race: race,
         class: class_name,
         backstory: backstory
     }
-    requestApiJsonData("/api/createplayer", "POST", data, func)
+    requestApiJsonData("/api/playthrough/" + PLAYTHROUGH_ID + "/players", "POST", data, func)
 }
 
 function cleanFields() {
@@ -53,6 +52,7 @@ function getGameCharacters() {
             playerInfoText = "These players have already joined this game:"
         document.getElementById("charactertext").innerHTML = playerInfoText
 
+        data = data.players
         for (let i = 0; i < data.length; i++) {
             li = document.createElement("li")
             li.setAttribute("class", "custom_list")
@@ -66,7 +66,7 @@ function getGameCharacters() {
         }
     }
 
-    response = requestApiJsonData("/api/getplayers", "POST", {playthrough_code: PLAYTHROUGH_ID}, func)
+    response = requestApiJsonData("/api/playthrough/" + PLAYTHROUGH_ID + "/players", "GET", null, func)
 }
 
 function show(id) {
@@ -102,8 +102,7 @@ function editCharacter(pid) {
 
         show("update")
     }
-    console.log("Retrieving data for id: " + pid)
-    response = requestApiJsonData("/api/getplayerdata", "POST", {player_id: pid}, func)
+    response = requestApiJsonData("/api/player/" + pid + "/data", "GET", null, func)
 }
 
 function updateCharacter() {
@@ -135,14 +134,12 @@ function updateCharacter() {
     }
 
     data = {
-        code: PLAYTHROUGH_ID,
         name: name,
         race: race,
         class: class_name,
         backstory: backstory,
-        pid: pid
     }
-    requestApiJsonData("/api/updateplayer", "POST", data, func)
+    requestApiJsonData("/api/player/" + pid, "PUT", data, func)
 }
 
 function deleteCharacter(id) {
@@ -152,7 +149,8 @@ function deleteCharacter(id) {
         else
             getGameCharacters()
     }
-    response = requestApiJsonData("/api/deleteplayer", "POST", {id: id}, func)
+
+    response = requestApiJsonData("/api/player/" + id, "DELETE", null, func)
 }
 
 function getPlaythroughName(code) {
@@ -178,9 +176,8 @@ function sendMessage() {
     if (message == "")
         return;
 
-    console.log(PLAYTHROUGH_ID)
     let data = {
-        playthrough_code: PLAYTHROUGH_ID,
+        playthrough_code: PLAYTHROUGH_CODE,
         message: message
     }
 
@@ -209,7 +206,7 @@ function createLog() {
     }
 
     let data = {
-        playthrough_code: PLAYTHROUGH_ID,
+        playthrough_code: PLAYTHROUGH_CODE,
         title: title,
         text: text
     }
@@ -238,7 +235,7 @@ function LogBook() {
         }
 
         let data = {
-            playthrough_code: PLAYTHROUGH_ID
+            playthrough_code: PLAYTHROUGH_CODE
         }
 
         requestApiJsonData("/api/getlogs", "POST", data, func);
@@ -326,7 +323,7 @@ function LogBook() {
         }
 
         let data = {
-            playthrough_code: PLAYTHROUGH_ID,
+            playthrough_code: PLAYTHROUGH_CODE,
             log_id: i
         }
 

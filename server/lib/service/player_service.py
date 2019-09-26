@@ -1,6 +1,8 @@
 import re
 from typing import List, Optional, Tuple
 
+from werkzeug.exceptions import BadRequest
+
 from server.lib.model.models import PlayerInfoModel, PlayerEquipmentModel, SpellModel, PlayerSpellModel, ItemModel, \
     WeaponModel, PlayerProficiencyModel
 from server.lib.model.models import PlayerModel, UserModel, PlaythroughModel
@@ -22,9 +24,7 @@ def striphtml(data):
     return p.sub('', data)
 
 
-def create_player(name: str, race: str, class_name: str, backstory: str, code: str, user: UserModel):
-    playthrough = playthrough_service.find_playthrough_with_code(code)
-
+def create_player(playthrough: PlaythroughModel, name: str, race: str, class_name: str, backstory: str, user: UserModel):
     player = PlayerModel.from_name_playthrough_user(name, playthrough, user)
 
     player.race_name = race
@@ -39,33 +39,17 @@ def find_player(pid: int) -> Optional[PlayerModel]:
     return player_repository.find_player(pid)
 
 
-def delete_player(pid: int, user: UserModel) -> str:
-    player = find_player(pid)
-    if not player:
-        return "Player not found."
-
-    if player.user != user:
-        return "This player does not belong to you."
-
+def delete_player(player: PlayerModel):
     player_repository.delete_player(player)
-    return ""
 
 
-def update_player(pid: int, name: str, race: str, class_name: str, backstory: str, user: UserModel):
-    player = find_player(pid)
-    if not player:
-        return "This player was not found."
-
-    if player.user != user:
-        return "This player does not belong to you."
-
+def update_player(player, name: str, race: str, class_name: str, backstory: str):
     player.backstory = backstory
     player.name = name
     player.race_name = race
     player.class_name = class_name
 
     player_repository.add_and_commit(player)
-    return ""
 
 
 def get_player(user: UserModel):
@@ -85,7 +69,7 @@ def get_user_players_by_id(user: UserModel, playthrough_id: int) -> List[PlayerM
     return user_players
 
 
-def get_player_info(user: UserModel, player: PlayerModel) -> Optional[PlayerInfoModel]:
+def get_player_info(player: PlayerModel) -> PlayerInfoModel:
     result = player_repository.get_player_info(player)
     if result is None:
         player_info = PlayerInfoModel.from_player(player)
@@ -123,18 +107,11 @@ def check_backstory(backstory: str) -> bool:
     return True
 
 
-def set_player_info(user, player_id, strength, dexterity, constitution, intelligence, wisdom, charisma,
+def set_player_info(player, strength, dexterity, constitution, intelligence, wisdom, charisma,
                     saving_throws_str, saving_throws_dex, saving_throws_con, saving_throws_int,
                     saving_throws_wis, saving_throws_cha, max_hp, armor_class, speed):
-    player = find_player(player_id)
-    if player is None:
-        return "This player character does not exist."
-    if player.user != user:
-        return "This player character does not belong to you."
 
-    player_info = get_player_info(user, player)
-    if player_info is None:
-        player_info = PlayerInfoModel.from_player(player)
+    player_info = get_player_info(player)
 
     player_info.strength = strength or player_info.strength
     player_info.dexterity = dexterity or player_info.dexterity
@@ -142,6 +119,13 @@ def set_player_info(user, player_id, strength, dexterity, constitution, intellig
     player_info.intelligence = intelligence or player_info.intelligence
     player_info.wisdom = wisdom or player_info.wisdom
     player_info.charisma = charisma or player_info.charisma
+
+    player_info.strength = min(player_info.strength, 30)
+    player_info.dexterity = min(player_info.dexterity, 30)
+    player_info.constitution = min(player_info.constitution, 30)
+    player_info.intelligence = min(player_info.intelligence, 30)
+    player_info.wisdom = min(player_info.wisdom, 30)
+    player_info.charisma = min(player_info.charisma, 30)
 
     player_info.saving_throws_str = saving_throws_str or player_info.saving_throws_str
     player_info.saving_throws_dex = saving_throws_dex or player_info.saving_throws_dex
@@ -159,14 +143,11 @@ def set_player_info(user, player_id, strength, dexterity, constitution, intellig
     return ""
 
 
-def player_add_item(user, player, item_id, amount: int):
-    if player.user is not user:
-        return "This player does not belong to you."
-
+def player_add_item(player, item_id, amount: int):
     item = item_service.get_item(item_id)
 
     if item is None:
-        return "This item does not exist."
+        raise BadRequest("This item does not exist.")
 
     try:
         amount = int(amount)
@@ -177,21 +158,14 @@ def player_add_item(user, player, item_id, amount: int):
     player_item.amount = amount
 
     player_repository.add_and_commit(player_item)
-    return ""
 
 
-def get_player_spells(user: UserModel, player: PlayerModel) -> Tuple[str, List[SpellModel]]:
-    if player.user is not user:
-        return "This player does not belong to you.", []
-
-    return "", player_repository.get_player_spells(player)
+def get_player_spells(player: PlayerModel) -> List[SpellModel]:
+    return player_repository.get_player_spells(player)
 
 
-def get_spells(user, player):
-    if player.user is not user:
-        return "This player does not belong to you.", []
-
-    return "", player_repository.get_spells(player)
+def get_spells(playthrough):
+    return player_repository.get_spells(playthrough)
 
 
 def get_spell(player: PlayerModel, spell_id: int):
@@ -202,13 +176,10 @@ def get_item(player: PlayerModel, item_id: int):
     return player_repository.player_get_item(player, item_id)
 
 
-def player_add_spell(user: UserModel, player: PlayerModel, spell_id: int):
-    if player.user is not user:
-        return "This player does not belong to you."
-
+def player_add_spell(player: PlayerModel, spell_id: int):
     spell = get_spell(player, spell_id)
     if spell is None:
-        return "This spell does not exist."
+        raise BadRequest("This spell does not exist.")
 
     player_spell = PlayerSpellModel.from_player_spell(player, spell)
     repository.add_and_commit(player_spell)
@@ -242,21 +213,9 @@ def delete_player_item(user, player, item_id):
     return ""
 
 
-def update_player_playthrough(user: UserModel, player_id: int, playthrough_code: str) -> str:
-    player = player_repository.get_player(player_id)
-    if player is None:
-        return "This player does not exist."
-    if player.user_id != user.id:
-        return "This player does not belong to you."
-
-    playthrough = playthrough_service.find_playthrough_with_code(playthrough_code)
-    if playthrough is None:
-        return "This playthrough does not exist."
-
+def update_player_playthrough(player: PlayerModel, playthrough: PlaythroughModel):
     player.playthrough_id = playthrough.id
     repository.add_and_commit(player)
-
-    return ""
 
 
 def get_player_proficiencies(player: PlayerModel) -> PlayerProficiencyModel:

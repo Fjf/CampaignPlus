@@ -2,7 +2,7 @@ import time
 from datetime import datetime
 
 from flask import request
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, NotFound
 
 from server.lib.user_session import session_user
 from server.views.api import api, json_api, require_login
@@ -98,7 +98,11 @@ def join_playthrough():
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
-    error = playthrough_service.join_playthrough(user, data.get("playthrough_code").upper())
+    playthrough = playthrough_service.find_playthrough_with_code(data.get("playthrough_code").upper())
+    if playthrough is None:
+        raise NotFound("This playthrough code is not linked to any existing playthrough.")
+
+    error = playthrough_service.join_playthrough(user, playthrough)
     success = error == ""
     return {
         "success": success,
@@ -117,6 +121,7 @@ def get_joined_playthroughs():
     data = []
     for playthrough, playthrough_code in playthroughs:
         data.append({
+            "id": playthrough.id,
             "code": playthrough_code.code,
             "name": playthrough.name,
             "time": time.mktime(playthrough.date.timetuple()) * 1000  # Python does time in seconds.

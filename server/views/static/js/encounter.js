@@ -24,7 +24,7 @@ function refreshPlayers(){
     let func = function(data) {
         console.log(data)
         str = "";
-        for (player of data){
+        for (player of data.players){
             str += "<option value='" + player.name + "'>" + player.name + " (" + player.class + ")</option>"
         }
 
@@ -34,7 +34,7 @@ function refreshPlayers(){
         document.getElementById("content_selected_player").innerHTML = str;
     }
 
-    response = requestApiJsonData("api/getplayers", "POST", {playthrough_id: PLAYTHROUGH_ID}, func)
+    response = requestApiJsonData("api/playthrough/" + PLAYTHROUGH_ID + "/players", "GET", null, func)
 }
 
 let localPlayers = []

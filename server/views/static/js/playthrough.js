@@ -103,8 +103,8 @@ function updatePlaythroughPlayers(pid) {
     let func = function(data) {
         let src = ""
         let div;
-        for (var i = 0; i < data.length; i++){
-            player = data[i]
+        for (var i = 0; i < data.players.length; i++){
+            player = data.players[i]
             src += "<div onclick='retrievePlayerData(" + player.id + ")'>" +
                             player.name + " - <i>" + player.class + "</i>(" + player.user_name + ")</div>"
 
@@ -112,7 +112,7 @@ function updatePlaythroughPlayers(pid) {
         document.getElementById("players").innerHTML = src;
     }
 
-    response = requestApiJsonData("/api/getplayers", "POST", {playthrough_id: pid}, func)
+    response = requestApiJsonData("/api/playthrough/" + pid + "/players", "GET", null, func)
 }
 
 function retrievePlayerData(pid) {
@@ -126,6 +126,6 @@ function retrievePlayerData(pid) {
         document.getElementById("pc_owner").innerHTML = data.user_name
         document.getElementById("pc_backstory").innerHTML = data.backstory
     }
-    console.log("Retrieving data for id: " + pid)
-    response = requestApiJsonData("/api/getplayerdata", "POST", {player_id: pid}, func)
+
+    response = requestApiJsonData("/api/player/" + pid + "/data", "GET", null, func)
 }

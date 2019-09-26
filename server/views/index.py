@@ -39,11 +39,11 @@ def join_playthrough(code):
     except ValueError:
         return login(refer="join/" + code)
 
-    playthrough_service.join_playthrough(user, code)
-
+    playthrough = playthrough_service.find_playthrough_with_code(code)
+    playthrough_service.join_playthrough(user, playthrough)
     playthrough_service.generate_qr(code)
 
-    return render_template('create_pc.html', code=code, username=user.name)
+    return render_template('create_pc.html', id=playthrough.id, code=code, username=user.name)
 
 
 @app.route('/map/<code>', methods=["GET"])
