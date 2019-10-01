@@ -47,7 +47,7 @@ def register():
 @json_api()
 def login():
     data = request.get_json()
-	
+
     required_fields = ["name", "password"]
 
     if not data or (False in [x in data for x in required_fields]):
@@ -127,4 +127,3 @@ def reset_password():
         "success": success,
         "error": error
     }
-

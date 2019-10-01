@@ -353,6 +353,7 @@ class PlayerInfoModel(OrmModelBase):
     max_hp = Column(Integer(), nullable=True)
     armor_class = Column(Integer(), nullable=True)
     speed = Column(Integer(), nullable=True)
+    level = Column(Integer(), nullable=True)
 
     @classmethod
     def from_player(cls, player: PlayerModel):

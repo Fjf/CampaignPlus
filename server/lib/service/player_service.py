@@ -91,6 +91,7 @@ def get_player_info(player: PlayerModel) -> PlayerInfoModel:
         player_info.max_hp = 10
         player_info.armor_class = 10
         player_info.speed = 60
+        player_info.level = 1
 
         player_repository.add_and_commit(player_info)
 
@@ -109,7 +110,7 @@ def check_backstory(backstory: str) -> bool:
 
 def set_player_info(player, strength, dexterity, constitution, intelligence, wisdom, charisma,
                     saving_throws_str, saving_throws_dex, saving_throws_con, saving_throws_int,
-                    saving_throws_wis, saving_throws_cha, max_hp, armor_class, speed):
+                    saving_throws_wis, saving_throws_cha, max_hp, armor_class, speed, level):
 
     player_info = get_player_info(player)
 
@@ -137,6 +138,9 @@ def set_player_info(player, strength, dexterity, constitution, intelligence, wis
     player_info.max_hp = max_hp or player_info.max_hp
     player_info.armor_class = armor_class or player_info.armor_class
     player_info.speed = speed or player_info.speed
+    player_info.level = level or player_info.level
+    # Fix value within range 1..20
+    player_info.level = max(min(player_info.level, 20), 1)
 
     player_repository.add_and_commit(player_info)
 

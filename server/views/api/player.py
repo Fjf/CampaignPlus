@@ -179,7 +179,8 @@ def get_player(player_id):
         "saving_throws_cha": player_info.saving_throws_cha,
         "max_hp": player_info.max_hp,
         "armor_class": player_info.armor_class,
-        "speed": player_info.speed
+        "speed": player_info.speed,
+        "level": player_info.level,
     }
 
     return {
@@ -202,6 +203,8 @@ def set_player_info(player_id):
     player = player_service.find_player(player_id)
     check_player(player)
 
+    print(data)
+
     error = player_service.set_player_info(player,
                                            data.get("strength", None),
                                            data.get("dexterity", None),
@@ -217,7 +220,8 @@ def set_player_info(player_id):
                                            data.get("saving_throws_cha", None),
                                            data.get("max_hp", None),
                                            data.get("armor_class", None),
-                                           data.get("speed", None))
+                                           data.get("speed", None),
+                                           data.get("level", None))
 
     success = error == ""
 
