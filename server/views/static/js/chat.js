@@ -37,6 +37,8 @@ function toggleChat() {
 }
 
 function getMessages() {
+	return;
+	
     let func = function(data) {
         if (!data.success) {
             console.log("Something went wrong retrieving chat messages.");

@@ -1,13 +1,14 @@
 from flask import request
 from werkzeug.exceptions import BadRequest, Unauthorized, NotFound
 
-from server.lib.model.models import PlayerEquipmentModel, SpellModel, WeaponModel, PlayerProficiencyModel
+from server import app
+from server.lib.model.models import PlayerEquipmentModel, SpellModel, WeaponModel, PlayerProficiencyModel, PlayerModel
 from server.lib.service import player_service, playthrough_service
 from server.lib.user_session import session_user
 from server.views.api import api, json_api, require_login
 
 
-def check_player(player):
+def check_player(player: PlayerModel):
     user = session_user()
 
     if player is None:
@@ -16,28 +17,36 @@ def check_player(player):
         raise Unauthorized("This player is not yours.")
 
 
-@api.route('/playthrough/<int:playthrough_id>/players', methods=["POST"])
+@api.route('/player', methods=["POST"])
 @json_api()
 @require_login()
-def create_player(playthrough_id):
-    data = request.get_json()
+def create_player():
+    """
+        Creates a player character
 
-    required_fields = ["name", "class", "code", "backs tory", "race"]
-
-    if not data or (False in [x in data for x in required_fields]):
-        raise BadRequest()
+        Optional POST parameters:
+         - name: The name of your PC
+         - race: The race of your PC
+         - class: The class of your PC
+         - backstory: The backstory for your PC
+        :return: A json object containing the newly created player's id.
+    """
 
     user = session_user()
-    playthrough = playthrough_service.find_playthrough_with_id(playthrough_id)
-    if playthrough is None:
-        raise NotFound("This playthrough does not exist.")
+    data = request.get_json()
 
-    error = player_service.create_player(playthrough, data["name"], data["race"], data["class"], data["backstory"], user)
+    name = data.get("name", "New PC")
+    race = data.get("race", "")
+    class_name = data.get("class", "")
+    backstory = data.get("backstory", "")
 
-    success = error == ""
+    # TODO: Check if the player's chosen race or class actually exist and is visible to the user.
+
+    player = player_service.create_player(user, name, race=race, class_name=class_name, backstory=backstory)
+
     return {
-        "success": success,
-        "error": error
+        "success": True,
+        "player_id": player.id
     }
 
 
@@ -45,75 +54,55 @@ def create_player(playthrough_id):
 @json_api()
 @require_login()
 def update_player(player_id):
-    player = player_service.find_player(player_id)
-    check_player(player)
+    """
+        Updates a specified player character
+
+        Required URL parameter:
+         - player_id: The player id for which to update their information.
+
+        Optional POST parameters:
+         - name: The new name of your PC
+         - race: The new race of your PC
+         - class: The new class of your PC
+         - backstory: The new backstory for your PC
+        :return: A json object containing the updated player's id.
+    """
 
     data = request.get_json()
 
-    required_fields = ["name", "class", "backstory", "race"]
+    player = player_service.find_player(player_id)
+    check_player(player)
 
-    if not data or (False in [x in data for x in required_fields]):
-        raise BadRequest()
+    name = data.get("name", None)
+    race = data.get("race", None)
+    class_name = data.get("class", None)
+    backstory = data.get("backstory", None)
 
-    player_service.update_player(player, data["name"], data["race"], data["class"], data["backstory"])
-
-    return {
-        "success": True
-    }
-
-
-@api.route('/playthrough/<int:playthrough_id>/players', methods=["GET"])
-@json_api()
-@require_login()
-def get_players(playthrough_id):
-    user = session_user()
-    playthrough = playthrough_service.find_playthrough_with_id(playthrough_id)
-
-    if not playthrough_service.user_in_playthrough(user, playthrough):
-        raise Unauthorized("You do not have any players in this playthrough.")
-
-    if playthrough is None:
-        raise NotFound("This playthrough does not exist.")
-
-    players = player_service.get_players(playthrough)
-    data = []
-    for player in players:
-        data.append({
-            "id": player.id,
-            "user_name": player.user.name,
-            "name": player.name,
-            "race": player.race_name,
-            "backstory": player.backstory,
-            "class": player.class_name
-        })
+    player_service.update_player(player, name=name, race=race, class_name=class_name, backstory=backstory)
 
     return {
         "success": True,
-        "players": data
+        "player_id": player.id
     }
 
 
-@api.route('/user/players', methods=["GET"])
+@api.route('/player/<int:player_id>', methods=["DELETE"])
 @json_api()
 @require_login()
-def get_user_players():
-    user = session_user()
+def delete_player(player_id):
+    """
+        Deletes a player with the given player_id in the URL.
 
-    data = []
+        :param player_id: The id of the player that will be deleted.
+        :return:
+    """
+    player = player_service.find_player(player_id)
+    check_player(player)
 
-    players = player_service.get_user_players(user)
-    for player in players:
-        data.append({
-            "id": player.id,
-            "user_name": player.user.name,
-            "name": player.name,
-            "race": player.race_name,
-            "class": player.class_name
-        })
+    player_service.delete_player(player)
 
     return {
         "success": True,
-        "players": data
     }
 
 
@@ -135,24 +124,10 @@ def set_player_playthrough(player_id):
     if playthrough is None:
         raise NotFound("This playthrough does not exist.")
 
-    player_service.update_player_playthrough(player, playthrough)
+    player_service.update_player_playthrough(player, playthrough.id)
 
     return {
         "success": True
-    }
-
-
-@api.route('/player/<int:player_id>', methods=["DELETE"])
-@json_api()
-@require_login()
-def delete_player(player_id):
-    player = player_service.find_player(player_id)
-    check_player(player)
-
-    player_service.delete_player(player)
-
-    return {
-        "success": True,
     }
 
 
@@ -202,8 +177,6 @@ def set_player_info(player_id):
 
     player = player_service.find_player(player_id)
     check_player(player)
-
-    print(data)
 
     error = player_service.set_player_info(player,
                                            data.get("strength", None),
@@ -378,32 +351,6 @@ def get_player_spells(player_id):
             "spell_range": spell.spell_range,
             "description": spell.description,
             "school": spell.school,
-            "phb_page": int(spell.phb_page)
-        })
-
-    return {
-        "success": True,
-        "spells": spells
-    }
-
-
-@api.route('/playthrough/<int:playthrough_id>/spells', methods=["GET"])
-@json_api()
-@require_login()
-def get_spells(playthrough_id):
-    playthrough = playthrough_service.find_playthrough_with_id(playthrough_id)
-
-    if playthrough is None:
-        raise NotFound("This playthrough does not exist.")
-
-    spells = []
-    spells_list = player_service.get_spells(playthrough)
-
-    for spell in spells_list:
-        spells.append({
-            "id": spell.id,
-            "name": spell.name,
-            "level": int(spell.level),
             "phb_page": int(spell.phb_page)
         })
 

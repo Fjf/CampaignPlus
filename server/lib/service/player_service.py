@@ -24,7 +24,8 @@ def striphtml(data):
     return p.sub('', data)
 
 
-def create_player(playthrough: PlaythroughModel, name: str, race: str, class_name: str, backstory: str, user: UserModel):
+def create_player(user: UserModel, name: str, race: str = "", class_name: str = "", backstory: str = "",
+                  playthrough: Optional[PlaythroughModel] = None):
     player = PlayerModel.from_name_playthrough_user(name, playthrough, user)
 
     player.race_name = race
@@ -32,7 +33,7 @@ def create_player(playthrough: PlaythroughModel, name: str, race: str, class_nam
     player.class_name = class_name
 
     player_repository.add_and_commit(player)
-    return ""
+    return player
 
 
 def find_player(pid: int) -> Optional[PlayerModel]:
@@ -43,11 +44,20 @@ def delete_player(player: PlayerModel):
     player_repository.delete_player(player)
 
 
-def update_player(player, name: str, race: str, class_name: str, backstory: str):
-    player.backstory = backstory
-    player.name = name
-    player.race_name = race
-    player.class_name = class_name
+def update_player(player: PlayerModel, name: str = None, race: str = None, class_name: str = None, backstory: str = None):
+    """
+    Updates the given PlayerModel to contain the new given data.
+    :param player: The PlayerModel to update.
+    :param [Optional] name: The new name for the player.
+    :param [Optional] race: The new race for the player.
+    :param [Optional] class_name: The new class for the player.
+    :param [Optional] backstory: The new backstory for the player.
+    :return:
+    """
+    player.backstory = backstory or player.backstory
+    player.name = name or player.name
+    player.race_name = race or player.race_name
+    player.class_name = class_name or player.class_name
 
     player_repository.add_and_commit(player)
 
@@ -217,8 +227,8 @@ def delete_player_item(user, player, item_id):
     return ""
 
 
-def update_player_playthrough(player: PlayerModel, playthrough: PlaythroughModel):
-    player.playthrough_id = playthrough.id
+def update_player_playthrough(player: PlayerModel, playthrough_id: int):
+    player.playthrough_id = playthrough_id
     repository.add_and_commit(player)
 
 

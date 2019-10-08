@@ -89,9 +89,21 @@ def get_spells():
         repository.add_and_commit(spell_model)
 
 
+def get_classes():
+    result = requests.get("http://www.dnd5eapi.co/api/classes/")
+    obj = result.json()
+
+    for elem in obj["results"]:
+        ctype = requests.get(elem["url"]).json()
+
+        print(ctype)
+        break
+
+
 def main():
     # get_equipment()
-    get_spells()
+    # get_spells()
+    get_classes()
 
 
 if __name__ == "__main__":

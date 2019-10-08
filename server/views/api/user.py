@@ -5,7 +5,7 @@ from werkzeug.utils import redirect
 from server.lib.service import player_service
 from server.lib.user_session import session_user, session_user_set
 
-from server.views.api import api, json_api
+from server.views.api import api, json_api, require_login
 from server.lib.service import user_service
 
 
@@ -127,3 +127,29 @@ def reset_password():
         "success": success,
         "error": error
     }
+
+
+@api.route('/user/players', methods=["GET"])
+@json_api()
+@require_login()
+def get_user_players():
+    user = session_user()
+
+    data = []
+
+    players = player_service.get_user_players(user)
+    for player in players:
+        data.append({
+            "id": player.id,
+            "user_name": player.user.name,
+            "name": player.name,
+            "race": player.race_name,
+            "class": player.class_name
+        })
+
+    return {
+        "success": True,
+        "players": data
+    }
+
+
