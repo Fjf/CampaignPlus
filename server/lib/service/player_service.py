@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple
 
 from werkzeug.exceptions import BadRequest
 
+from server.lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel
 from server.lib.model.models import PlayerInfoModel, PlayerEquipmentModel, SpellModel, PlayerSpellModel, ItemModel, \
     WeaponModel, PlayerProficiencyModel
 from server.lib.model.models import PlayerModel, UserModel, PlaythroughModel
@@ -266,3 +267,19 @@ def update_proficiencies(player, data):
 
     repository.add_and_commit(pp)
     return ""
+
+
+def get_classes(player: PlayerModel) -> List[ClassModel]:
+    return player_repository.get_classes(player)
+
+
+def get_class_abilities(class_model: ClassModel) -> List[ClassAbilityModel]:
+    return player_repository.get_class_abilities(class_model=class_model)
+
+
+def get_subclass_abilities(sub_class_model: SubClassModel) -> List[ClassAbilityModel]:
+    return player_repository.get_class_abilities(subclass_model=sub_class_model)
+
+
+def get_visible_classes(user: UserModel) -> List[ClassModel]:
+    return player_repository.get_visible_classes(user)

@@ -2,6 +2,7 @@ from flask import request
 from werkzeug.exceptions import BadRequest, Unauthorized, NotFound
 
 from server import app
+from server.lib.model.class_models import ClassAbilityModel
 from server.lib.model.models import PlayerEquipmentModel, SpellModel, WeaponModel, PlayerProficiencyModel, PlayerModel
 from server.lib.service import player_service, playthrough_service
 from server.lib.user_session import session_user
@@ -390,3 +391,28 @@ def set_player_proficiencies(player_id: int):
         "success": True,
         "error": error
     }
+
+
+@api.route('/player/<int:player_id>/classes', methods=["GET"])
+@json_api()
+@require_login()
+def get_player_classes(player_id):
+    player = player_service.find_player(player_id)
+    check_player(player)
+
+    class_models = player_service.get_classes(player)
+    classes = []
+    for class_model in class_models:
+        abilities = player_service.get_class_abilities(class_model)
+        classes.append({
+            "id": class_model.id,
+            "name": class_model.name,
+            "info": class_model.info,
+            "abilities": [ability.to_json() for ability in abilities]
+        })
+
+    return {
+        "success": True,
+        "classes": classes
+    }
+

@@ -153,3 +153,25 @@ def get_user_players():
     }
 
 
+@api.route('/user/classes', methods=["GET"])
+@json_api()
+@require_login()
+def get_user_classes():
+    user = session_user()
+
+    class_models = player_service.get_visible_classes(user)
+
+    classes = []
+    for class_model in class_models:
+        abilities = player_service.get_class_abilities(class_model)
+        classes.append({
+            "id": class_model.id,
+            "name": class_model.name,
+            "info": class_model.info,
+            "abilities": [ability.to_json() for ability in abilities]
+        })
+
+    return {
+        "success": True,
+        "classes": classes
+    }

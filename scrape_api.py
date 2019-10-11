@@ -1,7 +1,9 @@
+import re
 from collections import defaultdict
 
 import requests
 
+from server.lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel
 from server.lib.model.models import ItemModel, WeaponModel, SpellModel
 from server.lib.repository import player_repository, repository
 
@@ -90,20 +92,89 @@ def get_spells():
 
 
 def get_classes():
-    result = requests.get("http://www.dnd5eapi.co/api/classes/")
+    result = requests.get("http://api.open5e.com/classes/")
     obj = result.json()
 
-    for elem in obj["results"]:
-        ctype = requests.get(elem["url"]).json()
+    for ctype in obj["results"]:
+        classmodel = ClassModel.from_owner(owner=None)
 
-        print(ctype)
-        break
+        classmodel.name = ctype.get("name")
+        classmodel.hit_die = ctype.get("hit_dice")
+        classmodel.info = ""
+
+        repository.add_and_commit(classmodel)
+
+        abilities = ctype.get("desc")
+
+        groups = re.split("### ", abilities)
+
+        for group in groups:
+            if len(group.strip()) == 0:
+                continue
+
+            d = group.split(sep=" \n", maxsplit=1)
+            name = d[0]
+            text = d[1]
+
+            ability_model = ClassAbilityModel.from_main_class(classmodel)
+            ability_model.info = text
+            ability_model.name = name
+            ability_model.level = 0
+
+            repository.add_and_commit(ability_model)
+
+        for archetype in ctype.get("archetypes"):
+            subclass = SubClassModel.from_class_user(classmodel, owner=None)
+
+            subclass.name = archetype.get("name")
+            subclass.info = ""
+
+            repository.add_and_commit(subclass)
+
+            abilities = archetype.get("desc")
+
+            groups = re.split("##### ", abilities)
+
+            for group in groups:
+                if len(group.strip()) == 0:
+                    continue
+
+                d = group.split(sep=" \n", maxsplit=1)
+                name = d[0]
+                text = d[1]
+
+                ability_model = ClassAbilityModel.from_sub_class(subclass)
+                ability_model.info = text
+                ability_model.name = name
+                ability_model.level = 0
+
+                repository.add_and_commit(ability_model)
+
+
+def update_class_levels():
+    from server.lib.database import request_session
+    from typing import List
+    db = request_session()
+
+    abilities: List[ClassAbilityModel] = db.query(ClassAbilityModel).all()
+
+    for ability in abilities:
+        levels = re.findall("(\d+).. level", ability.info)
+        if not levels:
+            continue
+
+        level = int(levels[0])
+        ability.level = level
+
+        repository.add_and_commit(ability)
 
 
 def main():
     # get_equipment()
     # get_spells()
-    get_classes()
+    # get_classes()
+    # update_class_levels()
+    pass
 
 
 if __name__ == "__main__":

@@ -582,24 +582,3 @@ class PlayerProficiencyModel(OrmModelBase):
         c = cls()
         c.player_id = player.id
         return c
-
-
-class ClassModel(OrmModelBase):
-    """
-    The player data model contains the spells a player knows.
-    It refers to the SpellModel by id.
-    """
-
-    __tablename__ = 'class'
-
-    id = Column(Integer(), primary_key=True)
-
-    name = Column(String(), nullable=False)
-    hit_die = Column(Integer(), nullable=False)
-
-    @classmethod
-    def from_player_spell(cls, player: PlayerModel, spell: SpellModel):
-        c = cls()
-        c.player_id = player.id
-        c.spell_id = spell.id
-        return c
