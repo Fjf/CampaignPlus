@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id="header">
+        <div class="menu_toggle"></div>
+        <div class="headerelem" id="currentuser"></div>
+        <div class="headerelem" id="logout"><div class="header_button" onclick="window.location.href='/logout'">Log out</div></div>
+        <div class="headerelem" id="home"><div class="header_button" onclick="window.location.href='/'">Home</div></div>
+        <div class="headerelem" id="settings"><div class="header_button" onclick="window.location.href='/settings'">Settings</div></div>
+    </div>
+    <div id="content">
+        <div id="content_left">
+            <div>
+                <img src="{{ url_for('static', filename='images/qr_codes/' + code + '.png') }}">
+            </div>
+            <div id="charactertext">
+                <br>
+            </div>
+            <ul id="characters" style="list-style-type: none">
+
+            </ul>
+            <p>
+                The latest log entries:<br>
+                <ul id="latest_log_entries">
+
+                </ul>
+            </p>
+        </div>
+        <div id="content_right">
+            <div id="playthrough_name"></div><br>
+            <div id="character_chat_wrapper">
+                <div id="content_right_char">
+                    <div class="datadiv" id="update" style="display:none;">
+                        Update your player character.
+                        <div id="up_id" style="display:none;"></div>
+                        <form class="dataform" action="javascript:updateCharacter();" method = "POST">
+                            Player Character Name<br>
+                            <input type="text" id="up_name"/><br>
+                            Race<br>
+                            <input type="text" id="up_race"/><br>
+                            Class<br>
+                            <input type="text" id="up_class"/><br>
+                            Backstory<br>
+                            <div contenteditable id="up_backstory"></div><br>
+                            <input id="update_pc" type="submit" value="Update"/>
+                        </form>
+                    </div>
+                    <div class="datadiv" id="create">
+                        Create your player character.
+                        <form class="dataform" action="javascript:uploadCharacter();" method = "POST">
+                            Player Character Name<br>
+                            <input type="text" id="name" /><br>
+                            Race<br>
+                            <input type="text" id="race" /><br>
+                            Class<br>
+                            <input type="text" id="class" /><br>
+                            Backstory<br>
+                            <textarea id="backstory" placeholder="Er was eens..."></textarea><br>
+                            <input id="submit_pc" type="submit" value="Upload"/>
+                        </form>
+                    </div>
+                </div>
+                <div id="content_right_chat">
+                    Send a message to the DM.
+                    <input id="chat_message" type="text" placeholder="Hello!">
+                    <input type="button" value="Send!" onclick="sendMessage()">
+                </div>
+            </div>
+            <div id="content_log_wrapper" style="display: none;">
+                <div class="content_log_arrows" id="content_log_left_arrow"><div onclick="logBook.prevPage()"></div></div>
+                <div id="content_log_entries">
+                    Log entries go here.
+                </div>
+                <div class="content_log_arrows" id="content_log_right_arrow"><div onclick="logBook.nextPage()"></div></div>
+                <div id="content_log_create">
+                    <p>
+                        Title<br>
+                        <input id="create_log_title" type="text" placeholder="Title">
+                    </p>
+                    <p>
+                        Log entry<br>
+                        <textarea id="create_log_text" placeholder="Information" onkeyup="auto_grow(this)"></textarea>
+                    </p>
+                    <p>
+                        <input id="create_log_submit" type="button" value="Create Log" onclick="createLog()">
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        var PLAYTHROUGH_ID = "{{ id }}"
+        var PLAYTHROUGH_CODE = "{{ code }}"
+        var USERNAME = "{{ username }}"
+    </script>
+    <script src="{{ url_for('static', filename='js/create_pc.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,13 @@
+env/*
+.idea/*
+*.pyc
+*.mp3
+*.db
+*.jpg
+*.dump
+*.png
+*.exe
+!server/views/static/images/base/*
+!server/views/static/images/battlemap/*
+app/*
+app

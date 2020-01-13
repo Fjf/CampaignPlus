@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id="header">
+        <div class="menu_toggle"></div>
+        <div class="headerelem" id="currentuser"></div>
+    </div>
+    <div id="content">
+        <div id="content_left">
+            <div id="map_content">
+                <div id="functions" class="map_content_element no_overflow">
+                    <button onclick="document.getElementById('create_map').style.display='block'">Create Map</button>
+                    <button onclick="resize()">Resize</button>
+                    <button onclick="addMarker()">Add place</button>
+                </div>
+                <div id="placeswrapper" class="map_content_element no_overflow">
+                    <center><b>Places:</b></center>
+                    <div id="places">
+                    </div>
+                </div>
+                <div id="map_data" class="map_content_element no_overflow">
+                    <input class="textbox" id="map_name" type="text" placeholder="Location name here."><br>
+                    <textarea class="textbox" id="map_story" placeholder="Location story here."></textarea><br>
+                    <button id="button_update" onclick="updateMapData()">Update this data.</button>
+                </div>
+            </div>
+        </div>
+        <div id="content_right">
+            <canvas id="map">
+
+            </canvas>
+        </div>
+        <div class="popup" id="create_map">
+            <div class="popup_header">
+                Create Map
+                <button onclick="this.parentNode.parentNode.style.display='none'" style="float: right; width: 5%;">X</button>
+            </div>
+            <div class="popup_content_wrapper">
+                <input id="create_map_file" type="file" value="file">
+
+                <input id="create_map_title" type="text" placeholder="Title">
+                <input id="map_submit" type="button" value="Submit" onclick="createMap()">
+
+                <p>Create a Battlegrid? <br>
+                <input id="create_map_grid" type="button" value="Open Map Editor" onclick="openMapEditor()">
+            </div>
+        </div>
+        <div class="popup" id="select_map">
+             <div class="popup_header">
+                Select Map
+                <button onclick="this.parentNode.parentNode.style.display='none'" style="float: right; width: 5%;">X</button>
+            </div>
+            <div class="popup_content_wrapper">
+                <input id="select_map_name" type="text" placeholder="Select a map" disabled>
+                <input id="select_map_id" type="number" style="display: none;">
+                <input id="select_map_pid" type="number" placeholder="parent id" disabled>
+                <input id="select_map_x" type="number" placeholder="x" disabled>
+                <input id="select_map_y" type="number" placeholder="y" disabled>
+                <input id="submit_selected" type="button" value="Submit" onclick="selectMap()"><br>
+
+                Select an existing map
+                <ul id="create_map_maplist" style="list-style-type: none">
+
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        var PLAYTHROUGH_ID = "{{ pid }}"
+        var ROOT_MAP = "{{ mid }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/map.js') }}"></script>
+{% endblock %}

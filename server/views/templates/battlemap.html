@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id="header">
+        <div class="menu_toggle"></div>
+        <div class="headerelem" id="currentuser"></div>
+    </div>
+    <div id="content">
+        <div id="content_left">
+            <div id="map_content">
+                <div id="functions" class="map_content_element no_overflow">
+                    <button onclick="store_map(battlemap)">Save BattleMap</button>
+                    <button onclick="battlemap.print()">Export BattleMap</button>
+                </div>
+                <div id="placeswrapper" class="map_content_element no_overflow">
+                    <center><b>Places:</b></center>
+                    <div id="places">
+                    </div>
+                </div>
+                <div id="map_data" class="map_content_element no_overflow">
+                    <input class="textbox" id="map_name" type="text" placeholder="Location name here."><br>
+                    <textarea class="textbox" id="map_story" placeholder="Location story here."></textarea><br>
+                    <button id="button_update" onclick="updateMapData()">Update this data.</button>
+                </div>
+            </div>
+        </div>
+        <div id="content_right">
+            <canvas id="battlemap">
+
+            </canvas>
+        </div>
+    </div>
+    <a id="link"></a>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        var PLAYTHROUGH_ID = "{{ pid }}"
+    </script>
+    <script src="{{ url_for('static', filename='js/battlemap.js') }}"></script>
+{% endblock %}

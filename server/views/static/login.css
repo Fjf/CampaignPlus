@@ -1,0 +1,58 @@
+#loginpage {
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('images/base/titlescreen.jpg');
+}
+
+.logindiv {
+    box-sizing:border-box;
+
+    background: rgba(128, 128, 128, 0.6);
+
+    font-size: 18px;
+    text-align: center;
+
+    width: 40%;
+    height: 100%;
+    padding: 50px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.logindiv input {
+    font-size: 18px;
+    padding-left: 30px;
+    height: 30px;
+}
+
+.errorbox {
+    color: #980000;
+}
+
+.input_password {
+    background-image: url('images/base/pass.png');
+    background-position: 7px 7px;
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+}
+
+.input_name {
+    background-image: url('images/base/user.png');
+    background-position: 7px 7px;
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+}
+
+
+.input_confirm {
+    background-image: url('images/base/confirm_pass.png');
+    background-position: 7px 7px;
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+}
+
+.input_email {
+    background-image: url('images/base/email_icon.png');
+    background-position: 7px 7px;
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+}
