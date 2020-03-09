@@ -361,6 +361,26 @@ class PlayerInfoModel(OrmModelBase):
         c.player_id = player.id
         return c
 
+    def to_json(self):
+        return {
+            "strength": self.strength,
+            "dexterity": self.dexterity,
+            "constitution": self.constitution,
+            "intelligence": self.intelligence,
+            "wisdom": self.wisdom,
+            "charisma": self.charisma,
+            "saving_throws_str": self.saving_throws_str,
+            "saving_throws_dex": self.saving_throws_dex,
+            "saving_throws_con": self.saving_throws_con,
+            "saving_throws_int": self.saving_throws_int,
+            "saving_throws_wis": self.saving_throws_wis,
+            "saving_throws_cha": self.saving_throws_cha,
+            "max_hp": self.max_hp,
+            "armor_class": self.armor_class,
+            "speed": self.speed,
+            "level": self.level,
+        }
+
 
 class ItemModel(OrmModelBase):
     """

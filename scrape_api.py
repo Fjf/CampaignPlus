@@ -106,7 +106,7 @@ def get_classes():
 
         abilities = ctype.get("desc")
 
-        groups = re.split("### ", abilities)
+        groups = re.split("\n### ", abilities)
 
         for group in groups:
             if len(group.strip()) == 0:
@@ -172,8 +172,8 @@ def update_class_levels():
 def main():
     # get_equipment()
     # get_spells()
-    # get_classes()
-    # update_class_levels()
+    get_classes()
+    update_class_levels()
     pass
 
 

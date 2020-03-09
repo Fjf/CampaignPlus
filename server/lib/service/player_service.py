@@ -45,9 +45,11 @@ def delete_player(player: PlayerModel):
     player_repository.delete_player(player)
 
 
-def update_player(player: PlayerModel, name: str = None, race: str = None, class_name: str = None, backstory: str = None):
+def update_player(player: PlayerModel, name: str = None, race: str = None, class_name: str = None,
+                  backstory: str = None):
     """
     Updates the given PlayerModel to contain the new given data.
+
     :param player: The PlayerModel to update.
     :param [Optional] name: The new name for the player.
     :param [Optional] race: The new race for the player.
@@ -122,7 +124,6 @@ def check_backstory(backstory: str) -> bool:
 def set_player_info(player, strength, dexterity, constitution, intelligence, wisdom, charisma,
                     saving_throws_str, saving_throws_dex, saving_throws_con, saving_throws_int,
                     saving_throws_wis, saving_throws_cha, max_hp, armor_class, speed, level):
-
     player_info = get_player_info(player)
 
     player_info.strength = strength or player_info.strength
@@ -154,8 +155,6 @@ def set_player_info(player, strength, dexterity, constitution, intelligence, wis
     player_info.level = max(min(player_info.level, 20), 1)
 
     player_repository.add_and_commit(player_info)
-
-    return ""
 
 
 def player_add_item(player, item_id, amount: int):
@@ -243,7 +242,15 @@ def get_player_proficiencies(player: PlayerModel) -> PlayerProficiencyModel:
     return proficiencies
 
 
-def update_proficiencies(player, data):
+def update_proficiencies(player, data) -> None:
+    """
+    Updates the player proficiencies given an input json object. This json object needs to have the correct naming
+     schemes for all proficiencies.
+
+    :param player: The player object for which to update the stored information.
+    :param data: The data which will be used to overwrite player information.
+    :return:
+    """
     pp: PlayerProficiencyModel = get_player_proficiencies(player)
 
     pp.acrobatics = data.get("acrobatics", pp.acrobatics)
@@ -266,7 +273,6 @@ def update_proficiencies(player, data):
     pp.survival = data.get("survival", pp.survival)
 
     repository.add_and_commit(pp)
-    return ""
 
 
 def get_classes(player: PlayerModel) -> List[ClassModel]:

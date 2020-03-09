@@ -10,6 +10,12 @@ from server.views.api import api, json_api, require_login
 
 
 def check_player(player: PlayerModel):
+    """
+    Checks whether or not a player exists, and whether or not it belongs to the logged in user.
+
+    :param player:
+    :return:
+    """
     user = session_user()
 
     if player is None:
@@ -140,33 +146,17 @@ def get_player(player_id):
     check_player(player)
 
     player_info = player_service.get_player_info(player)
-    info = {
-        "strength": player_info.strength,
-        "dexterity": player_info.dexterity,
-        "constitution": player_info.constitution,
-        "intelligence": player_info.intelligence,
-        "wisdom": player_info.wisdom,
-        "charisma": player_info.charisma,
-        "saving_throws_str": player_info.saving_throws_str,
-        "saving_throws_dex": player_info.saving_throws_dex,
-        "saving_throws_con": player_info.saving_throws_con,
-        "saving_throws_int": player_info.saving_throws_int,
-        "saving_throws_wis": player_info.saving_throws_wis,
-        "saving_throws_cha": player_info.saving_throws_cha,
-        "max_hp": player_info.max_hp,
-        "armor_class": player_info.armor_class,
-        "speed": player_info.speed,
-        "level": player_info.level,
-    }
+    player_proficiencies = player_service.get_player_proficiencies(player)
 
     return {
         "success": True,
         "name": player.name,
+        "user_name": player.user.name,
         "class": player.class_name,
         "race": player.race_name,
-        "user_name": player.user.name,
         "backstory": player.backstory,
-        "info": info
+        "info": player_info.to_json(),
+        "proficiencies": player_proficiencies.to_json()
     }
 
 
@@ -179,29 +169,24 @@ def set_player_info(player_id):
     player = player_service.find_player(player_id)
     check_player(player)
 
-    error = player_service.set_player_info(player,
-                                           data.get("strength", None),
-                                           data.get("dexterity", None),
-                                           data.get("constitution", None),
-                                           data.get("intelligence", None),
-                                           data.get("wisdom", None),
-                                           data.get("charisma", None),
-                                           data.get("saving_throws_str", None),
-                                           data.get("saving_throws_dex", None),
-                                           data.get("saving_throws_con", None),
-                                           data.get("saving_throws_int", None),
-                                           data.get("saving_throws_wis", None),
-                                           data.get("saving_throws_cha", None),
-                                           data.get("max_hp", None),
-                                           data.get("armor_class", None),
-                                           data.get("speed", None),
-                                           data.get("level", None))
+    # Update main player information
+    player_service.update_player(player, data.get("name"), data.get("race"), data.get("class"), data.get("backstory"))
 
-    success = error == ""
+    info = data.get("info")
+    if info is not None:
+        player_service.set_player_info(player, info.get("strength"), info.get("dexterity"), info.get("constitution"),
+                                       info.get("intelligence"), info.get("wisdom"), info.get("charisma"),
+                                       info.get("saving_throws_str"), info.get("saving_throws_dex"),
+                                       info.get("saving_throws_con"), info.get("saving_throws_int"),
+                                       info.get("saving_throws_wis"), info.get("saving_throws_cha"), info.get("max_hp"),
+                                       info.get("armor_class"), info.get("speed"), info.get("level"))
+
+    profs = data.get("proficiencies")
+    if profs is not None:
+        player_service.update_proficiencies(player, profs)
 
     return {
-        "success": success,
-        "error": error
+        "success": True
     }
 
 
@@ -385,18 +370,17 @@ def set_player_proficiencies(player_id: int):
     player = player_service.find_player(player_id)
     check_player(player)
 
-    error = player_service.update_proficiencies(player, data)
+    player_service.update_proficiencies(player, data)
 
     return {
-        "success": True,
-        "error": error
+        "success": True
     }
 
 
 @api.route('/player/<int:player_id>/classes', methods=["GET"])
 @json_api()
 @require_login()
-def get_player_classes(player_id):
+def get_player_class(player_id):
     player = player_service.find_player(player_id)
     check_player(player)
 
@@ -410,9 +394,8 @@ def get_player_classes(player_id):
             "info": class_model.info,
             "abilities": [ability.to_json() for ability in abilities]
         })
-
+    print(classes)
     return {
         "success": True,
         "classes": classes
     }
-
