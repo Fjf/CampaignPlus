@@ -394,7 +394,6 @@ def get_player_class(player_id):
             "info": class_model.info,
             "abilities": [ability.to_json() for ability in abilities]
         })
-    print(classes)
     return {
         "success": True,
         "classes": classes

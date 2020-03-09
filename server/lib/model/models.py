@@ -381,7 +381,6 @@ class PlayerInfoModel(OrmModelBase):
             "level": self.level,
         }
 
-
 class ItemModel(OrmModelBase):
     """
     The datamodel which stores items.
