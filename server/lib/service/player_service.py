@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple
 
 from werkzeug.exceptions import BadRequest
 
-from server.lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel
+from server.lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel, PlayerClassModel
 from server.lib.model.models import PlayerInfoModel, PlayerEquipmentModel, SpellModel, PlayerSpellModel, ItemModel, \
     WeaponModel, PlayerProficiencyModel
 from server.lib.model.models import PlayerModel, UserModel, PlaythroughModel
@@ -25,16 +25,31 @@ def striphtml(data):
     return p.sub('', data)
 
 
-def create_player(user: UserModel, name: str, race: str = "", class_name: str = "", backstory: str = "",
-                  playthrough: Optional[PlaythroughModel] = None):
+def add_classes_to_player(player, class_ids):
+    # Add classes to player
+    for class_id in class_ids:
+        playable_class = player_repository.get_class_by_id(class_id)
+        if playable_class is None:
+            return "Undefined player class id '%d'" % class_id
+
+        pcm = PlayerClassModel.from_player_class(player, playable_class)
+        player_repository.add_and_commit(pcm)
+
+
+def create_player(user: UserModel, name: str, race: str = "", class_ids=None, backstory: str = "", playthrough: PlaythroughModel = None):
+    if class_ids is None:
+        class_ids = []
+
     player = PlayerModel.from_name_playthrough_user(name, playthrough, user)
 
     player.race_name = race
     player.backstory = backstory
-    player.class_name = class_name
-
+    player.class_name = "dummy"
     player_repository.add_and_commit(player)
-    return player
+
+    error = add_classes_to_player(player, class_ids)
+
+    return player, error
 
 
 def find_player(pid: int) -> Optional[PlayerModel]:
@@ -45,7 +60,7 @@ def delete_player(player: PlayerModel):
     player_repository.delete_player(player)
 
 
-def update_player(player: PlayerModel, name: str = None, race: str = None, class_name: str = None,
+def update_player(player: PlayerModel, name: str = None, race: str = None, class_ids=None,
                   backstory: str = None):
     """
     Updates the given PlayerModel to contain the new given data.
@@ -53,16 +68,22 @@ def update_player(player: PlayerModel, name: str = None, race: str = None, class
     :param player: The PlayerModel to update.
     :param [Optional] name: The new name for the player.
     :param [Optional] race: The new race for the player.
-    :param [Optional] class_name: The new class for the player.
+    :param [Optional] class_ids: List of class ids the player uses.
     :param [Optional] backstory: The new backstory for the player.
     :return:
     """
+    if class_ids is None:
+        class_ids = []
+
     player.backstory = backstory or player.backstory
     player.name = name or player.name
     player.race_name = race or player.race_name
-    player.class_name = class_name or player.class_name
 
     player_repository.add_and_commit(player)
+
+    # Add new player classes to db
+    player_repository.remove_classes_from_player(player)
+    add_classes_to_player(player, class_ids)
 
 
 def get_player(user: UserModel):

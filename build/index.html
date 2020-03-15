@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Welcome to DnD-Tools’s documentation! &#8212; DnD-Tools 0.3 documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+     
+    
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head><body>
+    
+    <div class=indexwrapper>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">DnD-Tools 0.3 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-dnd-tools-s-documentation">
+<h1>Welcome to DnD-Tools’s documentation!<a class="headerlink" href="#welcome-to-dnd-tools-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-server.views.api.player"></span><dl class="function">
+<dt id="server.views.api.player.create_player">
+<code class="sig-prename descclassname">server.views.api.player.</code><code class="sig-name descname">create_player</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.views.api.player.create_player" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a player character</p>
+<dl class="simple">
+<dt>Optional POST parameters:</dt><dd><ul class="simple">
+<li><p>name: The name of your PC</p></li>
+<li><p>race: The race of your PC</p></li>
+<li><p>class: The class of your PC</p></li>
+<li><p>backstory: The backstory for your PC</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A json object containing the newly created player’s id.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="server.views.api.player.delete_player">
+<code class="sig-prename descclassname">server.views.api.player.</code><code class="sig-name descname">delete_player</code><span class="sig-paren">(</span><em class="sig-param">player_id</em><span class="sig-paren">)</span><a class="headerlink" href="#server.views.api.player.delete_player" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes a player with the given player_id in the URL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>player_id</strong> – The id of the player that will be deleted.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="server.views.api.player.update_player">
+<code class="sig-prename descclassname">server.views.api.player.</code><code class="sig-name descname">update_player</code><span class="sig-paren">(</span><em class="sig-param">player_id</em><span class="sig-paren">)</span><a class="headerlink" href="#server.views.api.player.update_player" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates a specified player character</p>
+<dl class="simple">
+<dt>Required URL parameter:</dt><dd><ul class="simple">
+<li><p>player_id: The player id for which to update their information.</p></li>
+</ul>
+</dd>
+<dt>Optional POST parameters:</dt><dd><ul class="simple">
+<li><p>name: The new name of your PC</p></li>
+<li><p>race: The new race of your PC</p></li>
+<li><p>class: The new class of your PC</p></li>
+<li><p>backstory: The new backstory for your PC</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A json object containing the updated player’s id.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-server.views.api.user"></span><span class="target" id="module-server.views.api.enemy"></span><span class="target" id="module-server.views.api.items"></span><span class="target" id="module-server.views.api.logs"></span><span class="target" id="module-server.views.api.map"></span><span class="target" id="module-server.views.api.playthrough"></span><span class="target" id="module-server.views.api.messages"></span></div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to DnD-Tools’s documentation!</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Duncan Kampert.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+    </div>
+
+  </body>
+</html>

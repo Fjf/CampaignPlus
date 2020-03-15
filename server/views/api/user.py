@@ -139,12 +139,15 @@ def get_user_players():
 
     players = player_service.get_user_players(user)
     for player in players:
+        class_ids = [cls.id for cls in player_service.get_classes(player)]
+
         data.append({
             "id": player.id,
             "user_name": player.user.name,
             "name": player.name,
             "race": player.race_name,
-            "class": player.class_name
+            "class_ids": class_ids,
+            "backstory": player.backstory,
         })
 
     return {
@@ -174,4 +177,35 @@ def get_user_classes():
     return {
         "success": True,
         "classes": classes
+    }
+
+
+@api.route('/user/player', methods=["POST"])
+@json_api()
+@require_login()
+def create_player():
+    """
+        Creates a player character
+
+        Optional POST parameters:
+         - name: The new name of your PC
+         - race: The new race of your PC
+         - class_ids: The new class ids (array) of your PC
+         - backstory: The new backstory for your PC
+        :return: A json object containing the updated player's id.
+    """
+    user = session_user()
+    data = request.get_json()
+
+    name = data.get("name", user.name)
+    race = data.get("race", "Human")
+    class_ids = data.get("class_ids", [])
+    backstory = data.get("backstory", "")
+
+    player, error = player_service.create_player(user, name, race, class_ids, backstory)
+
+    return {
+        "success": error == "",
+        "player_id": player.id,
+        "error": error
     }

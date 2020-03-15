@@ -198,3 +198,17 @@ def get_class_abilities(class_model: ClassModel = None, subclass_model: SubClass
     else:
         return intermediate.filter(ClassAbilityModel.sub_class_id == subclass_model.id) \
             .all()
+
+
+def get_class_by_id(class_id: int) -> Optional[ClassModel]:
+    db = request_session()
+
+    return db.query(ClassModel).filter(ClassModel.id == class_id).one_or_none()
+
+
+def remove_classes_from_player(player: PlayerModel):
+    db = request_session()
+
+    db.query(PlayerClassModel).filter(PlayerClassModel.player_id == player.id).delete()
+
+

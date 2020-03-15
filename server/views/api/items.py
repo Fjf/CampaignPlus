@@ -39,6 +39,8 @@ def get_items():
             "cost": item.cost
         })
 
+    print(items)
+
     return {
         "success": True,
         "items": items

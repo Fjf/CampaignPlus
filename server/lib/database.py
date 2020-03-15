@@ -5,6 +5,7 @@ This file contains all the function used for setting up the database and databas
 """
 
 from contextlib import contextmanager
+from typing import Optional
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -43,7 +44,7 @@ def session():
         s.close()
 
 
-def request_session():
+def request_session() -> Optional[scoped_session]:
     """
     A database instance with a lifetime tied to the user request.
     The connection is closed when the response is sent.

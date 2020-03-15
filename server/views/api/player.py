@@ -24,39 +24,6 @@ def check_player(player: PlayerModel):
         raise Unauthorized("This player is not yours.")
 
 
-@api.route('/player', methods=["POST"])
-@json_api()
-@require_login()
-def create_player():
-    """
-        Creates a player character
-
-        Optional POST parameters:
-         - name: The name of your PC
-         - race: The race of your PC
-         - class: The class of your PC
-         - backstory: The backstory for your PC
-        :return: A json object containing the newly created player's id.
-    """
-
-    user = session_user()
-    data = request.get_json()
-
-    name = data.get("name", "New PC")
-    race = data.get("race", "")
-    class_name = data.get("class", "")
-    backstory = data.get("backstory", "")
-
-    # TODO: Check if the player's chosen race or class actually exist and is visible to the user.
-
-    player = player_service.create_player(user, name, race=race, class_name=class_name, backstory=backstory)
-
-    return {
-        "success": True,
-        "player_id": player.id
-    }
-
-
 @api.route('/player/<int:player_id>', methods=["PUT"])
 @json_api()
 @require_login()
@@ -70,22 +37,23 @@ def update_player(player_id):
         Optional POST parameters:
          - name: The new name of your PC
          - race: The new race of your PC
-         - class: The new class of your PC
+         - class_ids: The new class ids for your PC
          - backstory: The new backstory for your PC
         :return: A json object containing the updated player's id.
     """
-
+    user = session_user()
     data = request.get_json()
 
     player = player_service.find_player(player_id)
+
     check_player(player)
 
     name = data.get("name", None)
     race = data.get("race", None)
-    class_name = data.get("class", None)
+    class_ids = data.get("class_ids", None)
     backstory = data.get("backstory", None)
 
-    player_service.update_player(player, name=name, race=race, class_name=class_name, backstory=backstory)
+    player_service.update_player(player, name=name, race=race, class_ids=class_ids, backstory=backstory)
 
     return {
         "success": True,
@@ -148,7 +116,7 @@ def get_player(player_id):
     player_info = player_service.get_player_info(player)
     player_proficiencies = player_service.get_player_proficiencies(player)
 
-    return {
+    data = {
         "success": True,
         "name": player.name,
         "user_name": player.user.name,
@@ -158,6 +126,8 @@ def get_player(player_id):
         "info": player_info.to_json(),
         "proficiencies": player_proficiencies.to_json()
     }
+
+    return data
 
 
 @api.route('/player/<int:player_id>/data', methods=["PUT"])
@@ -170,9 +140,9 @@ def set_player_info(player_id):
     check_player(player)
 
     # Update main player information
-    player_service.update_player(player, data.get("name"), data.get("race"), data.get("class"), data.get("backstory"))
+    player_service.update_player(player, data.get("name"), data.get("race"), data.get("class_ids"), data.get("backstory"))
 
-    info = data.get("info")
+    info = data.get("stats")
     if info is not None:
         player_service.set_player_info(player, info.get("strength"), info.get("dexterity"), info.get("constitution"),
                                        info.get("intelligence"), info.get("wisdom"), info.get("charisma"),
@@ -186,7 +156,8 @@ def set_player_info(player_id):
         player_service.update_proficiencies(player, profs)
 
     return {
-        "success": True
+        "success": True,
+        "player_id": player.id
     }
 
 

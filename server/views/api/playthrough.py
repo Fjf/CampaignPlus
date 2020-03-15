@@ -155,12 +155,13 @@ def create_player_playthrough(playthrough_id):
     if playthrough is None:
         raise NotFound("This playthrough does not exist.")
 
-    player = player_service.create_player(user, data["name"], data["race"], data["class"], data["backstory"],
+    player, error = player_service.create_player(user, data["name"], data["race"], data["class_ids"], data["backstory"],
                                          playthrough)
 
     return {
         "success": True,
-        "player_id": player.id
+        "player_id": player.id,
+        "error": error
     }
 
 
