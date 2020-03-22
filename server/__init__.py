@@ -1,6 +1,7 @@
 import configparser
 import os
 import sys
+from socket import SocketIO
 
 from flask import Flask
 
@@ -49,6 +50,8 @@ def init():
     setup_directories()
 
     app = create_app(config_parser)
+    # Wrap app in socketIO to support socket communication
+    app = SocketIO(app)
 
     # Import blueprints
     from server.views.api import api
