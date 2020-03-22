@@ -39,7 +39,7 @@ def require_login():
         @wraps(f)
         def decorated_function(*args, **kwargs):
             if not user_session.session_is_authed():
-                raise BadRequest()
+                raise BadRequest("User is not logged in.")
 
             return f(*args, **kwargs)
 

@@ -230,9 +230,14 @@ def get_player_items(player_id):
 
         if weapon is not None:
             data.update({
-                "dice_amount": weapon.dice_amount,
-                "dice_type": weapon.dice_type,
+                "dice": weapon.dice,
                 "damage_type": weapon.damage_type,
+                "damage_bonus": weapon.damage_bonus,
+
+                "2h_dice": weapon.two_dice,
+                "2h_damage_type": weapon.two_damage_type,
+                "2h_damage_bonus": weapon.two_damage_bonus,
+
                 "range_normal": weapon.range_normal,
                 "range_long": weapon.range_long,
                 "throw_range_normal": weapon.throw_range_normal,
@@ -310,6 +315,26 @@ def get_player_spells(player_id):
             "school": spell.school,
             "phb_page": int(spell.phb_page)
         })
+
+    return {
+        "success": True,
+        "spells": spells
+    }
+
+
+@api.route('/player/<int:player_id>/allspells', methods=["GET"])
+@json_api()
+@require_login()
+def get_available_spells(player_id):
+    player = player_service.find_player(player_id)
+    check_player(player)
+
+    spells_list = player_service.get_spells()
+
+    spells = []
+    for spell in spells_list:
+        spell: SpellModel
+        spells.append(spell.to_json())
 
     return {
         "success": True,

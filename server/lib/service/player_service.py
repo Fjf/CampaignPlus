@@ -35,6 +35,8 @@ def add_classes_to_player(player, class_ids):
         pcm = PlayerClassModel.from_player_class(player, playable_class)
         player_repository.add_and_commit(pcm)
 
+    return None
+
 
 def create_player(user: UserModel, name: str, race: str = "", class_ids=None, backstory: str = "", playthrough: PlaythroughModel = None):
     if class_ids is None:
@@ -189,8 +191,11 @@ def player_add_item(player, item_id, amount: int):
     except:
         amount = 1
 
-    player_item = PlayerEquipmentModel.from_player(player, item)
-    player_item.amount = amount
+    player_item = player_repository.get_player_item(item, player)
+    if player_item is None:
+        player_item = PlayerEquipmentModel.from_player(player, item)
+
+    player_item.amount += amount
 
     player_repository.add_and_commit(player_item)
 
@@ -199,7 +204,7 @@ def get_player_spells(player: PlayerModel) -> List[SpellModel]:
     return player_repository.get_player_spells(player)
 
 
-def get_spells(playthrough):
+def get_spells(playthrough=None):
     return player_repository.get_spells(playthrough)
 
 

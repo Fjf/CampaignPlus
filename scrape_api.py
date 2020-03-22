@@ -22,7 +22,7 @@ def get_equipment():
     obj = result.json()
 
     for elem in obj["results"]:
-        item = requests.get(elem["url"]).json()
+        item = requests.get("http://www.dnd5eapi.co" + elem["url"]).json()
 
         # All unknown elements will return None instead of error.
         item_model = ItemModel.from_name(item["name"])
@@ -37,13 +37,18 @@ def get_equipment():
         if item_model.category == "Weapon":
             weapon_model = WeaponModel.from_item(item_model)
 
-            dmg = item.get("damage", None)
-
             # Not all items have all sub-JSON objects, so continue with the next item if that is the case.
+            dmg = item.get("damage", None)
             if dmg is not None:
-                weapon_model.dice_amount = dmg["dice_count"]
-                weapon_model.dice_type = dmg["dice_value"]
+                weapon_model.dice = dmg["damage_dice"]
+                weapon_model.damage_bonus = dmg["damage_bonus"]
                 weapon_model.damage_type = dmg["damage_type"]["name"]
+
+            dmg = item.get("2h_damage", None)
+            if dmg is not None:
+                weapon_model.two_dice = dmg["damage_dice"]
+                weapon_model.two_damage_bonus = dmg["damage_bonus"]
+                weapon_model.two_damage_type = dmg["damage_type"]["name"]
 
             item_range = item.get("range", None)
             if item_range is not None:
@@ -63,7 +68,7 @@ def get_spells():
     obj = result.json()
 
     for elem in obj["results"]:
-        spell = requests.get(elem["url"]).json()
+        spell = requests.get("http://www.dnd5eapi.co" + elem["url"]).json()
 
         spell_model = SpellModel.from_name(spell["name"])
 
@@ -169,11 +174,41 @@ def update_class_levels():
         repository.add_and_commit(ability)
 
 
+def get_table():
+    result = requests.get("http://api.open5e.com/classes/")
+    obj = result.json()
+
+    from server.lib.database import request_session
+    db = request_session()
+
+    from typing import List
+    models: List[ClassModel] = db.query(ClassModel).all()
+
+    for result in obj['results']:
+        tbl = result.get("table")
+        name = result.get("name")
+
+        model = next(model for model in models if model.name == name)
+
+        rows = tbl.split("\n")
+        headers = rows[0].split("|")
+        rows = [row.split("|") for row in rows[2:]]
+
+        data = dict()
+        for i, header in enumerate(headers):
+            data[header.strip()] = [row[i].strip() for row in rows]
+
+        model.table = str(data)
+
+    db.commit()
+
+
 def main():
     # get_equipment()
     # get_spells()
-    get_classes()
-    update_class_levels()
+    # get_classes()
+    # update_class_levels()
+    get_table()
     pass
 
 

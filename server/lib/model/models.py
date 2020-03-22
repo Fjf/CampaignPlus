@@ -178,7 +178,7 @@ class PlayerModel(OrmModelBase):
     The user to whom this player character belongs.
     """
 
-    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"))
+    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"), default=-1)
     playthrough = relationship("PlaythroughModel")
 
     user_id = Column(Integer(), ForeignKey("user.id"))
@@ -428,9 +428,14 @@ class WeaponModel(OrmModelBase):
     item_id = Column(Integer(), ForeignKey("item.id"), nullable=False)
     item = relationship("ItemModel")
 
-    dice_amount = Column(Integer(), nullable=True)
-    dice_type = Column(Integer(), nullable=True)
+    dice = Column(Integer(), nullable=True)
+    damage_bonus = Column(Integer, nullable=True)
     damage_type = Column(String(), nullable=True)
+
+    # Two handed information
+    two_dice = Column(Integer(), nullable=True)
+    two_damage_bonus = Column(Integer, nullable=True)
+    two_damage_type = Column(String(), nullable=True)
 
     range_normal = Column(Integer(), nullable=True)
     range_long = Column(Integer(), nullable=True)
@@ -464,7 +469,7 @@ class PlayerEquipmentModel(OrmModelBase):
     item_id = Column(Integer(), ForeignKey("item.id"), nullable=False)
     item: ItemModel = relationship("ItemModel")
 
-    amount = Column(Integer(), nullable=False)
+    amount = Column(Integer(), nullable=False, default=0)
     extra_info = Column(String(), nullable=True)
 
     @classmethod
@@ -513,6 +518,14 @@ class SpellModel(OrmModelBase):
         c = cls()
         c.name = name
         return c
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "level": self.level,
+            "phb_page": self.phb_page
+        }
 
 
 class PlayerSpellModel(OrmModelBase):

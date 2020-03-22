@@ -1,3 +1,5 @@
+from typing import Optional
+
 from server.lib.model.models import ItemModel, PlayerModel, WeaponModel, UserModel
 from server.lib.repository import player_repository, repository, item_repository
 
@@ -41,8 +43,9 @@ def get_item(item_id: int):
     return player_repository.get_item(item_id)
 
 
-def get_items(user: UserModel, player: PlayerModel):
-    if player.user is not user:
+def get_items(user: UserModel, player: Optional[PlayerModel]):
+    if player is not None and player.user is not user:
         return "This player does not belong to you."
 
     return [item for item, _ in item_repository.get_all_items(player)]
+

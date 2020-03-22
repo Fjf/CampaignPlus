@@ -6,42 +6,31 @@ from server.lib.user_session import session_user
 from server.views.api import json_api, api, require_login
 
 
-@api.route('/getitems', methods=["POST"])
+@api.route('/items', methods=["GET"])
 @json_api()
 @require_login()
 def get_items():
-    data = request.get_json()
     user = session_user()
 
-    required_fields = ["player_id"]
-
-    if not data or (False in [x in required_fields for x in data]):
-        raise BadRequest()
-
-    player_id = data.get("player_id")
-
+    player_id = request.args.get("player_id", -1)
     player = player_service.find_player(player_id)
-    if player is None:
-        return {
-            "success": False,
-            "error": "This player does not exist."
-        }
 
     item_objects = item_service.get_items(user, player)
     items = []
     for item in item_objects:
         items.append({
-            "item_id": item.id,
-            "playthrough_id": item.playthrough_id,
+            "id": item.id,
+            "campaign_id": item.playthrough_id,
             "name": item.name,
             "category": item.category,
             "weight": item.weight,
-            "cost": item.cost
+            "value": item.cost
         })
 
     print(items)
 
     return {
         "success": True,
-        "items": items
+        "items": items,
+        "error": ""
     }

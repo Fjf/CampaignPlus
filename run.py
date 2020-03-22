@@ -54,4 +54,4 @@ if __name__ == "__main__":
     create_documentation()
 
     # server.app.run(ssl_context='adhoc', threaded=True, host=args.host, port=args.port)
-    server.app.run(threaded=True, host=args.host, port=args.port)
+    server.app.run(threaded=True, host="0.0.0.0", port=args.port)
