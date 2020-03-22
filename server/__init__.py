@@ -1,11 +1,12 @@
 import configparser
 import os
 import sys
-from socket import SocketIO
 
 from flask import Flask
+from flask_socketio import SocketIO
 
 global app
+global socketio
 
 
 def create_app(config) -> Flask:
@@ -38,6 +39,7 @@ def init():
     print('Initialising')
 
     global app
+    global socketio
 
     config_file = os.getenv('CONFIG_FILE', 'config.ini')
 
@@ -51,7 +53,7 @@ def init():
 
     app = create_app(config_parser)
     # Wrap app in socketIO to support socket communication
-    app = SocketIO(app)
+    socketio = SocketIO(app)
 
     # Import blueprints
     from server.views.api import api
