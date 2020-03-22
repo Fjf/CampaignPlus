@@ -1,8 +1,6 @@
 let socket = io();
 socket.on('connect', function () { });
 
-let username = null;
-
 socket.on("message", function(json) {
     let message = JSON.parse(json);
 
@@ -14,26 +12,20 @@ socket.on("message", function(json) {
     chat.appendChild(div);
 });
 
-function connect(username) {
-    socket.emit("join", {
-        "username": username,
-        "campaign": CAMPAIGN_ID,
-    })
-}
+socket.emit("join", {
+    "username": USERNAME,
+    "campaign": CAMPAIGN_ID,
+});
 
-function sendMessage() {
+function sendMessage(e) {
     const div = document.getElementById("message_data");
     const msg = div.value;
     div.value = "";
-    if (username === null) {
-        username = msg;
-        connect(msg);
-        return;
-    }
 
     socket.emit("message", {
         "campaign": CAMPAIGN_ID,
-        "username": username,
         "message": msg,
-    })
+    });
+
+    return false;
 }

@@ -82,8 +82,8 @@ def settings():
 @app.route('/testbattlemap', methods=["GET"])
 @require_login()
 def testbattlemap():
-    # TODO: fill pid
-    return render_template("testbattlemap.html", pid=1)
+    user = session_user()
+    return render_template("testbattlemap.html", pid=1, username=user.name)
 
 
 @app.route('/app', methods=['GET'])
@@ -94,7 +94,4 @@ def download():
     return send_from_directory(directory=uploads, filename="app-debug.apk", as_attachment=True)
 
 
-
-
 print("Loaded index successfully.")
-
