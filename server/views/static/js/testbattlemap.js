@@ -1,4 +1,4 @@
-let socket = io("http://localhost:5000/");
+let socket = io();
 socket.on('connect', function () { });
 
 let username = null;
