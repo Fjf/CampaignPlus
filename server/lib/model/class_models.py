@@ -23,6 +23,8 @@ class ClassModel(OrmModelBase):
     name = Column(String(), nullable=False)
     hit_die = Column(Integer(), nullable=False)
 
+    table = Column(String(), nullable=True)
+
     info = Column(String(), nullable=True)
 
     @classmethod
@@ -33,6 +35,11 @@ class ClassModel(OrmModelBase):
         else:
             c.owner_id = None
         return c
+
+    def to_json(self):
+        return {
+
+        }
 
 
 class SubClassModel(OrmModelBase):

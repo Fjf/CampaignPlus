@@ -47,6 +47,18 @@ def get_player_items(player: PlayerModel) -> List[Tuple[PlayerEquipmentModel, We
         .all()
 
 
+def get_player_item(item: ItemModel, player: Optional[PlayerModel]) -> Optional[ItemModel]:
+    db = request_session()
+
+    intermediate = db.query(PlayerEquipmentModel) \
+        .filter(PlayerEquipmentModel.item_id == item.id)
+
+    if player is not None:
+        intermediate.filter(PlayerEquipmentModel.player_id == player.id)
+
+    return intermediate.one_or_none()
+
+
 def delete_player(player: PlayerModel):
     db = request_session()
 
@@ -81,8 +93,10 @@ def get_player_spells(player: PlayerModel) -> List[PlayerSpellModel]:
 def get_spells(playthrough: PlaythroughModel) -> List[PlayerSpellModel]:
     db = request_session()
 
+    campaign_id = playthrough.id if playthrough is not None else -1
+
     return db.query(SpellModel) \
-        .filter(playthrough.id == SpellModel.playthrough_id or SpellModel.playthrough_id == -1) \
+        .filter(campaign_id == SpellModel.playthrough_id or SpellModel.playthrough_id == -1) \
         .all()
 
 
@@ -128,7 +142,8 @@ def player_get_item(player, item_id):
     db = request_session()
 
     return db.query(ItemModel) \
-        .filter(player.playthrough_id == ItemModel.playthrough_id or ItemModel.playthrough_id == -1) \
+        .filter((player.playthrough_id == ItemModel.playthrough_id) or (ItemModel.playthrough_id == -1)) \
+        .filter((player.playthrough_id == ItemModel.playthrough_id) or (ItemModel.playthrough_id == -1)) \
         .filter(ItemModel.id == item_id) \
         .one_or_none()
 

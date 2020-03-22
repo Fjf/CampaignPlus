@@ -68,6 +68,17 @@ def login():
     }
 
 
+@api.route('/logout', methods=["POST"])
+@json_api()
+@require_login()
+def logout():
+    session_user_set(None)
+
+    return {
+        "success": True
+    }
+
+
 @api.route('/session', methods=["GET"])
 @json_api()
 def session():
@@ -171,12 +182,14 @@ def get_user_classes():
             "id": class_model.id,
             "name": class_model.name,
             "info": class_model.info,
+            "table": class_model.table,
             "abilities": [ability.to_json() for ability in abilities]
         })
 
     return {
         "success": True,
-        "classes": classes
+        "classes": classes,
+        "error": ""
     }
 
 
@@ -205,7 +218,7 @@ def create_player():
     player, error = player_service.create_player(user, name, race, class_ids, backstory)
 
     return {
-        "success": error == "",
+        "success": error is None,
         "player_id": player.id,
         "error": error
     }

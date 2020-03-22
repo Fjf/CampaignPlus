@@ -1,0 +1,42 @@
+.small_button {
+    width: 20px;
+    height: 20px;
+    margin: 2px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+#content {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#chat {
+    overflow: scroll;
+}
+
+#message_send_wrapper {
+    display: flex;
+    flex-direction: row;
+}
+
+#message_data {
+    flex: 2;
+    padding: 20px;
+    margin: 10px;
+}
+
+#message_send {
+    flex: 1;
+    padding: 20px;
+    margin: 10px;
+}
+
+.chat_message {
+    padding: 4px;
+    margin: 2px 2px 2px 16px;
+    border-bottom: 1px solid lightgrey;
+    font-size: 18px;
+}
