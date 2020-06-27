@@ -7,7 +7,7 @@ from werkzeug.exceptions import BadRequest, NotFound, Unauthorized
 from server.lib.model.models import PlayerModel
 from server.lib.user_session import session_user
 from server.views.api import api, json_api, require_login
-from server.lib.service import playthrough_service, player_service
+from server.lib.service import campaign_service, player_service
 
 
 def check_player(player: PlayerModel):
@@ -15,7 +15,7 @@ def check_player(player: PlayerModel):
 
     if player is None:
         raise NotFound("This player does not exist.")
-    if player.user is not user and not playthrough_service.is_user_dm(user, player):
+    if player.user is not user and not campaign_service.is_user_dm(user, player):
         raise Unauthorized("This player is not yours.")
 
 
@@ -30,7 +30,7 @@ def create_playthrough():
 
     user = session_user()
 
-    return playthrough_service.create_playthrough(data['name'], datetime.now(), user)
+    return campaign_service.create_playthrough(data['name'], datetime.now(), user)
 
 
 @api.route('/getplaythroughs', methods=["GET"])
@@ -39,7 +39,7 @@ def create_playthrough():
 def get_playthrough():
     user = session_user()
 
-    playthroughs = playthrough_service.get_playthroughs(user)
+    playthroughs = campaign_service.get_campaigns(user)
 
     data = []
     for playthrough in playthroughs:
@@ -63,9 +63,9 @@ def get_playthrough_url():
         raise BadRequest()
 
     pid = data["id"]
-    url = playthrough_service.get_playthrough_url(pid, user)
-    playthrough, code_model = playthrough_service.get_playthrough_code(pid)
-    playthrough_service.generate_qr(code_model.code)
+    url = campaign_service.get_playthrough_url(pid, user)
+    playthrough, code_model = campaign_service.get_playthrough_code(pid)
+    campaign_service.generate_qr(code_model.code)
 
     return {
         "url": url,
@@ -83,7 +83,7 @@ def get_playthrough_name():
         raise BadRequest()
 
     code = data["code"]
-    playthrough = playthrough_service.find_playthrough_with_code(code)
+    playthrough = campaign_service.find_playthrough_with_code(code)
 
     success = playthrough is not None
     name = ""
@@ -108,11 +108,11 @@ def join_playthrough():
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
-    playthrough = playthrough_service.find_playthrough_with_code(data.get("playthrough_code").upper())
+    playthrough = campaign_service.find_playthrough_with_code(data.get("playthrough_code").upper())
     if playthrough is None:
         raise NotFound("This playthrough code is not linked to any existing playthrough.")
 
-    error = playthrough_service.join_playthrough(user, playthrough)
+    error = campaign_service.join_playthrough(user, playthrough)
     success = error == ""
     return {
         "success": success,
@@ -126,7 +126,7 @@ def join_playthrough():
 def get_joined_playthroughs():
     user = session_user()
 
-    playthroughs = playthrough_service.get_joined_playthroughs(user)
+    playthroughs = campaign_service.get_joined_campaign(user)
 
     data = []
     for playthrough, playthrough_code in playthroughs:
@@ -151,7 +151,7 @@ def create_player_playthrough(playthrough_id):
         raise BadRequest()
 
     user = session_user()
-    playthrough = playthrough_service.find_playthrough_with_id(playthrough_id)
+    playthrough = campaign_service.find_campaign_with_id(playthrough_id)
     if playthrough is None:
         raise NotFound("This playthrough does not exist.")
 
@@ -170,9 +170,9 @@ def create_player_playthrough(playthrough_id):
 @require_login()
 def get_players(playthrough_id):
     user = session_user()
-    playthrough = playthrough_service.find_playthrough_with_id(playthrough_id)
+    playthrough = campaign_service.find_campaign_with_id(playthrough_id)
 
-    if not playthrough_service.user_in_playthrough(user, playthrough):
+    if not campaign_service.user_in_campaign(user, playthrough):
         raise Unauthorized("You do not have any players in this playthrough.")
 
     if playthrough is None:
@@ -201,7 +201,7 @@ def get_players(playthrough_id):
 @require_login()
 def delete_player_playthrough(playthrough_id: int, player_id: int):
     user = session_user()
-    playthrough = playthrough_service.find_playthrough_with_id(playthrough_id)
+    playthrough = campaign_service.find_campaign_with_id(playthrough_id)
     if playthrough is None:
         raise NotFound("This playthrough does not exist.")
 
@@ -223,7 +223,7 @@ def delete_player_playthrough(playthrough_id: int, player_id: int):
 @json_api()
 @require_login()
 def get_spells(playthrough_id):
-    playthrough = playthrough_service.find_playthrough_with_id(playthrough_id)
+    playthrough = campaign_service.find_campaign_with_id(playthrough_id)
 
     if playthrough is None:
         raise NotFound("This playthrough does not exist.")

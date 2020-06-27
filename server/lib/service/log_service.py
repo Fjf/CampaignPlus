@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from server.lib.model.models import UserModel, LogModel
 from server.lib.repository import log_repository
-from server.lib.service import playthrough_service, player_service
+from server.lib.service import campaign_service, player_service
 
 
 def get_logs(playthrough_code: str, user: UserModel) -> (str, List[LogModel]):
@@ -13,7 +13,7 @@ def get_logs(playthrough_code: str, user: UserModel) -> (str, List[LogModel]):
     :param user:
     :return: A tuple (Error message, List with messages)
     """
-    playthrough = playthrough_service.find_playthrough_with_code(playthrough_code)
+    playthrough = campaign_service.find_playthrough_with_code(playthrough_code)
     if playthrough is None:
         return "This playthrough does not exist.", []
 
@@ -21,7 +21,7 @@ def get_logs(playthrough_code: str, user: UserModel) -> (str, List[LogModel]):
 
 
 def create_log(user: UserModel, playthrough_code: str, title: str, text: str) -> str:
-    playthrough = playthrough_service.find_playthrough_with_code(playthrough_code)
+    playthrough = campaign_service.find_playthrough_with_code(playthrough_code)
     if playthrough is None:
         return "This playthrough does not exist."
 
@@ -38,7 +38,7 @@ def get_log(log_id: int) -> Optional[LogModel]:
 
 def delete_log(user: UserModel, playthrough_code: str, log_id: int):
     log = get_log(int(log_id))
-    playthrough = playthrough_service.find_playthrough_with_code(playthrough_code)
+    playthrough = campaign_service.find_playthrough_with_code(playthrough_code)
 
     if log is None:
         return "This log does not exist."

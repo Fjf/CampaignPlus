@@ -6,7 +6,7 @@ from werkzeug.exceptions import BadRequest
 from server import app
 from server.lib.user_session import session_user
 from server.views.api import api, json_api, require_login
-from server.lib.service import enemy_service, map_service, playthrough_service
+from server.lib.service import enemy_service, map_service, campaign_service
 
 
 @api.route('/uploadmap', methods=["POST"])
@@ -27,7 +27,7 @@ def create_map():
     if pid is None:
         raise BadRequest()
 
-    map_service.create_map(pid, file, 0, 0, name=name)
+    map_service.create_editor_map(pid, file, 0, 0, name=name)
     return {
         "success": True
     }
@@ -178,3 +178,69 @@ def get_all_battlemaps():
         "success": True,
         "maps": maps_list
     }
+
+
+@api.route("/<int:campaign_id>/maps", methods=["GET"])
+@json_api()
+@require_login()
+def get_editor_maps(campaign_id):
+    user = session_user()
+
+    if campaign_id is None:
+        raise BadRequest("Missing parameters to load map data; `campaign_id`.")
+
+    success, error, maps = map_service.get_editor_maps(user, campaign_id)
+
+    return {
+        "success": success,
+        "error": error,
+        "maps": [m.to_json() for m in maps]
+    }
+
+
+@api.route("/<int:campaign_id>/maps/<int:map_id>", methods=["DELETE"])
+@require_login()
+def delete_editor_map(campaign_id, map_id):
+    """
+    Deletes an editor map, then returns an updated list of editor maps.
+    :param campaign_id:
+    :param map_id:
+    :return:
+    """
+    user = session_user()
+
+    map_service.delete_editor_map(user, campaign_id, map_id)
+
+    return get_editor_maps(campaign_id)
+
+
+@api.route("/<int:campaign_id>/maps", methods=["POST"])
+@json_api()
+@require_login()
+def create_editor_map(campaign_id):
+    user = session_user()
+
+    data = request.get_json()
+
+    map_base64 = data.get("map_base64", None)
+    name = data.get("name", "New Map")
+    grid_size = data.get("grid_size", 1)
+    grid_type = data.get("grid_type", "none")
+
+    if campaign_id is None or map_base64 is None:
+        raise BadRequest("Missing parameters to upload map; `campaign_id` or `map_base64`.")
+
+    success, error, map_id = map_service.create_editor_map(user, campaign_id, map_base64, name, grid_size, grid_type)
+
+    return {
+        "success": success,
+        "error": error,
+        "map_id": map_id
+    }
+
+
+@api.route("/maps/<int:map_id>", methods=["POST"])
+@json_api()
+@require_login()
+def update_editor_maps(map_id):
+    return

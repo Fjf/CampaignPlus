@@ -4,7 +4,7 @@ from werkzeug.exceptions import BadRequest, Unauthorized, NotFound
 from server import app
 from server.lib.model.class_models import ClassAbilityModel
 from server.lib.model.models import PlayerEquipmentModel, SpellModel, WeaponModel, PlayerProficiencyModel, PlayerModel
-from server.lib.service import player_service, playthrough_service
+from server.lib.service import player_service, campaign_service
 from server.lib.user_session import session_user
 from server.views.api import api, json_api, require_login
 
@@ -20,7 +20,7 @@ def check_player(player: PlayerModel):
 
     if player is None:
         raise NotFound("This player does not exist.")
-    if player.user is not user and not playthrough_service.is_user_dm(user, player):
+    if player.user is not user and not campaign_service.is_user_dm(user, player):
         raise Unauthorized("This player is not yours.")
 
 
@@ -95,7 +95,7 @@ def set_player_playthrough(player_id):
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
-    playthrough = playthrough_service.find_playthrough_with_code(data.get("playthrough_code"))
+    playthrough = campaign_service.find_playthrough_with_code(data.get("playthrough_code"))
     if playthrough is None:
         raise NotFound("This playthrough does not exist.")
 
@@ -388,6 +388,7 @@ def get_player_class(player_id):
             "id": class_model.id,
             "name": class_model.name,
             "info": class_model.info,
+            "table": class_model.table,
             "abilities": [ability.to_json() for ability in abilities]
         })
     return {

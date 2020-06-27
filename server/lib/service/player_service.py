@@ -8,7 +8,7 @@ from server.lib.model.models import PlayerInfoModel, PlayerEquipmentModel, Spell
     WeaponModel, PlayerProficiencyModel
 from server.lib.model.models import PlayerModel, UserModel, PlaythroughModel
 from server.lib.repository import player_repository, repository
-from server.lib.service import playthrough_service, item_service
+from server.lib.service import campaign_service, item_service
 
 
 def get_players(playthrough: PlaythroughModel) -> List[PlayerModel]:

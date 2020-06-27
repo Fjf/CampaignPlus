@@ -1,6 +1,6 @@
 let canvas = document.getElementById("map");
-canvas.height = 1080
-canvas.width = 1920
+canvas.height = 1080;
+canvas.width = 1920;
 
 canvas.addEventListener('wheel', function(event){
     if (event.deltaY < 0) {
@@ -99,8 +99,8 @@ canvas.onclick = function(e) {
     if (curAction == actions.placeMarker) {
         pos = canvas.relMouseCoords(e);
 
-        pos.x = currentMap.width * pos.x / canvas.clientWidth + currentMap.x;
-        pos.y = currentMap.height * pos.y / canvas.clientHeight + currentMap.y;
+        pos.x = currentMap.width * pos.x / canvas.clientWidth - currentMap.x;
+        pos.y = currentMap.height * pos.y / canvas.clientHeight - currentMap.y;
 
         currentMap.markers.push({x: pos.x, y: pos.y});
 
@@ -116,21 +116,22 @@ canvas.onclick = function(e) {
         pos.y = currentMap.height * pos.y / canvas.clientHeight;
 
         let i;
-        if((i = currentMap.isInMarker(pos)) != -1) {
+        if((i = currentMap.isInMarker(pos)) !== -1) {
             loadMap(i)
         }
     }
 }
 
 canvas.onmousedown = function(e) {
-    if (curAction == actions.move) {
+    if (curAction === actions.move) {
         currentMap.startMoveEvent = e;
     }
 }
 
 function moveMap(e) {
-    currentMap.x += currentMap.startMoveEvent.x - e.x;
-    currentMap.y += currentMap.startMoveEvent.y - e.y;
+    console.log(currentMap.xScale(), currentMap.yScale());
+    currentMap.x += (currentMap.startMoveEvent.x - e.x);
+    currentMap.y += (currentMap.startMoveEvent.y - e.y);
 
     currentMap.draw();
     currentMap.startMoveEvent = e;
@@ -141,12 +142,12 @@ function addMarker() {
 }
 
 canvas.onmousemove = function(e) {
-    if (curAction == actions.move && currentMap.startMoveEvent != null) {
+    if (curAction === actions.move && currentMap.startMoveEvent != null) {
         moveMap(e)
-    } else if (curAction == actions.placeMarker) {
+    } else if (curAction === actions.placeMarker) {
         pos = canvas.relMouseCoords(e);
 
-        newMarker.x = canvas.width * pos.x / canvas.clientWidth;
+        newMarker.x = canvas.width  * pos.x / canvas.clientWidth;
         newMarker.y = canvas.height * pos.y / canvas.clientHeight;
 
         // Redraw map so you dont see snaking marker.
@@ -156,13 +157,13 @@ canvas.onmousemove = function(e) {
 }
 
 document.onmouseup = function(e) {
-    if (curAction == actions.move && currentMap.startMoveEvent != null) {
+    if (curAction === actions.move && currentMap.startMoveEvent != null) {
         currentMap.startMoveEvent = null;
     }
 }
 
 
-let context = canvas.getContext("2d")
+let context = canvas.getContext("2d");
 
 
 let currentMap = {
@@ -177,17 +178,21 @@ let currentMap = {
     markers: [],
     markerWidth: 40,
     markerHeight: 40,
+
+    xScale: function() {
+        console.log(canvas.width, this.width);
+        return canvas.width / this.width },
+    yScale: function() { return canvas.height / this.height },
+
     markerImg: new Image(),
     draw: function() {
         context.clearRect(0, 0, canvas.width, canvas.height);
-        context.drawImage(this.img, this.x, this.y, this.width, this.height, 0, 0, canvas.width, canvas.height)
+        context.drawImage(this.img, 0, 0, this.width, this.height, -this.x, -this.y, canvas.width, canvas.height);
 
-        xScale = (canvas.width / this.width);
-        yScale = (canvas.height / this.height);
         for (pos of this.markers) {
 
-            relativeX = (pos.x - this.x) * xScale - this.markerWidth / 2;
-            relativeY = (pos.y - this.y) * yScale - this.markerHeight;
+            relativeX = (pos.x - this.x) - this.markerWidth / 2;
+            relativeY = (pos.y - this.y) - this.markerHeight;
 
             // Dont draw the marker if it is out of bounds.
             if (relativeX + this.markerWidth < 0 || relativeX > canvas.width ||
@@ -219,15 +224,12 @@ let currentMap = {
         }
     },
     isInMarker: function(loc) {
-        xScale = (canvas.width / this.width);
-        yScale = (canvas.height / this.height);
-
-        loc.x *= xScale;
-        loc.y *= yScale;
+        loc.x *= this.xScale();
+        loc.y *= this.yScale();
         for (pos of this.markers) {
 
-            relativeX = (pos.x - this.x) * xScale - this.markerWidth / 2;
-            relativeY = (pos.y - this.y) * yScale - this.markerHeight;
+            relativeX = (pos.x - this.x) * this.xScale() - this.markerWidth / 2;
+            relativeY = (pos.y - this.y) * this.yScale() - this.markerHeight;
 
             if (isInRectangle(loc, relativeX, relativeY, this.markerWidth, this.markerHeight))
                 return pos.id;

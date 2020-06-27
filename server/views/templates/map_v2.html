@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/map.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="viewbox">
+        <div class="header-wrapper">
+            Map creator
+        </div>
+        <div class="content-wrapper">
+            <div class="content-left-column">
+                <div class="row-flex-container">
+                    <input class="user-text-input-field" type="text" placeholder="Map Title" id="creator-map-title"
+                           autocomplete="off" onkeyup="drawingMap.name = this.value">
+                    <input class="user-button-input-field" type="button" value="Save"
+                           onclick="storeCurrentDrawing(this)">
+                </div>
+                <div>
+                    <div id="created-map-list">
+
+                    </div>
+                </div>
+                <div>
+                    <div id="action-toggles" class="toggle-wrapper row-flex-container">
+                        <div class="active" value="drawing">Draw</div>
+                        <div value="selecting">Select</div>
+                        <div value="resizing">Resize</div>
+                    </div>
+                </div>
+                <div>
+                    <div class="slider-container row-flex-container">
+                        <div id="slider-value">
+                            4
+                        </div>
+                        <input id="slider-line-width" type="range" min="1" max="20" value="4">
+                    </div>
+                    <div>
+                        <input id="line-colour" data-jscolor="" value="ab2567">
+                    </div>
+                </div>
+                <div>
+                    <div id="grid-toggles" class="toggle-wrapper row-flex-container">
+                        <div class="active" value="none">None</div>
+                        <div value="squared">Squared</div>
+                        <div value="hexagonal">Hexagonal</div>
+                    </div>
+                    <input id="slider-grid-size" type="range" min="10" max="100" value="40">
+                </div>
+            </div>
+            <div class="content-right">
+                <canvas id="canvas"></canvas>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        let CAMPAIGN_ID = "{{ campaign_id }}";
+        let STATIC_FOLDER = "{{ url_for('static', filename='') }}"
+    </script>
+    <script src="{{ url_for('static', filename='js/lib/jscolor.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/map/creator.js') }}"></script>
+{% endblock %}

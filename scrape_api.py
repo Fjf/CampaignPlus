@@ -208,7 +208,7 @@ def main():
     # get_spells()
     # get_classes()
     # update_class_levels()
-    get_table()
+    # get_table()
     pass
 
 

@@ -53,7 +53,7 @@ function getNSquares(sizewidth, sizeheight, squares){
 
 function makeBattleMap() {
     a4 = {x: 2, y: 2};
-    let dim = getNSquares(a4.x, a4.y, 3);
+    let dim = getNSquares(a4.x, a4.y, 2);
 
     xSteps = dim.x;
     ySteps = dim.y;

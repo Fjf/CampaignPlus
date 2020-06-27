@@ -14,11 +14,11 @@ def create_playthrough(name, datetime, user: UserModel):
     return playthrough_repository.create_playthrough(model)
 
 
-def get_playthroughs(user) -> List[PlaythroughModel]:
+def get_campaigns(user) -> List[PlaythroughModel]:
     return playthrough_repository.get_playthroughs(user)
 
 
-def get_joined_playthroughs(user) -> List[PlaythroughModel]:
+def get_joined_campaign(user) -> List[PlaythroughModel]:
     return playthrough_repository.get_joined_playthroughs(user)
 
 
@@ -46,7 +46,7 @@ def find_playthrough_with_code(code: str) -> Optional[PlaythroughModel]:
     return playthrough_repository.find_playthrough_with_code(code)
 
 
-def find_playthrough_with_id(pid: int) -> Optional[PlaythroughModel]:
+def find_campaign_with_id(pid: int) -> Optional[PlaythroughModel]:
     return playthrough_repository.find_playthrough_with_id(pid)
 
 
@@ -62,7 +62,7 @@ def generate_qr(code: str):
         img.get_image().save(qr_filename)
 
 
-def user_in_playthrough(user: UserModel, playthrough: PlaythroughModel):
+def user_in_campaign(user: UserModel, playthrough: PlaythroughModel):
     """
     Checks if the user has any players in the given playthrough.
 
@@ -86,7 +86,7 @@ def is_user_dm(user: UserModel, player: PlayerModel):
         :param playthrough: The playthrough model
         :return: A boolean. True if the user has 1 or more players in the given playthrough, False if not.
         """
-    playthroughs = get_playthroughs(user)
+    playthroughs = get_campaigns(user)
     for playthrough in playthroughs:
         if player.playthrough == playthrough:
             return True

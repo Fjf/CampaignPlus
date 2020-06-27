@@ -5,7 +5,7 @@ from werkzeug.exceptions import BadRequest, NotFound, Unauthorized
 
 from server.lib import user_session
 from server.lib.model.models import PlayerModel
-from server.lib.service import playthrough_service
+from server.lib.service import campaign_service
 from server.lib.user_session import session_user
 
 api = Blueprint('api', __name__, url_prefix='/api')

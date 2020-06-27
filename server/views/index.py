@@ -6,7 +6,7 @@ from flask import render_template, send_from_directory
 from server import app
 from server.lib.user_session import session_is_authed, session_user_set, session_user
 from server.views.api import require_login
-from server.lib.service import playthrough_service, user_service
+from server.lib.service import campaign_service, user_service
 
 
 @app.route('/')
@@ -39,9 +39,9 @@ def join_playthrough(code):
     except ValueError:
         return login(refer="join/" + code)
 
-    playthrough = playthrough_service.find_playthrough_with_code(code)
-    playthrough_service.join_playthrough(user, playthrough)
-    playthrough_service.generate_qr(code)
+    playthrough = campaign_service.find_playthrough_with_code(code)
+    campaign_service.join_playthrough(user, playthrough)
+    campaign_service.generate_qr(code)
 
     return render_template('create_pc.html', id=playthrough.id, code=code, username=user.name)
 
@@ -53,7 +53,7 @@ def show_map(code):
     except ValueError:
         return login(refer="map/" + code)
 
-    playthrough = playthrough_service.find_playthrough_with_code(code)
+    playthrough = campaign_service.find_playthrough_with_code(code)
     return render_template('map.html', pid=playthrough.id, mid=1)
 
 
@@ -64,7 +64,7 @@ def battlemap(code):
     except ValueError:
         return login(refer="battlemap/" + code)
 
-    playthrough = playthrough_service.find_playthrough_with_code(code)
+    playthrough = campaign_service.find_playthrough_with_code(code)
     return render_template('battlemap.html', pid=playthrough.id)
 
 

@@ -8,6 +8,11 @@ function requestApiJsonData(api, requestType, data, callback) {
             else
                 console.log("Something went wrong calling " + api);
         }
+    };
+
+    if (requestType === "GET" && data != null) {
+        console.error("GET requests may not contain a body.");
+        return;
     }
 
     xmlHttp.open(requestType, api, true);

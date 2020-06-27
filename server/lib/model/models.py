@@ -233,6 +233,47 @@ class MapModel(OrmModelBase):
         return c
 
 
+class CreatorMapModel(OrmModelBase):
+    """
+    The CreatorMapModel contains information from the map_creation tool in the dnd site.
+    For example, grid size, and drawn image.
+    For now, clipboard and previous states are not saved on server.
+    """
+    __tablename__ = 'created_map'
+
+    id = Column(Integer(), primary_key=True)
+
+    campaign_id = Column(Integer(), ForeignKey("playthrough.id"), nullable=False)
+    campaign = relationship("PlaythroughModel")
+
+    map_base64 = Column(String(), nullable=False)
+    name = Column(String(), nullable=False)
+    grid_size = Column(Integer(), nullable=True, default=1)
+    grid_type = Column(String(), nullable=True, default="none")
+
+    creator_id = Column(Integer(), ForeignKey("user.id"), nullable=False)
+    creator = relationship("UserModel")
+
+    @classmethod
+    def from_name_base64(cls, campaign_id: int, map_base64: str, name: str):
+        c = cls()
+        c.campaign_id = campaign_id
+        c.map_base64 = map_base64
+        c.name = name
+        return c
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "campaign_id": self.campaign_id,
+            "map_base64": self.map_base64,
+            "name": self.name,
+            "grid_size": self.grid_size,
+            "grid_type": self.grid_type,
+            "creator_id": self.creator_id
+        }
+
+
 class MessageModel(OrmModelBase):
     """
     The mapmodel contanis data about maps regarding their location on their parent maps.
