@@ -102,8 +102,8 @@ class EnemyModel(OrmModelBase):
         return {
             "id": self.id,
             "name": self.name,
-            "hp": self.max_hp,
-            "ac": self.armor_class,
+            "max_hp": self.max_hp,
+            "armor_class": self.armor_class,
             "str": self.strength,
             "dex": self.dexterity,
             "con": self.constitution,
@@ -137,6 +137,13 @@ class EnemyAbilityModel(OrmModelBase):
         c.enemy_id = enemy_id
         c.text = text
         return c
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "enemy_name": self.enemy.name,
+            "text": self.text
+        }
 
 
 class CampaignModel(OrmModelBase):

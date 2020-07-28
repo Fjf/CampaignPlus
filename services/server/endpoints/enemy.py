@@ -19,7 +19,8 @@ def create_enemy():
 
     user = session_user()
 
-    error = enemy_service.create_enemy(data["name"], data["maxhp"], data["ac"], data["stre"], data["dex"], data["con"], data["inte"], data["wis"], data["cha"], user)
+    error = enemy_service.create_enemy(data["name"], data["maxhp"], data["ac"], data["stre"], data["dex"], data["con"],
+                                       data["inte"], data["wis"], data["cha"], user)
     success = error == ""
     return {
         "success": success,
@@ -32,14 +33,17 @@ def create_enemy():
 @require_login()
 def get_enemies():
     user = session_user()
-
     enemies = enemy_service.get_enemies(user)
+    return [d.to_json() for d in enemies]
 
-    data = []
-    for enemy in enemies:
-        data.append(enemy.to_json())
 
-    return data
+@api.route('/enemies/<int:enemy_id>/abilities', methods=["GET"])
+@json_api()
+@require_login()
+def get_enemy_abilities(enemy_id):
+    user = session_user()
+    data = enemy_service.get_abilities(user, enemy_id=enemy_id)
+    return [d.to_json() for d in data]
 
 
 @api.route('/addability', methods=["POST"])
@@ -84,33 +88,14 @@ def edit_ability():
     }
 
 
-@api.route('/getabilities', methods=["POST"])
+@api.route('/abilities', methods=["GET"])
 @json_api()
 @require_login()
 def get_abilities():
-    data = request.get_json()
-
-    required_fields = ["id"]
-
-    if not data or (False in [x in required_fields for x in data]):
-        raise BadRequest()
-
     user = session_user()
 
-    fields = []
-    data = enemy_service.get_abilities(data["id"], user)
-    success = data is not None
-
-    for field in data:
-        fields.append({
-            "text": field.text,
-            "id": field.id
-        })
-
-    return {
-        "success": success,
-        "fields": fields
-    }
+    data = enemy_service.get_abilities(user)
+    return [d.to_json() for d in data]
 
 
 @api.route('/deleteability', methods=["POST"])

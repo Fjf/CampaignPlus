@@ -8,8 +8,9 @@ def get_enemies(user_id: int):
     db = request_session()
 
     return db.query(EnemyModel)\
-        .filter(EnemyModel.user_id == user_id)\
         .all()
+        # .filter(EnemyModel.user_id == user_id)\
+        # .all()
 
 
 def create_enemy(enemy):

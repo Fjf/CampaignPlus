@@ -16,3 +16,5 @@ node_modules
 services/server/views/static/
 
 config.ini
+
+index.js

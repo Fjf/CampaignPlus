@@ -1,5 +1,6 @@
 from typing import List
 
+from lib.database import request_session
 from lib.model.models import EnemyModel, EnemyAbilityModel, UserModel
 from lib.repository import enemy_repository, repository
 
@@ -57,13 +58,16 @@ def add_ability(enemy_id: int, text: str, user: UserModel):
     return ""
 
 
-def get_abilities(eid: int, user: UserModel) -> List[EnemyAbilityModel]:
-    enemy = get_enemy(eid)
+def get_abilities(user: UserModel, enemy_id=None) -> List[EnemyAbilityModel]:
+    db = request_session()
+    sub = db.query(EnemyAbilityModel) \
+        .join(EnemyModel) \
+        # .filter(EnemyModel.user_id == user.id)
 
-    if enemy.user != user:
-        return []
+    if enemy_id is not None:
+        sub = sub.filter(EnemyModel.id == enemy_id)
 
-    return enemy_repository.get_enemy_abilities(enemy)
+    return sub.all()
 
 
 def delete_ability(ability_id: int, enemy_id: int, user: UserModel):

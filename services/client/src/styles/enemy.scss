@@ -1,9 +1,53 @@
 @import "main.scss";
+@import "base.scss";
 
-.enemy-list { @extend .player-list }
+.enemy-list {
+  @extend .player-list
+}
+
 .enemy-list-entry {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  max-width: 100%;
+
+  &:hover {
+    background-color: darken($primary, $hover_percent);
+  }
 }
-.enemy-list-wrapper { @extend .player-list-wrapper }
+
+.list-wrapper {
+  @extend .disable-scrollbars;
+
+  overflow-y: scroll;
+  height: 100%;
+}
+
+.stats-column {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+
+  & > * {
+    margin-bottom: 4px;
+  }
+}
+
+.abilities-column {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  word-break: break-word;
+
+  & > * {
+    margin-bottom: 4px;
+  }
+}
+
+.ability-list-entry {
+  max-width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

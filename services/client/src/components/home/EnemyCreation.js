@@ -9,33 +9,44 @@ import {dataService} from "../services/dataService";
 import "../../styles/enemy.scss"
 import TextField from "@material-ui/core/TextField";
 
+let timeout = null;
+let filteredEnemies = [];
 export default function EnemyCreation(props) {
     const [enemies, setEnemies] = React.useState([]);
-    const [enemyToggled, setEnemyToggled] = React.useState([]);
+    const [abilities, setAbilities] = React.useState([]);
     const [selectedEnemy, setSelectedEnemy] = React.useState(null);
-
+    const [filter, setFilter] = React.useState("");
 
     React.useEffect(() => {
         // Load your enemies on initialization
-        dataService.get().then(r => {
+        dataService.getEnemies().then(r => {
             setEnemies(r);
-            setEnemyToggled(new Array(r.length).fill(true));
         });
+
+        dataService.getAbilities().then(r => {
+            setAbilities(r);
+        })
     }, []);
 
-    function toggleEnemyList(i) {
-        let p;
-        if (i === undefined) {
-            p = new Array(enemyToggled.length).fill(!enemyToggled.some((i) => i));
-        } else {
-            p = [...enemyToggled];
-            p[i] = !p[i];
-        }
-        setEnemyToggled(p);
+    React.useEffect(() => {
+        filteredEnemies = enemies.filter((enemy) => enemy.name.includes(filter));
+    }, [filter, enemies]);
+
+    function setFilterInput(event)  {
+        clearTimeout(timeout);
+        let val = event.target.value;
+        timeout = setTimeout(() => {
+            setFilter(val);
+        }, 150);
     }
 
     function openEditEnemy(i) {
-        setSelectedEnemy(enemies[i]);
+        dataService.getAbilities(filteredEnemies[i].id).then(r => {
+            setSelectedEnemy({
+                ...filteredEnemies[i],
+                abilities: r
+            })
+        })
     }
 
     function deleteEnemy(id) {
@@ -45,29 +56,37 @@ export default function EnemyCreation(props) {
     return <div className={"main-content"}>
         <div className={"left-content-bar"}>
             <div className={"enemy-list-entry"}>
-                <h3>Enemies ({enemies.length})</h3>
+                <h3>Enemies ({filteredEnemies.length} / {enemies.length})</h3>
             </div>
-
-            {
-                enemies.map((enemy, i) => {
-                    return <div key={i} className={"enemy-list-entry"}>
-                        <div><b>{enemy.name}</b></div>
-                        <div className={"icon-bar"}>
-                            <IconButton size="small" onClick={() => openEditEnemy(i)}>
-                                <EditIcon fontSize="inherit"/>
-                            </IconButton>
-                            <IconButton size="small" onClick={() => deleteEnemy(enemy.id)}>
-                                <DeleteIcon fontSize="inherit"/>
-                            </IconButton>
+            <div className={"enemy-list-entry"}>
+                <TextField
+                    onChange={setFilterInput}
+                    label={"Filter"}
+                />
+            </div>
+            <div className={"list-wrapper"}>
+                {
+                    filteredEnemies.map((enemy, i) => {
+                        return <div key={i} className={"enemy-list-entry"}>
+                            <div><b>{enemy.name}</b></div>
+                            <div className={"icon-bar"}>
+                                <IconButton size="small" onClick={() => openEditEnemy(i)}>
+                                    <EditIcon fontSize="inherit"/>
+                                </IconButton>
+                                <IconButton size="small" onClick={() => deleteEnemy(enemy.id)}>
+                                    <DeleteIcon fontSize="inherit"/>
+                                </IconButton>
+                            </div>
                         </div>
-                    </div>
-                })
-            }
+                    })
+                }
+            </div>
         </div>
         {selectedEnemy === null ?
             <div className={"main-content"}>Click an enemy to show editor.</div> :
             <div className={"main-content"}>
-                <div className={"stats-bar"}>
+                <div className={"stats-column"}>
+                    <h3>Info</h3>
                     <TextField
                         value={selectedEnemy.name}
                         onChange={(e) => {
@@ -98,8 +117,106 @@ export default function EnemyCreation(props) {
                         }}
                         label={"Max HP"}
                     />
+                    <h3>Stats</h3>
+                    <TextField
+                        value={selectedEnemy.str}
+                        onChange={(e) => {
+                            setSelectedEnemy({
+                                ...selectedEnemy,
+                                str: e.target.value
+                            });
+                        }}
+                        label={"Strength"}
+                    />
+                    <TextField
+                        value={selectedEnemy.dex}
+                        onChange={(e) => {
+                            setSelectedEnemy({
+                                ...selectedEnemy,
+                                dex: e.target.value
+                            });
+                        }}
+                        label={"Dexterity"}
+                    />
+                    <TextField
+                        value={selectedEnemy.con}
+                        onChange={(e) => {
+                            setSelectedEnemy({
+                                ...selectedEnemy,
+                                con: e.target.value
+                            });
+                        }}
+                        label={"Constitution"}
+                    />
+                    <TextField
+                        value={selectedEnemy.int}
+                        onChange={(e) => {
+                            setSelectedEnemy({
+                                ...selectedEnemy,
+                                int: e.target.value
+                            });
+                        }}
+                        label={"Intelligence"}
+                    />
+                    <TextField
+                        value={selectedEnemy.wis}
+                        onChange={(e) => {
+                            setSelectedEnemy({
+                                ...selectedEnemy,
+                                wis: e.target.value
+                            });
+                        }}
+                        label={"Wisdom"}
+                    />
+                    <TextField
+                        value={selectedEnemy.cha}
+                        onChange={(e) => {
+                            setSelectedEnemy({
+                                ...selectedEnemy,
+                                cha: e.target.value
+                            });
+                        }}
+                        label={"Charisma"}
+                    />
+                </div>
+                <div className={"abilities-column"}>
+                    <h3>Abilities</h3>
+                    <div className={"abilities-list"}>
+                        {
+                            selectedEnemy.abilities.map((ability, i) => {
+                                return <div key={i}>
+                                    {ability.text}
+                                </div>
+                            })
+                        }
+                    </div>
                 </div>
             </div>
         }
+        <div className={"right-content-bar"}>
+            <div className={"ability-list-entry"}>
+                <h3>Enemies ({filteredEnemies.length} / {enemies.length})</h3>
+            </div>
+            <div className={"ability-list-entry"}>
+                <TextField
+                    onChange={setFilterInput}
+                    label={"Filter"}
+                />
+            </div>
+            <div className={"list-wrapper"}>
+                {
+                    abilities.map((ability, i) => {
+                        return <div key={i} className={"ability-list-entry"}>
+                            <div><b>{ability.text}</b></div>
+                            <div className={"icon-bar"}>
+                                <IconButton size="small" onClick={() => deleteEnemy(ability.id)}>
+                                    <DeleteIcon fontSize="inherit"/>
+                                </IconButton>
+                            </div>
+                        </div>
+                    })
+                }
+            </div>
+        </div>
     </div>
 }
