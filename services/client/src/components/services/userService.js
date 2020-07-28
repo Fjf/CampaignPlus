@@ -42,13 +42,13 @@ function login(username, password) {
 
     return fetch(`${apiUrl}/login`, requestOptions)
         .then(handleResponse)
-        .then(user => {
+        .then(data => {
             // login successful if there's a user in the response
-            if (user) {
-                localStorage.setItem('user', JSON.stringify(user));
+            if (data) {
+                localStorage.setItem('user', JSON.stringify(data.user));
             }
 
-            return user;
+            return data;
         });
 }
 
