@@ -11,3 +11,9 @@ env/*
 !services/server/views/static/images/battlemap/*
 app/*
 app
+
+venv
+node_modules
+services/server/views/static/
+
+config.ini
