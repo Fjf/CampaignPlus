@@ -62,9 +62,11 @@ def api_login():
     if "redirect" in data:
         refer += data["redirect"]
 
+    user = session_user()
     return {
         "success": success,
         "error": error,
+        "user": user.to_json() if user is not None else None,
         "refer": refer
     }
 
