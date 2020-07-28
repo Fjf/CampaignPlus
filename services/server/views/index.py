@@ -6,6 +6,7 @@ from endpoints import require_login
 from lib.service import campaign_service
 
 
+@app.route('/', defaults={"text": ""})
 @app.route('/<path:text>')
 def index(text):
     return render_template('index.html')

@@ -4,10 +4,12 @@ import "../../styles/authentication.scss"
 import Button from "@material-ui/core/Button";
 import {userService} from "../services/userService";
 import TextField from "@material-ui/core/TextField";
+import {useHistory} from "react-router-dom";
 
 export default function Login(props) {
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const history = useHistory();
 
     function handleLogin() {
         if (username === "" || password === "")
@@ -15,6 +17,9 @@ export default function Login(props) {
 
         userService.login(username, password).then(r => {
             console.log(r);
+            if (r.success) {
+                history.push('/')
+            }
         });
     }
 

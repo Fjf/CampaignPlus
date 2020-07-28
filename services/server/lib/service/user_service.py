@@ -39,6 +39,9 @@ def create_user(username, password, email):
     if not _check_email(email):
         return "This email address is invalid."
 
+    if find_user_by_email(email) is not None:
+        return "This email address is already in use."
+
     hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
     user = UserModel.from_name_password(username, hashed_pw)

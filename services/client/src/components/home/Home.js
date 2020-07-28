@@ -5,18 +5,19 @@ import {campaignService} from "../services/campaignService";
 import CampaignOverview from "./CampaignOverview";
 import EnemyCreation from "./EnemyCreation";
 import AudioPlayer from "../AudioPlayer";
+import {userService} from "../services/userService";
 
 export default function Home(props) {
     const [campaigns, setCampaigns] = React.useState([]);
     const [selectedCampaign, setSelectedCampaign] = React.useState(null);
-
+    let user = userService.getUser();
     React.useEffect(() => {
         // Load campaigns on initialization
         campaignService.get().then(r => {
             setCampaigns(r)
         });
     }, []);
-
+    console.log(user)
     return <div className={"page-wrapper"}>
         <nav className={"title-bar"}>
             <Link to="/">
@@ -25,9 +26,12 @@ export default function Home(props) {
             <Link to="/enemies">
                 <div>Enemies</div>
             </Link>
-            <Link to="/login">
-                <div>Login</div>
-            </Link>
+            {user === undefined ?
+                <Link to="/login">
+                    <div>Login</div>
+                </Link> :
+                <div>{user.name}</div>
+            }
         </nav>
         <div className={"content-wrapper"}>
             <Route exact path={"/"}>
