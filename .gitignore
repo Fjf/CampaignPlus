@@ -7,7 +7,7 @@ env/*
 *.dump
 *.png
 *.exe
-!server/views/static/images/base/*
-!server/views/static/images/battlemap/*
+!services/server/views/static/images/base/*
+!services/server/views/static/images/battlemap/*
 app/*
 app

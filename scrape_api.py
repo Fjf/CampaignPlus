@@ -1,11 +1,10 @@
 import re
-from collections import defaultdict
 
 import requests
 
-from server.lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel
-from server.lib.model.models import ItemModel, WeaponModel, SpellModel
-from server.lib.repository import player_repository, repository
+from services.server import ClassModel, ClassAbilityModel, SubClassModel
+from services.server import ItemModel, WeaponModel, SpellModel
+from lib.repository import player_repository, repository
 
 
 def convert_copper(obj):
@@ -157,7 +156,7 @@ def get_classes():
 
 
 def update_class_levels():
-    from server.lib.database import request_session
+    from services.server import request_session
     from typing import List
     db = request_session()
 
@@ -178,7 +177,7 @@ def get_table():
     result = requests.get("http://api.open5e.com/classes/")
     obj = result.json()
 
-    from server.lib.database import request_session
+    from services.server import request_session
     db = request_session()
 
     from typing import List

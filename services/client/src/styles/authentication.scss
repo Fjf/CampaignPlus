@@ -1,0 +1,24 @@
+
+
+.authenticationInput {
+  display: flex;
+  flex-direction: column;
+}
+
+.authInputWrapper {
+  padding: 8px;
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  background: rgba(131,131,131,0.60)
+}
+
+.authContent {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../images/titlescreen.jpg");
+}

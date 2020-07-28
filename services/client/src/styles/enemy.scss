@@ -1,0 +1,5 @@
+@import "main.scss";
+
+.enemy-list { @extend .player-list }
+.enemy-list-entry { @extend  .player-list-entry }
+.enemy-list-wrapper { @extend .player-list-wrapper }
