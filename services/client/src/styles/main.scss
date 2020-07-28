@@ -1,0 +1,120 @@
+$title_height: 5%;
+
+$primary: #78829a;
+$secondary: #ac8e83;
+$hover_percent: 10%;
+
+.page-wrapper {
+  height: 100%;
+
+  background-color: lighten($primary, 40%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h3 {
+  margin: 0;
+}
+
+.title-bar {
+  height: $title_height;
+  display: flex;
+  flex-direction: row;
+
+  align-items: center;
+
+  background-color: opacify($primary, 0.5);
+
+  & > * {
+    height: 100%;
+    min-width: 150px;
+    text-align: center;
+    font-size: 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    &:hover {
+      background-color: darken($primary, $hover_percent);
+    }
+  }
+}
+
+.content-wrapper {
+  height: 100 - $title_height;
+  display: flex;
+  flex-direction: row;
+}
+
+.left-content-bar {
+  flex: 1;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+
+  background-color: lighten($primary, 20%);
+  display: flex;
+  flex-direction: column;
+
+  padding: 8px;
+
+
+  & > div {
+    height: 30px;
+    line-height: 30px;
+    font-size: 16px;
+    margin-bottom: 4px;
+
+    &:hover {
+      background-color: darken($primary, $hover_percent);
+    }
+  }
+}
+
+.campaign-list-entry {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  & > div:last-child {
+    font-size: 14px;
+  }
+}
+
+.main-content {
+  flex: 5;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.player-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 250px;
+}
+
+.player-list {
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+}::-webkit-scrollbar {
+    width: 0;
+    background: transparent; /* make scrollbar transparent */
+}
+
+.player-list-entry {
+  &:first-child {
+    padding: 4px 2px;
+  }
+
+  & > div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}

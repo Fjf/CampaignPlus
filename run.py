@@ -1,7 +1,6 @@
 from __future__ import unicode_literals, absolute_import
 
 import argparse
-from server.lib.model.models import *
 
 
 def get_args():
@@ -14,7 +13,7 @@ def get_args():
 
 
 def create_schema():
-    from server.lib.model import models
+    from lib.model import models
     from sqlalchemy_schemadisplay import create_uml_graph
     from sqlalchemy.orm import class_mapper
 
@@ -44,7 +43,7 @@ def create_documentation():
 if __name__ == "__main__":
     args = get_args()
 
-    import server
+    from services import server
 
     try:
         create_schema()
