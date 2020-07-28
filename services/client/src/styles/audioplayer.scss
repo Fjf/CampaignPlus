@@ -1,0 +1,9 @@
+@import "colours.scss";
+@import "constants.scss";
+
+.audio-player-bar {
+  background-color: $secondary;
+  width: 100%;
+  height: $audio_bar_percent;
+  bottom: 0;
+}

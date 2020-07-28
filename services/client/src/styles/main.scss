@@ -1,11 +1,8 @@
-$title_height: 5%;
-
-$primary: #78829a;
-$secondary: #ac8e83;
-$hover_percent: 10%;
+@import "colours.scss";
+@import "constants.scss";
 
 .page-wrapper {
-  height: 100%;
+  height: 100vh - $audio_bar_percent;
 
   background-color: lighten($primary, 40%);
 }
@@ -19,7 +16,7 @@ h3 {
 }
 
 .title-bar {
-  height: $title_height;
+  height: $title_bar_percent;
   display: flex;
   flex-direction: row;
 
@@ -44,7 +41,7 @@ h3 {
 }
 
 .content-wrapper {
-  height: 100 - $title_height;
+  height: 100 - $title_bar_percent;
   display: flex;
   flex-direction: row;
 }

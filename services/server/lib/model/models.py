@@ -30,6 +30,13 @@ class UserModel(OrmModelBase):
         c.email = email
         return c
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email
+        }
+
 
 class EmailResetModel(OrmModelBase):
     """

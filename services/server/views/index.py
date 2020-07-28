@@ -6,25 +6,20 @@ from endpoints import require_login
 from lib.service import campaign_service
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
-@app.route('/login')
-def login():
+@app.route('/<path:text>')
+def index(text):
     return render_template('index.html')
 
 
 @app.route('/register')
 def register():
-    return login()
+    return index()
 
 
 @app.route('/logout')
 def logout():
     session_user_set(None)
-    return login()
+    return index()
 
 
 @app.route('/join/<code>', methods=["GET"])

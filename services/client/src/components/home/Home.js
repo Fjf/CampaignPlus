@@ -1,9 +1,10 @@
-import {Link, Route} from "react-router-dom";
+import {BrowserRouter, Link, Route} from "react-router-dom";
 import React from "react";
 import "../../styles/main.scss"
 import {campaignService} from "../services/campaignService";
 import CampaignOverview from "./CampaignOverview";
 import EnemyCreation from "./EnemyCreation";
+import AudioPlayer from "../AudioPlayer";
 
 export default function Home(props) {
     const [campaigns, setCampaigns] = React.useState([]);
@@ -52,5 +53,6 @@ export default function Home(props) {
                 <EnemyCreation campaign={selectedCampaign}/>
             </Route>
         </div>
+        <AudioPlayer/>
     </div>
 }

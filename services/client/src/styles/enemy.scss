@@ -1,5 +1,9 @@
 @import "main.scss";
 
 .enemy-list { @extend .player-list }
-.enemy-list-entry { @extend  .player-list-entry }
+.enemy-list-entry {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 .enemy-list-wrapper { @extend .player-list-wrapper }

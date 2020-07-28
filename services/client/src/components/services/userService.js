@@ -22,14 +22,13 @@ function registerUser(name, password, email) {
 
     return fetch(`${apiUrl}/register`, requestOptions)
         .then(handleResponse)
-        .then(user => {
-            console.log(user);
+        .then(data => {
             // login successful if there's a user in the response
-            if (user) {
-                localStorage.setItem('user', JSON.stringify(user));
+            if (data) {
+                localStorage.setItem('user', JSON.stringify(data.user));
             }
 
-            return user;
+            return data;
         });
 }
 
