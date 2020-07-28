@@ -2,8 +2,16 @@
 @import "constants.scss";
 
 .audio-player-bar {
+  box-sizing: border-box;
   background-color: $secondary;
-  width: 100%;
+  width: 100vw;
   height: $audio_bar_percent;
-  bottom: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & > * {
+    padding: 0 4px;
+  }
 }
