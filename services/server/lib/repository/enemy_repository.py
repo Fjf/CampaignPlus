@@ -48,6 +48,8 @@ def get_enemy_abilities(enemy: EnemyModel):
     return db.query(EnemyAbilityModel) \
         .filter(EnemyAbilityModel.enemy == enemy) \
         .all()
+        # .filter(EnemyModel.user_id == user_id)\
+
 
 
 def get_ability(ability_id: int) -> Optional[EnemyAbilityModel]:

@@ -62,7 +62,7 @@ function logout() {
         body: null
     };
 
-    fetch(`${apiUrl}/logout`, requestOptions)
+    return fetch(`${apiUrl}/logout`, requestOptions)
         .then(d => {
             localStorage.removeItem('user');
         });

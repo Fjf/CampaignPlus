@@ -46,6 +46,7 @@ def require_login():
 
 
 import endpoints.user  # noqa
+import endpoints.player  # noqa
 import endpoints.enemy  # noqa
 import endpoints.campaign  # noqa
 import endpoints.map  # noqa

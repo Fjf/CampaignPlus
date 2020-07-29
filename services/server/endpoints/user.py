@@ -61,8 +61,9 @@ def api_login():
     refer = "/"
     if "redirect" in data:
         refer += data["redirect"]
-
-    user = session_user()
+    user = None
+    if success:
+        user = session_user()
     return {
         "success": success,
         "error": error,
@@ -164,10 +165,7 @@ def get_user_players():
             "backstory": player.backstory,
         })
 
-    return {
-        "success": True,
-        "players": data
-    }
+    return data
 
 
 @api.route('/user/classes', methods=["GET"])

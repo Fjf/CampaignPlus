@@ -4,8 +4,11 @@ import Authenticate from "./login/Authenticate";
 import "../styles/base.scss"
 import {Route, BrowserRouter, Switch} from "react-router-dom";
 import Home from "./home/Home";
+import Profile from "./home/Profile"
+import {userService} from "./services/userService";
 
 export default function App(props) {
+
     return <BrowserRouter>
         <Switch>
             <Route path="/login">

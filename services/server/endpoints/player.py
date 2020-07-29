@@ -6,7 +6,6 @@ from lib.service import player_service, campaign_service
 from lib.user_session import session_user, session_user_set
 from endpoints import api, json_api, require_login
 
-
 def check_player(player: PlayerModel):
     """
     Checks whether or not a player exists, and whether or not it belongs to the logged in user.
@@ -393,3 +392,5 @@ def get_player_class(player_id):
         "success": True,
         "classes": classes
     }
+
+print("Loaded player endpoints")
