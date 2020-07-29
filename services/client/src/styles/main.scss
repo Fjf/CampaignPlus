@@ -47,7 +47,7 @@ h3 {
 }
 
 .left-content-bar {
-  flex: 1;
+  flex: 0 1 auto;
   height: 100%;
   box-sizing: border-box;
 
@@ -60,6 +60,7 @@ h3 {
 
 .right-content-bar {
   background-color: lighten($primary, 30%);
+  flex: 0 2 auto;
 
   @extend .left-content-bar;
 }

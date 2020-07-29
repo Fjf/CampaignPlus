@@ -1,13 +1,11 @@
 import IconButton from "@material-ui/core/IconButton";
-import {Collapse} from "@material-ui/core";
 import React from "react";
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import {dataService} from "../services/dataService";
 import "../../styles/enemy.scss"
 import TextField from "@material-ui/core/TextField";
+import MapWidget from "../MapWidget";
 
 let timeout = null;
 let filteredEnemies = [];
@@ -15,12 +13,13 @@ export default function EnemyCreation(props) {
     const [enemies, setEnemies] = React.useState([]);
     const [abilities, setAbilities] = React.useState([]);
     const [selectedEnemy, setSelectedEnemy] = React.useState(null);
-    const [filter, setFilter] = React.useState("");
+    const [filteredEnemies, setFilteredEnemies] = React.useState([]);
 
     React.useEffect(() => {
         // Load your enemies on initialization
         dataService.getEnemies().then(r => {
             setEnemies(r);
+            setFilteredEnemies(r);
         });
 
         dataService.getAbilities().then(r => {
@@ -28,16 +27,12 @@ export default function EnemyCreation(props) {
         })
     }, []);
 
-    React.useEffect(() => {
-        filteredEnemies = enemies.filter((enemy) => enemy.name.includes(filter));
-    }, [filter, enemies]);
-
     function setFilterInput(event)  {
         clearTimeout(timeout);
         let val = event.target.value;
         timeout = setTimeout(() => {
-            setFilter(val);
-        }, 150);
+            setFilteredEnemies(enemies.filter((enemy) => enemy.name.includes(val)));
+        }, 500);
     }
 
     function openEditEnemy(i) {
@@ -49,11 +44,9 @@ export default function EnemyCreation(props) {
         })
     }
 
-    function deleteEnemy(id) {
+    console.log("Re-rendering..");
 
-    }
-
-    return <div className={"main-content"}>
+    return <>
         <div className={"left-content-bar"}>
             <div className={"enemy-list-entry"}>
                 <h3>Enemies ({filteredEnemies.length} / {enemies.length})</h3>
@@ -67,7 +60,7 @@ export default function EnemyCreation(props) {
             <div className={"list-wrapper"}>
                 {
                     filteredEnemies.map((enemy, i) => {
-                        return <div key={i} className={"enemy-list-entry"}>
+                        return <div key={enemy.id} className={"enemy-list-entry"}>
                             <div><b>{enemy.name}</b></div>
                             <div className={"icon-bar"}>
                                 <IconButton size="small" onClick={() => openEditEnemy(i)}>
@@ -83,7 +76,10 @@ export default function EnemyCreation(props) {
             </div>
         </div>
         {selectedEnemy === null ?
-            <div className={"main-content"}>Click an enemy to show editor.</div> :
+            <div className={"main-content"}>
+                Click an enemy to show editor.
+                <MapWidget width={1000} height={800}/>
+            </div> :
             <div className={"main-content"}>
                 <div className={"stats-column"}>
                     <h3>Info</h3>
@@ -206,7 +202,7 @@ export default function EnemyCreation(props) {
             <div className={"list-wrapper"}>
                 {
                     abilities.map((ability, i) => {
-                        return <div key={i} className={"ability-list-entry"}>
+                        return <div key={ability.id} className={"ability-list-entry"}>
                             <div><b>{ability.text}</b></div>
                             <div className={"icon-bar"}>
                                 <IconButton size="small" onClick={() => deleteEnemy(ability.id)}>
@@ -218,5 +214,5 @@ export default function EnemyCreation(props) {
                 }
             </div>
         </div>
-    </div>
+    </>
 }
