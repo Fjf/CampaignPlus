@@ -10,28 +10,38 @@ import MapWidget from "../MapWidget";
 let timeout = null;
 let filteredEnemies = [];
 export default function EnemyCreation(props) {
-    const [enemies, setEnemies] = React.useState([]);
-    const [abilities, setAbilities] = React.useState([]);
+    let abilities = [];
+    let enemies = [];
     const [selectedEnemy, setSelectedEnemy] = React.useState(null);
     const [filteredEnemies, setFilteredEnemies] = React.useState([]);
+    const [filteredAbilities, setFilteredAbilities] = React.useState([]);
 
     React.useEffect(() => {
         // Load your enemies on initialization
         dataService.getEnemies().then(r => {
-            setEnemies(r);
+            enemies = r;
             setFilteredEnemies(r);
         });
 
         dataService.getAbilities().then(r => {
-            setAbilities(r);
+            abilities = r;
+            setFilteredAbilities(r);
         })
     }, []);
 
     function setFilterInput(event)  {
         clearTimeout(timeout);
-        let val = event.target.value;
+        let val = event.target.value.toLowerCase();
         timeout = setTimeout(() => {
-            setFilteredEnemies(enemies.filter((enemy) => enemy.name.includes(val)));
+            setFilteredEnemies(enemies.filter((enemy) => enemy.name.toLowerCase().includes(val)));
+        }, 500);
+    }
+
+    function setFilterAbility(event)  {
+        clearTimeout(timeout);
+        let val = event.target.value.toLowerCase();
+        timeout = setTimeout(() => {
+            setFilteredAbilities(abilities.filter((ability) => ability.text.toLowerCase().includes(val)));
         }, 500);
     }
 
@@ -78,7 +88,6 @@ export default function EnemyCreation(props) {
         {selectedEnemy === null ?
             <div className={"main-content"}>
                 Click an enemy to show editor.
-                <MapWidget width={1000} height={800}/>
             </div> :
             <div className={"main-content"}>
                 <div className={"stats-column"}>
@@ -191,17 +200,17 @@ export default function EnemyCreation(props) {
         }
         <div className={"right-content-bar"}>
             <div className={"ability-list-entry"}>
-                <h3>Enemies ({filteredEnemies.length} / {enemies.length})</h3>
+                <h3>Abilities ({filteredAbilities.length} / {abilities.length})</h3>
             </div>
             <div className={"ability-list-entry"}>
                 <TextField
-                    onChange={setFilterInput}
+                    onChange={setFilterAbility}
                     label={"Filter"}
                 />
             </div>
             <div className={"list-wrapper"}>
                 {
-                    abilities.map((ability, i) => {
+                    filteredAbilities.map((ability, i) => {
                         return <div key={ability.id} className={"ability-list-entry"}>
                             <div><b>{ability.text}</b></div>
                             <div className={"icon-bar"}>

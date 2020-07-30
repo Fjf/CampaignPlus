@@ -201,3 +201,19 @@ def delete_editor_map(user, campaign_id, map_id):
     db = request_session()
     db.delete(editor_map)
     db.commit()
+
+
+def get_root_map(user, campaign_id):
+    """
+    Gets the root map for the campaign.
+
+    :param user:
+    :param campaign_id:
+    :return:
+    """
+    db = request_session()
+
+    return db.query(MapModel)\
+        .filter(MapModel.campaign_id == campaign_id)\
+        .filter(MapModel.parent_map_id == None)\
+        .one_or_none()

@@ -179,22 +179,13 @@ def get_all_battlemaps():
     }
 
 
-@api.route("/<int:campaign_id>/maps", methods=["GET"])
+@api.route("/campaigns/<int:campaign_id>/maps", methods=["GET"])
 @json_api()
 @require_login()
-def get_editor_maps(campaign_id):
+def get_maps(campaign_id):
     user = session_user()
-
-    if campaign_id is None:
-        raise BadRequest("Missing parameters to load map data; `campaign_id`.")
-
-    success, error, maps = map_service.get_editor_maps(user, campaign_id)
-
-    return {
-        "success": success,
-        "error": error,
-        "maps": [m.to_json() for m in maps]
-    }
+    map_model = map_service.get_root_map(user, campaign_id)
+    return map_model.to_json(recursive=True)
 
 
 @api.route("/<int:campaign_id>/maps/<int:map_id>", methods=["DELETE"])

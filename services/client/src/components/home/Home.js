@@ -6,6 +6,7 @@ import CampaignOverview from "./CampaignOverview";
 import EnemyCreation from "./EnemyCreation";
 import AudioPlayer from "../AudioPlayer";
 import {userService} from "../services/userService";
+import MapWidget from "../MapWidget";
 
 export default function Home(props) {
     const [campaigns, setCampaigns] = React.useState([]);
@@ -51,7 +52,8 @@ export default function Home(props) {
                     </div>
                     {selectedCampaign === null ?
                         <div className={"main-content"}>Select a campaign to show information here.</div> :
-                        <CampaignOverview campaign={selectedCampaign}/>
+                        <MapWidget width={"100%"} height={"100%"} campaign={selectedCampaign}/>
+                        // <CampaignOverview campaign={selectedCampaign}/>
                     }
                 </Route>
                 <Route exact path={"/enemies"}>

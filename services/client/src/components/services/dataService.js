@@ -2,7 +2,8 @@ import {apiUrl, handleResponse} from "./constants";
 
 export const dataService = {
     getEnemies,
-    getAbilities
+    getAbilities,
+    getMaps
 };
 
 
@@ -30,5 +31,15 @@ function getAbilities(eid) {
     }
 
     return fetch(url, requestOptions)
+        .then(handleResponse);
+}
+
+function getMaps(cid) {
+    const requestOptions = {
+        method: 'GET',
+        headers: {'Content-Type': 'text/html'},
+    };
+
+    return fetch(`${apiUrl}/campaigns/${cid}/maps`, requestOptions)
         .then(handleResponse);
 }
