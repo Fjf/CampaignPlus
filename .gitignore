@@ -14,7 +14,8 @@ app
 venv
 node_modules
 services/server/views/static/
-!services/server/views/static/images/icons/
+services/client/public/static/images/
+!services/client/public/static/images/icons/
 
 config.ini
 
