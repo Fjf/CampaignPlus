@@ -4,7 +4,6 @@ env/*
 *.db
 *.jpg
 *.dump
-*.png
 *.exe
 !services/server/views/static/images/base/*
 !services/server/views/static/images/battlemap/*
@@ -13,10 +12,11 @@ app
 
 venv
 node_modules
-services/server/views/static/
-services/client/public/static/images/
-!services/client/public/static/images/icons/
+services/client/public/static/images/qr_codes/
+services/client/public/static/images/uploads/
 
 config.ini
 
 index.js
+/build/
+/schema/
