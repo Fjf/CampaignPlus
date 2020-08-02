@@ -16,10 +16,9 @@ export default function Login(props) {
             return;
 
         userService.login(username, password).then(r => {
-            console.log(r);
-            if (r.success) {
-                history.push('/')
-            }
+            history.push(r.refer)
+        }, e => {
+            console.log("Error:", e);
         });
     }
 
