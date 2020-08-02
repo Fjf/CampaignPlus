@@ -8,65 +8,6 @@ from endpoints import api, json_api, require_login
 from lib.service import map_service
 
 
-@api.route('/uploadmap', methods=["POST"])
-@json_api()
-@require_login()
-def create_map():
-    try:
-        file = request.files["file"]
-    except:
-        return {
-            "success": 0,
-            "error": "No file was uploaded."
-        }
-
-    pid = int(request.form.get('playthrough_id', None))
-    name = request.form.get('name', "")
-
-    if pid is None:
-        raise BadRequest()
-
-    map_service.create_editor_map(pid, file, 0, 0, name=name)
-    return {
-        "success": True
-    }
-
-
-@api.route('/getmap', methods=["POST"])
-@json_api()
-@require_login()
-def get_map():
-    data = request.get_json()
-
-    required_fields = ["map_id", "playthrough_id"]
-
-    if not data or (False in [x in required_fields for x in data]):
-        raise BadRequest()
-
-    map = map_service.get_map(data["map_id"])
-    if map is None:
-        return {
-            "success": False,
-            "error": "This map does not exist."
-        }
-
-    children = map_service.get_children(map)
-
-    markers = []
-    for child in children:
-        markers.append({"x": child.x, "y": child.y, "id": child.id, "name": child.name})
-
-    return {
-        "success": True,
-        "id": map.id,
-        "map_name": map.name,
-        "map_story": map.story,
-        "parent_id": map.parent_map_id,
-        "image": os.path.join("/static/images/uploads", map.map_url),
-        "markers": markers
-    }
-
-
 @api.route('/updatemapdata', methods=["POST"])
 @json_api()
 @require_login()
@@ -185,23 +126,60 @@ def get_all_battlemaps():
 def get_maps(campaign_id):
     user = session_user()
     map_model = map_service.get_root_map(user, campaign_id)
+    if map_model is None:
+        return None
     return map_model.to_json(recursive=True)
 
 
-@api.route("/<int:campaign_id>/maps/<int:map_id>", methods=["DELETE"])
+@api.route("/campaigns/<int:campaign_id>/maps", methods=["PUT"])
+@json_api()
 @require_login()
-def delete_editor_map(campaign_id, map_id):
-    """
-    Deletes an editor map, then returns an updated list of editor maps.
-    :param campaign_id:
-    :param map_id:
-    :return:
-    """
+def create_map(campaign_id):
+    data = request.get_json()
+
+    if "parent_map_id" not in data:
+        raise BadRequest("Must specify a parent map.")
+    if "x" not in data:
+        raise BadRequest("Must specify an x coordinate for created map.")
+    if "y" not in data:
+        raise BadRequest("Must specify an y coordinate for created map.")
+
+    parent_map_id = data.get("parent_map_id")
+    x = data.get("x")
+    y = data.get("y")
+
     user = session_user()
+    map_model = map_service.create_map(user, campaign_id, x, y, parent_map_id)
+    return map_model.to_json()
 
-    map_service.delete_editor_map(user, campaign_id, map_id)
 
-    return get_editor_maps(campaign_id)
+@api.route("/campaigns/<int:campaign_id>/maps", methods=["POST"])
+@json_api()
+@require_login()
+def alter_map(campaign_id):
+    file = request.files.get("file", None)
+    data = request.get_json()
+
+    name = data.get("name", None)
+    story = data.get("story", None)
+    x = data.get("x", None)
+    y = data.get("y", None)
+
+    user = session_user()
+    map_model = map_service.alter_map(user, campaign_id, file, name, story, x, y)
+    return map_model.to_json()
+
+
+@api.route("/maps/<int:map_id>", methods=["DELETE"], defaults={"campaign_id": ""})
+@api.route("/campaigns/<int:campaign_id>/maps/<int:map_id>", methods=["DELETE"])
+@json_api()
+@require_login()
+def delete_map(campaign_id, map_id):
+    user = session_user()
+    deleted_map = map_service.delete_map(user, map_id)
+
+    # Return the updated root map
+    return map_service.get_root_map(user, deleted_map.campaign_id).to_json(recursive=True)
 
 
 @api.route("/<int:campaign_id>/maps", methods=["POST"])

@@ -6,7 +6,8 @@ import CampaignOverview from "./CampaignOverview";
 import EnemyCreation from "./EnemyCreation";
 import AudioPlayer from "../AudioPlayer";
 import {userService} from "../services/userService";
-import MapWidget from "../MapWidget";
+import MapWidget from "./MapWidget";
+import {dataService} from "../services/dataService";
 
 export default function Home(props) {
     const [campaigns, setCampaigns] = React.useState([]);
@@ -25,6 +26,9 @@ export default function Home(props) {
                 <Link to="/">
                     <div>Home</div>
                 </Link>
+                <Link to="/maps">
+                    <div>Maps</div>
+                </Link>
                 <Link to="/enemies">
                     <div>Enemies</div>
                 </Link>
@@ -32,7 +36,9 @@ export default function Home(props) {
                     <Link to="/login">
                         <div>Login</div>
                     </Link> :
-                    <div>{user.name}</div>
+                    <><div>{user.name}</div>
+                        <div onClick={() => userService.logout()}>Logout</div>
+                    </>
                 }
             </nav>
             <div className={"content-wrapper"}>
@@ -52,12 +58,14 @@ export default function Home(props) {
                     </div>
                     {selectedCampaign === null ?
                         <div className={"main-content"}>Select a campaign to show information here.</div> :
-                        <MapWidget width={"100%"} height={"100%"} campaign={selectedCampaign}/>
-                        // <CampaignOverview campaign={selectedCampaign}/>
+                        <CampaignOverview campaign={selectedCampaign}/>
                     }
                 </Route>
                 <Route exact path={"/enemies"}>
                     <EnemyCreation campaign={selectedCampaign}/>
+                </Route>
+                <Route exact path={"/maps"}>
+                    <MapWidget campaigns={campaigns}/>
                 </Route>
             </div>
         </div>

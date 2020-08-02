@@ -89,7 +89,7 @@ def create_player_playthrough(playthrough_id):
         raise BadRequest()
 
     user = session_user()
-    playthrough = campaign_service.find_campaign_with_id(playthrough_id)
+    playthrough = campaign_service.get_campaign(playthrough_id)
     if playthrough is None:
         raise NotFound("This campaign does not exist.")
 
@@ -108,7 +108,7 @@ def create_player_playthrough(playthrough_id):
 @require_login()
 def get_players(playthrough_id):
     user = session_user()
-    campaign = campaign_service.find_campaign_with_id(playthrough_id)
+    campaign = campaign_service.get_campaign(playthrough_id)
 
     if not campaign_service.user_in_campaign(user, campaign) and campaign.user != user:
         raise Unauthorized("You do not have any players in this campaign.")
@@ -142,7 +142,7 @@ def get_players(playthrough_id):
 @require_login()
 def delete_player_playthrough(playthrough_id: int, player_id: int):
     user = session_user()
-    playthrough = campaign_service.find_campaign_with_id(playthrough_id)
+    playthrough = campaign_service.get_campaign(playthrough_id)
     if playthrough is None:
         raise NotFound("This campaign does not exist.")
 
@@ -164,7 +164,7 @@ def delete_player_playthrough(playthrough_id: int, player_id: int):
 @json_api()
 @require_login()
 def get_spells(playthrough_id):
-    playthrough = campaign_service.find_campaign_with_id(playthrough_id)
+    playthrough = campaign_service.get_campaign(playthrough_id)
 
     if playthrough is None:
         raise NotFound("This campaign does not exist.")

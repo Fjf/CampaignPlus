@@ -49,6 +49,7 @@ def session_user_set(user: Optional[UserModel]):
     """
 
     if user is None:
-        del session['user_id']
+        if 'user_id' in session:
+            del session['user_id']
     else:
         session['user_id'] = user.id

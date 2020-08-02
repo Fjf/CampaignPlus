@@ -3,7 +3,10 @@ import os
 import sys
 
 from flask import Flask
+from flask_cors import CORS
 from flask_socketio import SocketIO
+
+from lib.exceptions import JSONExceptionHandler
 
 global app
 global socketio
@@ -18,7 +21,7 @@ def create_app(config) -> Flask:
     app.port = app_section['port']
     app.host = app_section['host']
     app.database_name = 'database.db'
-    app.map_storage = 'server/views/static/images/uploads/'
+    app.map_storage = '../client/public/static/images/uploads/'
 
     app.secret_key = app_section['secret'].encode()
 
@@ -32,7 +35,7 @@ def create_app(config) -> Flask:
 
 def setup_directories():
     os.makedirs('storage', exist_ok=True)
-    os.makedirs('server/views/static/images/uploads', exist_ok=True)
+    os.makedirs("services/client/public/static/images/uploads/", exist_ok=True)
 
 
 def init():
@@ -52,6 +55,13 @@ def init():
     setup_directories()
 
     app = create_app(config_parser)
+
+    # I dont care about cross origin requests
+    CORS(app)
+
+    # Wrap app in JSON response to parse exceptions to JSON instead of HTML.
+    handler = JSONExceptionHandler(app)
+
     # Wrap app in socketIO to support socket communication
     socketio = SocketIO(app)
 

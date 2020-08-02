@@ -3,7 +3,10 @@ import {apiUrl, handleResponse} from "./constants";
 export const dataService = {
     getEnemies,
     getAbilities,
-    getMaps
+    getMaps,
+    createMap,
+    alterMap,
+    deleteMap
 };
 
 
@@ -41,5 +44,38 @@ function getMaps(cid) {
     };
 
     return fetch(`${apiUrl}/campaigns/${cid}/maps`, requestOptions)
+        .then(handleResponse);
+}
+
+function createMap(cid, parent_map_id, x, y) {
+    const requestOptions = {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({parent_map_id, x, y})
+    };
+
+    return fetch(`${apiUrl}/campaigns/${cid}/maps`, requestOptions)
+        .then(handleResponse);
+}
+
+function alterMap(cid, data) {
+    const requestOptions = {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    };
+
+    return fetch(`${apiUrl}/campaigns/${cid}/maps`, requestOptions)
+        .then(handleResponse);
+}
+
+
+function deleteMap(cid, map_id) {
+    const requestOptions = {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json'},
+    };
+
+    return fetch(`${apiUrl}/campaigns/${cid}/maps/${map_id}`, requestOptions)
         .then(handleResponse);
 }

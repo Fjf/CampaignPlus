@@ -16,12 +16,19 @@ ALLOWED_CHARS = string.digits + string.ascii_letters
 import exifread
 from PIL import Image
 
+
 def rotate_file(filename: str) -> None:
+    """
+    Rotates a file to match its image orientation as specified by the camera.
+
+    :param filename:
+    :return:
+    """
+
     f = open(filename, "rb")
-
     tags = exifread.process_file(f, details=False, stop_tag='Image Orientation')
-
     f.close()
+
     rot = str(tags["Image Orientation"])
     if not rot.startswith("Rotated "):
         return
@@ -45,35 +52,101 @@ def rotate_file(filename: str) -> None:
     image.save(filename)
 
 
-def create_map(playthrough_id: int, map_img, x: int, y: int, name: str, parent_map: MapModel=None):
-    # Generate random file names until you get a unique one in the uploads.
-    while True:
-        extension = os.path.splitext(map_img.filename)[1]
-        filename = _create_random_string(15) + extension  # 15 seems like a large enough number for files.
+def create_map(user: UserModel, campaign_id: int, x: int, y: int, parent_map_id: int):
+    """
+    Creates a map on the defined x,y coordinates and a parent map.
+    If parent map is None, it is assumed this map to be the root map for the campaign.
+    :param user:
+    :param campaign_id:
+    :param x:
+    :param y:
+    :param parent_map:
+    :return:
+    """
+    campaign = campaign_service.get_campaign(campaign_id=campaign_id)
 
-        path = os.path.join(app.map_storage, filename)
-        if not os.path.isfile(path):
-            break
+    if campaign is None:
+        raise BadRequest("This campaign does not exist.")
 
-    map_img.save(path)
-    rotate_file(path)
+    parent_map = get_map(parent_map_id)
+    if parent_map is None:
+        raise BadRequest("Parent map id does not exist.")
 
-    # TODO: Check if the given image is an allowed image format.
+    # TODO: Do we want this restriction?
+    # if campaign.user_id != user.id:
+    #     raise Unauthorized("You cannot create a map in a campaign that is not yours.")
 
-    mapmodel = MapModel.from_name_date(playthrough_id, filename, x, y, name)
-    if parent_map is not None:
-        mapmodel.parent_map_id = parent_map.id
+    map_model = MapModel(campaign_id, x, y)
+    if parent_map_id is not None:
+        map_model.parent_map_id = parent_map_id
 
-    success = map_repository.create_map(mapmodel)
-    return success
+    db = request_session()
+    db.add(map_model)
+    db.commit()
+
+    return map_model
+
+
+def alter_map(user: UserModel, map_id: int, map_img=None, name: str = None, story: str = None, x: int = None,
+              y: int = None):
+    """
+    Alters the map specified by the supplied map_id, returns the altered map.
+    All parameters are optional, only non-null parameters will be altered.
+
+    :param user:
+    :param map_id:
+    :param map_img:
+    :param name:
+    :param story:
+    :param x:
+    :param y:
+    :return:
+    """
+    map_model = get_map(map_id)
+
+    # TODO: Decide if we want this
+    # if map_model.campaign.user_id != user.id:
+    #     raise Unauthorized("You cannot alter maps of which you are not the campaign owner.")
+
+    if map_img is not None:
+        # Generate random file names until you get a unique one in the uploads.
+        while True:
+            extension = os.path.splitext(map_img.filename)[1]
+            filename = _create_random_string(15) + extension  # 15 seems like a large enough number for files.
+
+            path = os.path.join(app.map_storage, filename)
+            if not os.path.isfile(path):
+                break
+
+        map_img.save(path)
+        rotate_file(path)
+        map_model.filename = filename
+    if x is not None:
+        map_model.x = x
+    if y is not None:
+        map_model.y = y
+    if story is not None:
+        map_model.story = story
+    if name is not None:
+        map_model.name = name
+
+    # Push changes.
+    db = request_session()
+    db.commit()
+
+    return map_model
 
 
 def get_map(map_id: int) -> Optional[MapModel]:
-    return map_repository.get_map(map_id)
+    db = request_session()
+
+    return db.query(MapModel) \
+        .filter(MapModel.id == map_id) \
+        .one_or_none()
 
 
 def _create_random_string(length: int):
-    return "".join(ALLOWED_CHARS[randint(0, len(ALLOWED_CHARS)-1)] for _ in range(length))
+    return "".join(ALLOWED_CHARS[randint(0, len(ALLOWED_CHARS) - 1)] for _ in range(length))
 
 
 def get_children(map: MapModel) -> Optional[List[MapModel]]:
@@ -101,14 +174,14 @@ def update_map(map_id: int, x=None, y=None, parent_id=None, name=None, story=Non
         map.parent_map_id = parent_id
     if image_id is not None:
         # image =
-        map.map_url = ""
+        map.filename = ""
 
     map_repository.commit()
     return ""
 
 
 def create_battlemap(user: UserModel, playthrough_id: int, name: str, data: str):
-    playthrough = campaign_service.find_campaign_with_id(playthrough_id)
+    playthrough = campaign_service.get_campaign(playthrough_id)
     if playthrough is None:
         return "This playthrough does not exist."
 
@@ -122,7 +195,8 @@ def get_all_battlemaps(playthrough_id: int):
     return map_repository.get_all_battlemaps(playthrough_id)
 
 
-def create_editor_map(user: UserModel, campaign_id: int, map_base64: str, name: str, grid_size=1, grid_type="none") -> Tuple[bool, str, int]:
+def create_editor_map(user: UserModel, campaign_id: int, map_base64: str, name: str, grid_size=1, grid_type="none") -> \
+        Tuple[bool, str, int]:
     """
     Creates an editable map to be stored on the server.
     Returns a tuple containing (Success, Error)
@@ -136,7 +210,7 @@ def create_editor_map(user: UserModel, campaign_id: int, map_base64: str, name: 
     :param name:
     :return:
     """
-    campaign = campaign_service.find_campaign_with_id(campaign_id)
+    campaign = campaign_service.get_campaign(campaign_id)
     if campaign is None:
         return False, "This campaign does not exist.", -1
 
@@ -164,7 +238,7 @@ def get_editor_maps(user: UserModel, campaign_id: int) -> Tuple[bool, str, Optio
     :param campaign_id:
     :return:
     """
-    campaign = campaign_service.find_campaign_with_id(campaign_id)
+    campaign = campaign_service.get_campaign(campaign_id)
     if campaign is None:
         return False, "This campaign does not exist.", None
 
@@ -184,7 +258,7 @@ def delete_editor_map(user, campaign_id, map_id):
         :param campaign_id:
         :return:
         """
-    campaign = campaign_service.find_campaign_with_id(campaign_id)
+    campaign = campaign_service.get_campaign(campaign_id)
     if campaign is None:
         raise BadRequest("This campaign does not exist.")
     if not campaign_service.user_in_campaign(user, campaign):
@@ -213,7 +287,31 @@ def get_root_map(user, campaign_id):
     """
     db = request_session()
 
-    return db.query(MapModel)\
-        .filter(MapModel.campaign_id == campaign_id)\
-        .filter(MapModel.parent_map_id == None)\
+    return db.query(MapModel) \
+        .filter(MapModel.campaign_id == campaign_id) \
+        .filter(MapModel.parent_map_id == None) \
         .one_or_none()
+
+
+def delete_map(user, map_id):
+    """
+    Deletes a map given a map id.
+    Requires there to be no child maps of the to-be-deleted map
+    :param user:
+    :param map_id:
+    :return:
+    """
+
+    map_model = get_map(map_id)
+
+    if map_model is None:
+        raise BadRequest("This map id does not exist.")
+
+    if len(map_model.children()) > 0:
+        raise BadRequest("You cannot delete a map with children. First delete sub-maps before deleting this map.")
+
+    db = request_session()
+    db.delete(map_model)
+    db.commit()
+
+    return map_model

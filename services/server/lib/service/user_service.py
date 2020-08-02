@@ -6,6 +6,7 @@ from typing import Optional
 
 import bcrypt as bcrypt
 import flask
+from werkzeug.exceptions import BadRequest
 
 from services.server import app
 from lib.model.models import UserModel, EmailResetModel
@@ -18,15 +19,13 @@ ALLOWED_CHARS = string.digits + string.ascii_letters
 def login(username, password):
     user = find_user_by_username(username)
     if user is None:
-        # raise BadRequest("This username does not exist")
-        return "This username does not exist."
+        raise BadRequest("This username does not exist.")
 
     if not (user.name == username and bcrypt.checkpw(password.encode(), user.password)):
-        print("Something went wrong logging in user {}".format(username))
-        return "Password incorrect."
+        raise BadRequest("Password incorrect.")
 
     session_user_set(user)
-    return ""
+    return user
 
 
 def create_user(username, password, email):

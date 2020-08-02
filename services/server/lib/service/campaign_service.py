@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple
 
 import qrcode
 
+from lib.database import request_session
 from services.server import app
 from lib.model.models import CampaignModel, UserModel, CampaignJoinCodeModel, PlayerModel
 from lib.repository import campaign_repository
@@ -46,8 +47,27 @@ def find_playthrough_with_code(code: str) -> Optional[CampaignModel]:
     return campaign_repository.find_playthrough_with_code(code)
 
 
-def find_campaign_with_id(pid: int) -> Optional[CampaignModel]:
-    return campaign_repository.find_playthrough_with_id(pid)
+def get_campaign(campaign_id: int = None, campaign_code: str = None) -> Optional[CampaignModel]:
+    """
+    Gets the campaign from the database from either campaign ID or campaign code.
+    :param campaign_id:
+    :param campaign_code:
+    :return:
+    """
+
+    db = request_session()
+
+    sub = db.query(CampaignModel)
+
+    # Filter if one of the inputs is not None
+    if campaign_id is not None:
+        sub = sub.filter(CampaignModel.id == campaign_id)
+    elif campaign_code is not None:
+        sub = sub.filter(CampaignModel.code == campaign_code)
+    else:
+        return None
+
+    return sub.one_or_none()
 
 
 def user_in_campaign(user: UserModel, playthrough: CampaignModel):

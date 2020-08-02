@@ -165,6 +165,8 @@ class CampaignModel(OrmModelBase):
     name = Column(String(), nullable=False)
     date = Column(DateTime(), nullable=False)
 
+    code = Column(String(), nullable=True)
+
     @classmethod
     def from_name_date(cls, name: str, date: datetime, user_id: int):
         c = cls()
@@ -262,38 +264,31 @@ class MapModel(OrmModelBase):
     parent_map_id = Column(Integer(), ForeignKey("map.id"), nullable=True)
     parent_map = relationship("MapModel")
 
-    map_url = Column(String(), nullable=False)
+    filename = Column(String(), nullable=False, default="default.png")
     x = Column(Integer(), nullable=False, default=0)
     y = Column(Integer(), nullable=False, default=0)
 
-    name = Column(String(), nullable=False)
-    story = Column(String(), nullable=True)
+    name = Column(String(), nullable=True, default="New Map")
+    story = Column(String(), nullable=True, default="")
 
     visible = Column(Boolean(), nullable=False, default=True)
 
-    @classmethod
-    def from_name_date(cls, playthrough_id: int, map_url: str, x: int, y: int, name: str):
-        c = cls()
-        c.campaign_id = playthrough_id
-        c.map_url = map_url
-        c.x = x
-        c.y = y
-        c.name = name
-        return c
+    def __init__(self, campaign_id: int, x: int, y: int):
+        self.campaign_id = campaign_id
+        self.x = x
+        self.y = y
 
     def to_json(self, recursive=False):
         children = []
 
         if recursive:
-            db = request_session()
-            child_maps = db.query(MapModel).filter(MapModel.parent_map_id == self.id).all()
-            children = [m.to_json(recursive=True) for m in child_maps]
+            children = [m.to_json(recursive=True) for m in self.children()]
 
         return {
             "id": self.id,
             "campaign_id": self.campaign_id,
             "parent_map_id": self.parent_map_id,
-            "map_url": "/static/images/uploads/" + self.map_url,
+            "map_url": "/static/images/uploads/" + self.filename,
             "x": self.x,
             "y": self.y,
             "name": self.name,
@@ -301,6 +296,9 @@ class MapModel(OrmModelBase):
             "children": children
         }
 
+    def children(self):
+        db = request_session()
+        return db.query(MapModel).filter(MapModel.parent_map_id == self.id).all()
 
 class CreatorMapModel(OrmModelBase):
     """

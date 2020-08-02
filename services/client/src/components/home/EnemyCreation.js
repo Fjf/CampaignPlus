@@ -5,13 +5,13 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import {dataService} from "../services/dataService";
 import "../../styles/enemy.scss"
 import TextField from "@material-ui/core/TextField";
-import MapWidget from "../MapWidget";
+import MapWidget from "./MapWidget";
 
 let timeout = null;
 let filteredEnemies = [];
+let abilities = [];
+let enemies = [];
 export default function EnemyCreation(props) {
-    let abilities = [];
-    let enemies = [];
     const [selectedEnemy, setSelectedEnemy] = React.useState(null);
     const [filteredEnemies, setFilteredEnemies] = React.useState([]);
     const [filteredAbilities, setFilteredAbilities] = React.useState([]);
@@ -29,7 +29,7 @@ export default function EnemyCreation(props) {
         })
     }, []);
 
-    function setFilterInput(event)  {
+    function setFilterInput(event) {
         clearTimeout(timeout);
         let val = event.target.value.toLowerCase();
         timeout = setTimeout(() => {
@@ -37,7 +37,7 @@ export default function EnemyCreation(props) {
         }, 500);
     }
 
-    function setFilterAbility(event)  {
+    function setFilterAbility(event) {
         clearTimeout(timeout);
         let val = event.target.value.toLowerCase();
         timeout = setTimeout(() => {

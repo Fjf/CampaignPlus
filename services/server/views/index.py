@@ -9,18 +9,19 @@ from lib.service import campaign_service
 @app.route('/', defaults={"text": ""})
 @app.route('/<path:text>')
 def index(text):
+    print(text)
     return render_template('index.html')
 
 
 @app.route('/register')
 def register():
-    return index()
+    return index("")
 
 
 @app.route('/logout')
 def logout():
     session_user_set(None)
-    return index()
+    return index("")
 
 
 @app.route('/join/<code>', methods=["GET"])
