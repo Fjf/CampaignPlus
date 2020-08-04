@@ -33,7 +33,6 @@ def join_playthrough(code):
 
     playthrough = campaign_service.find_playthrough_with_code(code)
     campaign_service.join_playthrough(user, playthrough)
-    campaign_service.generate_qr(code)
 
     return render_template('create_pc.html', id=playthrough.id, code=code, username=user.name)
 

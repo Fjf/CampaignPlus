@@ -16,42 +16,42 @@ export default function Register(props) {
     const [errors, setErrors] = React.useState({username: null, password: null, cfPassword: null, email: null})
 
     function register() {
-        let e = {...errors}
+        let e = {...errors};
         if (username === "") {
             e.username = "Please fill in a username."
         }
 
         if (password !== cfPassword || cfPassword === "") {
-            e.password = "Passwords do not match"
-            e.cfPassword = "Passwords do not match"
+            e.password = "Passwords do not match";
+            e.cfPassword = "Passwords do not match";
         }
 
         if (password === "") {
-            e.password = "Please fill in a password."
+            e.password = "Please fill in a password.";
         }
 
         if (email === "") {
-            e.email = "Please fill in your email address."
+            e.email = "Please fill in your email address.";
         }
 
-        setErrors(e)
+        setErrors(e);
 
         if (!Object.values(e).every(i => i === null)) return;
 
         userService.registerUser(username, password, email).then(
             r => {
                 history.push(r.refer)
-            }, e => {
-                if (e.error.includes("username")) {
+            }, error => {
+                if (error.includes("username")) {
                     setErrors({
                         ...errors,
-                        username: e.error
+                        username: error
                     })
                 }
-                if (r.error.includes("email")) {
+                if (error.includes("email")) {
                     setErrors({
                         ...errors,
-                        email: e.error
+                        email: error
                     })
                 }
             });

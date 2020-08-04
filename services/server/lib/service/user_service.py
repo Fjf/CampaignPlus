@@ -30,16 +30,16 @@ def login(username, password):
 
 def create_user(username, password, email):
     if not is_valid_username(username):
-        return "Your username contains invalid characters. Allowed characters are alphanumeric and underscores."
+        raise BadRequest("Your username contains invalid characters. Allowed characters are alphanumeric and underscores.")
 
     if find_user_by_username(username) is not None:
-        return "This username is already in use."
+        raise BadRequest("This username is already in use.")
 
     if not _check_email(email):
-        return "This email address is invalid."
+        raise BadRequest("This email address is invalid.")
 
     if find_user_by_email(email) is not None:
-        return "This email address is already in use."
+        raise BadRequest("This email address is already in use.")
 
     hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
@@ -47,7 +47,7 @@ def create_user(username, password, email):
     user.email = email
 
     user_repository.add(user)
-    return ""
+    return user
 
 
 def find_user_by_username(username: str):

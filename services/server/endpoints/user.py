@@ -19,23 +19,18 @@ def register():
     name = data["name"]
     email = data["email"].lower().strip(" \n\t")
     pw = data["password"]
-    error = user_service.create_user(name, pw, email)
 
-    success = error == ""
+    user = user_service.create_user(name, pw, email)
 
     # Do this to set session to the registered user.
-    if success == 1:
+    if user is not None:
         user = user_service.login(name, pw)
-
-    success = error == ""
 
     refer = "/"
     if "redirect" in data:
         refer += data["redirect"]
 
     return {
-        "success": success,
-        "error": error,
         "user": user.to_json() if user is not None else None,
         "refer": refer
     }
@@ -58,7 +53,6 @@ def api_login():
     refer = "/"
     if "redirect" in data:
         refer += data["redirect"]
-    user = None
 
     return {
         "user": user.to_json() if user is not None else None,

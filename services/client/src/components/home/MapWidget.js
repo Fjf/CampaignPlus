@@ -173,11 +173,14 @@ function Map(c) {
 
         for (let i = 0; i < visibleMap.children.length; i++) {
             let child = visibleMap.children[i];
+            let w = child.hover || child.bhover ? 5 : 0;
+            let h = child.hover || child.bhover ? 5 : 0;
+
             let markerPosition = getMarkerPosition(child);
             context.drawImage(icons.get("position-marker"),
-                markerPosition.x,
-                markerPosition.y,
-                markerWidth, markerHeight);
+                markerPosition.x - w / 2,
+                markerPosition.y - h,
+                markerWidth + w, markerHeight + h);
         }
 
         if (hoverMarker !== null) {
@@ -262,7 +265,11 @@ function Map(c) {
         let pos = getMousePos(event);
         for (let child of visibleMap.children) {
             if (isCoordinateOnMarker(child, pos)) {
+                child.hover = true;
                 document.body.style.cursor = "pointer";
+                break;
+            } else {
+                child.hover = false;
                 break;
             }
         }
@@ -286,6 +293,13 @@ function Map(c) {
         // Callback for any eventhandlers.
         if (onMapChange !== null) {
             onMapChange(visibleMap);
+        }
+    };
+    this.setHover = function(actualChild, b) {
+        for (let i = 0; i < visibleMap.children.length; i++) {
+            if (visibleMap.children[i].id === actualChild.id){
+                visibleMap.children[i].bhover = b;
+            }
         }
     };
 
@@ -388,19 +402,19 @@ export default function MapWidget(props) {
         </div>
         <div className={"main-content"}>
             <canvas id={"canvas"} style={{backgroundColor: "white"}}/>
-            { selectedMap !== null ?
-            <div className={"icon-bar"} style={{top: "8px", left: "8px", position: "absolute"}}>
-                <IconButton variant={"outlined"} color={"secondary"} aria-label="back" onClick={() => {
-                    map.toParent();
-                }}>
-                    <FaArrowLeft/>
-                </IconButton>
-                <IconButton variant={"outlined"} color={"secondary"} aria-label="add" onClick={() => {
-                    map.setHoverMarker({x: 0, y: 0});
-                }}>
-                    <FaPlusCircle/>
-                </IconButton>
-            </div> : null}
+            {selectedMap !== null ?
+                <div className={"icon-bar"} style={{top: "8px", left: "8px", position: "absolute"}}>
+                    <IconButton variant={"outlined"} color={"secondary"} aria-label="back" onClick={() => {
+                        map.toParent();
+                    }}>
+                        <FaArrowLeft/>
+                    </IconButton>
+                    <IconButton variant={"outlined"} color={"secondary"} aria-label="add" onClick={() => {
+                        map.setHoverMarker({x: 0, y: 0});
+                    }}>
+                        <FaPlusCircle/>
+                    </IconButton>
+                </div> : null}
         </div>
         <div className={"right-content-bar"}>
             <div className={"standard-bar-entry"}>
@@ -446,6 +460,8 @@ export default function MapWidget(props) {
                         className={"campaign-list-entry"}
                         key={i}
                         onClick={() => map.onSetVisibleMap(child)}
+                        onMouseOver={(e) => map.setHover(child, true)}
+                        onMouseOut={(e) => map.setHover(child, false)}
                     >
                         {child.name}
                     </div>

@@ -36,27 +36,16 @@ export default function Home(props) {
                     <div>Enemies</div>
                 </Link>
                 {user === null ?
-                <Link to="/login">
-                    <div>Login</div>
-                </Link>
-                :
-                <>
-                    <Link to="/profile">
-                        <div>{user.name}</div>
-                    </Link>
-                    <div onClick={() => userService.logout().then(r => {
-                        history.push('/login')
-                    })}>Logout</div>
-                </>
-            }
                     <Link to="/login">
                         <div>Login</div>
                     </Link> :
-                    <><div>{user.name}</div>
+                    <> <Link to="/profile">
+                         <div>{user.name}</div>
+                        </Link>
                         <div onClick={() => {
-                            userService.logout().then(
-                                setUser(userService.getUser())
-                            )}}
+                        userService.logout().then(
+                            setUser(userService.getUser())
+                        )}}
                         >Logout</div>
                     </>
                 }
