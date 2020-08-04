@@ -1,18 +1,37 @@
-import os
-from typing import List, Optional, Tuple
+import string
+from random import randint
+from sqlite3 import IntegrityError
+from typing import List, Optional
 
-import qrcode
+from werkzeug.exceptions import Unauthorized, BadRequest
 
 from lib.database import request_session
-from services.server import app
-from lib.model.models import CampaignModel, UserModel, CampaignJoinCodeModel, PlayerModel
+from lib.model.models import CampaignModel, UserModel, PlayerModel
 from lib.repository import campaign_repository
 from lib.service import player_service
 
+ALLOWED_CHARS = string.ascii_uppercase + string.digits
 
-def create_playthrough(name, datetime, user: UserModel):
-    model = CampaignModel.from_name_date(name, datetime, user.id)
-    return campaign_repository.create_playthrough(model)
+
+def _create_random_string(length: int):
+    return "".join(ALLOWED_CHARS[randint(0, len(ALLOWED_CHARS) - 1)] for _ in range(length))
+
+
+def create_campaign(user: UserModel):
+    campaign = CampaignModel(user)
+
+    db = request_session()
+    while True:
+        try:
+            campaign.code = _create_random_string(6)
+
+            db.add(campaign)
+            db.commit()
+            break
+        except IntegrityError:
+            print("A key had to be regenerated.")
+
+    return campaign
 
 
 def get_campaigns(user: UserModel) -> List[CampaignModel]:
@@ -21,15 +40,6 @@ def get_campaigns(user: UserModel) -> List[CampaignModel]:
 
 def get_joined_campaigns(user) -> List[CampaignModel]:
     return campaign_repository.get_joined_playthroughs(user)
-
-
-def get_playthrough_url(id: int, user: UserModel) -> Optional[str]:
-    playthrough = campaign_repository.get_playthrough_by_id(id)
-
-    if playthrough.user != user:
-        return None
-
-    return campaign_repository.get_campaign_url(playthrough)
 
 
 def join_playthrough(user: UserModel, playthrough: CampaignModel):
@@ -100,3 +110,30 @@ def is_user_dm(user: UserModel, player: PlayerModel):
             return True
 
     return False
+
+
+def update_campaign(user: UserModel, campaign_id: int, name: str = None) -> CampaignModel:
+    campaign = get_campaign(campaign_id=campaign_id)
+
+    if campaign.user_id != user.id:
+        raise Unauthorized("You may not change another player's campaign.")
+
+    if name is not None:
+        campaign.name = name
+
+    db = request_session()
+    db.commit()
+
+    return campaign
+
+
+def delete_campaign(user, campaign_id):
+    campaign = get_campaign(campaign_id=campaign_id)
+    if campaign is None:
+        raise BadRequest("Campaign with this id does not exist.")
+    if campaign.user_id != user.id:
+        raise Unauthorized("You may not delete another player's campaign.")
+
+    db = request_session()
+    db.delete(campaign)
+    db.commit()

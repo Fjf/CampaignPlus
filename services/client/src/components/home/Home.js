@@ -12,14 +12,16 @@ import {dataService} from "../services/dataService";
 
 export default function Home(props) {
     const [campaigns, setCampaigns] = React.useState([]);
-    const [selectedCampaign, setSelectedCampaign] = React.useState(null);
-    let user = userService.getUser();
+    const [user, setUser] = React.useState(userService.getUser());
+
     React.useEffect(() => {
-        // Load campaigns on initialization
+        if (user === null) return;
+        // Load campaigns on initialization, and when user changes
         campaignService.get().then(r => {
             setCampaigns(r)
         });
-    }, []);
+    }, [user]);
+
 
     return <>
         <div className={"page-wrapper"}>
@@ -47,29 +49,24 @@ export default function Home(props) {
                     })}>Logout</div>
                 </>
             }
+                    <Link to="/login">
+                        <div>Login</div>
+                    </Link> :
+                    <><div>{user.name}</div>
+                        <div onClick={() => {
+                            userService.logout().then(
+                                setUser(userService.getUser())
+                            )}}
+                        >Logout</div>
+                    </>
+                }
             </nav>
             <div className={"content-wrapper"}>
                 <Route exact path={"/"}>
-                    <div className={"left-content-bar"}>
-                        <h3>Campaigns</h3>
-                        {
-                            campaigns.map((campaign, i) => {
-                                return <div key={i}
-                                            className={"campaign-list-entry"}
-                                            onClick={() => setSelectedCampaign(campaigns[i])}>
-                                    <div>{campaign.name}</div>
-                                    <div>{campaign.is_owner ? "You" : campaign.owner}</div>
-                                </div>
-                            })
-                        }
-                    </div>
-                    {selectedCampaign === null ?
-                        <div className={"main-content"}>Select a campaign to show information here.</div> :
-                        <CampaignOverview campaign={selectedCampaign}/>
-                    }
+                    <CampaignOverview campaigns={campaigns} setCampaigns={setCampaigns}/>
                 </Route>
                 <Route exact path={"/enemies"}>
-                    <EnemyCreation campaign={selectedCampaign}/>
+                    <EnemyCreation campaigns={campaigns}/>
                 </Route>
                 <Route exact path={"/maps"}>
                     <MapWidget campaigns={campaigns}/>

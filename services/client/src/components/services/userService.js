@@ -10,7 +10,9 @@ export const userService = {
 
 
 function getUser() {
-    return JSON.parse(localStorage.getItem("user"))
+    let u = localStorage.getItem("user");
+    if (u === null) return u;
+    return JSON.parse(u);
 }
 
 function registerUser(name, password, email) {
@@ -55,28 +57,20 @@ function login(username, password) {
 
 function logout() {
     // remove user from local storage to log user out
-
     const requestOptions = {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: null
+        headers: {'Content-Type': 'application/json'}
     };
 
+    localStorage.removeItem('user');
     return fetch(`${apiUrl}/logout`, requestOptions)
-        .then(d => {
-            localStorage.removeItem('user');
-        });
+        .then(handleResponse);
 }
 
 
 function handleResponse(response) {
     return response.text().then(text => {
         if (!response.ok) {
-            if (response.status === 401) {
-                // auto logout if 401 response returned from api
-                logout();
-            }
-
             const error = (data && data.message) || response.statusText;
             return Promise.reject(error);
         }

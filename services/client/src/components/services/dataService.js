@@ -6,7 +6,8 @@ export const dataService = {
     getMaps,
     createMap,
     alterMap,
-    deleteMap
+    deleteMap,
+    setMapImage,
 };
 
 
@@ -58,17 +59,29 @@ function createMap(cid, parent_map_id, x, y) {
         .then(handleResponse);
 }
 
-function alterMap(cid, data) {
+function alterMap(map_id, data) {
     const requestOptions = {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)
     };
 
-    return fetch(`${apiUrl}/campaigns/${cid}/maps`, requestOptions)
+    return fetch(`${apiUrl}/maps/${map_id}`, requestOptions)
         .then(handleResponse);
 }
 
+function setMapImage(map, file) {
+    let formData = new FormData();
+    formData.append("image", file);
+
+    const requestOptions = {
+        method: 'POST',
+        body: formData
+    };
+
+    return fetch(`${apiUrl}/maps/${map.id}/image`, requestOptions)
+        .then(handleResponse);
+}
 
 function deleteMap(cid, map_id) {
     const requestOptions = {
@@ -79,3 +92,4 @@ function deleteMap(cid, map_id) {
     return fetch(`${apiUrl}/campaigns/${cid}/maps/${map_id}`, requestOptions)
         .then(handleResponse);
 }
+
