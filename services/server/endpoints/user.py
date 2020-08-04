@@ -25,7 +25,7 @@ def register():
 
     # Do this to set session to the registered user.
     if success == 1:
-        error = user_service.login(name, pw)
+        user = user_service.login(name, pw)
 
     success = error == ""
 
@@ -33,7 +33,6 @@ def register():
     if "redirect" in data:
         refer += data["redirect"]
 
-    user = session_user()
     return {
         "success": success,
         "error": error,
