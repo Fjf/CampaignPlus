@@ -29,7 +29,11 @@ def rotate_file(filename: str) -> None:
     tags = exifread.process_file(f, details=False, stop_tag='Image Orientation')
     f.close()
 
-    rot = str(tags["Image Orientation"])
+    tag = tags.get("Image Orientation", None)
+    if tag is None:
+        return
+
+    rot = str(tag)
     if not rot.startswith("Rotated "):
         return
 
@@ -52,15 +56,15 @@ def rotate_file(filename: str) -> None:
     image.save(filename)
 
 
-def create_map(user: UserModel, campaign_id: int, x: int, y: int, parent_map_id: int):
+def create_map(user: UserModel, campaign_id: int, x: int, y: int, parent_map_id: int = None):
     """
     Creates a map on the defined x,y coordinates and a parent map.
     If parent map is None, it is assumed this map to be the root map for the campaign.
+    :param parent_map_id:
     :param user:
     :param campaign_id:
     :param x:
     :param y:
-    :param parent_map:
     :return:
     """
     campaign = campaign_service.get_campaign(campaign_id=campaign_id)
@@ -68,17 +72,15 @@ def create_map(user: UserModel, campaign_id: int, x: int, y: int, parent_map_id:
     if campaign is None:
         raise BadRequest("This campaign does not exist.")
 
-    parent_map = get_map(parent_map_id)
-    if parent_map is None:
-        raise BadRequest("Parent map id does not exist.")
-
-    # TODO: Do we want this restriction?
-    # if campaign.user_id != user.id:
-    #     raise Unauthorized("You cannot create a map in a campaign that is not yours.")
-
     map_model = MapModel(campaign_id, x, y)
-    if parent_map_id is not None:
-        map_model.parent_map_id = parent_map_id
+    if not (parent_map_id is None and get_root_map(user, campaign_id) is None):
+        # This will become a child model
+        parent_map = get_map(parent_map_id)
+        if parent_map is None:
+            raise BadRequest("Parent map id does not exist.")
+
+        if parent_map_id is not None:
+            map_model.parent_map_id = parent_map_id
 
     db = request_session()
     db.add(map_model)
@@ -110,6 +112,7 @@ def alter_map(user: UserModel, map_id: int, map_img=None, name: str = None, stor
 
     if map_img is not None:
         # Generate random file names until you get a unique one in the uploads.
+        print(os.getcwd())
         while True:
             extension = os.path.splitext(map_img.filename)[1]
             filename = _create_random_string(15) + extension  # 15 seems like a large enough number for files.

@@ -1,7 +1,9 @@
 import React from "react";
+import {FileDrop} from 'react-file-drop';
 import {dataService} from "../services/dataService";
 import {IconButton, TextField, TextareaAutosize} from "@material-ui/core"
 import {BsTrash, BsUpload, FaArrowLeft, FaPlusCircle} from "react-icons/all"
+import {campaignService} from "../services/campaignService";
 
 function distance(p1, p2) {
     return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
@@ -96,9 +98,18 @@ function Map(c) {
         overwriteVisibleMap(newMap);
     }
 
-    function overwriteVisibleMap(newMap) {
-        console.log(newMap);
+    this.forceUpdate = function(newMap) {
+        visibleMap = newMap;
 
+        let parent = visibleMap.parent;
+        for (let i = 0; i < parent.children.length; i++) {
+            if (parent.children[i].id === visibleMap.id) {
+                parent.children[i] = visibleMap;
+            }
+        }
+    };
+
+    function overwriteVisibleMap(newMap) {
         let img = new Image();
         img.onload = () => {
             zoom = Math.max(img.width / c.width, img.height / c.height);
@@ -281,6 +292,7 @@ function Map(c) {
     this.onKeyDown = function(event) {
         if (event.key === "Escape" && hoverMarker !== null) hoverMarker = null;
     };
+
 }
 
 let map;
@@ -314,9 +326,14 @@ export default function MapWidget(props) {
         document.addEventListener("keydown", map.onKeyDown);
         canvas.addEventListener("wheel", map.onMouseScroll);
         // Prevent right mouse button menu popup
-        canvas.oncontextmenu = () => { return false };
+        canvas.oncontextmenu = () => {
+            return false
+        };
 
-        setInterval(map.render, 1000 / 60);
+        let interval = setInterval(map.render, 1000 / 60);
+        return () => {
+            clearInterval(interval)
+        }
     }, []);
 
     React.useEffect(() => {
@@ -325,6 +342,35 @@ export default function MapWidget(props) {
             map.setMap(r);
         });
     }, [campaign]);
+
+    function uploadFile(files, event) {
+        let file = files[0];
+        if (!(file.name.endsWith(".png") || file.name.endsWith(".jpg") || file.name.endsWith(".jpeg"))) {
+            alert("Only png or jpg files are supported.");
+            return
+        }
+
+        const reader = new FileReader();
+        reader.addEventListener("load", function() {
+            selectedMap.image.src = reader.result;
+            map.forceUpdate(selectedMap);
+        }, false);
+
+        dataService.setMapImage(selectedMap, file).then(r => {
+            console.log("Uploaded image successfully.")
+        });
+
+        reader.readAsDataURL(file);
+    }
+
+    function alterMap() {
+        dataService.alterMap(selectedMap.id, {
+            name: selectedMap.name,
+            story: selectedMap.story
+        }).then(r => { /* Upload successful. */
+        });
+        map.forceUpdate(selectedMap);
+    }
 
     return <>
         <div className={"left-content-bar"}>
@@ -342,18 +388,19 @@ export default function MapWidget(props) {
         </div>
         <div className={"main-content"}>
             <canvas id={"canvas"} style={{backgroundColor: "white"}}/>
+            { selectedMap !== null ?
             <div className={"icon-bar"} style={{top: "8px", left: "8px", position: "absolute"}}>
                 <IconButton variant={"outlined"} color={"secondary"} aria-label="back" onClick={() => {
                     map.toParent();
                 }}>
                     <FaArrowLeft/>
                 </IconButton>
-                <IconButton variant={"outlined"} color={"secondary"} aria-label="back" onClick={() => {
+                <IconButton variant={"outlined"} color={"secondary"} aria-label="add" onClick={() => {
                     map.setHoverMarker({x: 0, y: 0});
                 }}>
                     <FaPlusCircle/>
                 </IconButton>
-            </div>
+            </div> : null}
         </div>
         <div className={"right-content-bar"}>
             <div className={"standard-bar-entry"}>
@@ -361,18 +408,7 @@ export default function MapWidget(props) {
                 <div className={"icon-bar"}>
                     <IconButton
                         size={"small"}
-                        onClick={() => {
-                            dataService.alterMap(selectedMap.campaign_id, {
-                                name: selectedMap.name,
-                                story: selectedMap.story
-                            }).then(r => {
-                                // Get all original values, and overwrite with the updated server values.
-                                map.setOverwriteVisibleMap({
-                                    ...selectedMap,
-                                    ...r
-                                })
-                            });
-                        }}>
+                        onClick={alterMap}>
                         <BsUpload/>
                     </IconButton>
                     <IconButton
@@ -415,6 +451,13 @@ export default function MapWidget(props) {
                     </div>
                 })
             }
+            <div>
+                <FileDrop
+                    onDrop={uploadFile}
+                >
+                    Drop an image here to overwrite the current map.
+                </FileDrop>
+            </div>
         </div>
     </>
 }

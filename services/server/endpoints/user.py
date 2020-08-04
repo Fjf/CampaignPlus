@@ -42,7 +42,7 @@ def register():
     }
 
 
-@api.route('/login', methods=["POST", "GET"])
+@api.route('/login', methods=["POST"])
 def api_login():
     data = request.get_json()
 

@@ -127,7 +127,7 @@ def get_maps(campaign_id):
     user = session_user()
     map_model = map_service.get_root_map(user, campaign_id)
     if map_model is None:
-        return None
+        return map_service.create_map(user, campaign_id, 0, 0, None).to_json()
     return map_model.to_json(recursive=True)
 
 
@@ -153,11 +153,10 @@ def create_map(campaign_id):
     return map_model.to_json()
 
 
-@api.route("/campaigns/<int:campaign_id>/maps", methods=["POST"])
+@api.route("/maps/<int:map_id>", methods=["POST"])
 @json_api()
 @require_login()
-def alter_map(campaign_id):
-    file = request.files.get("file", None)
+def alter_map(map_id):
     data = request.get_json()
 
     name = data.get("name", None)
@@ -166,7 +165,17 @@ def alter_map(campaign_id):
     y = data.get("y", None)
 
     user = session_user()
-    map_model = map_service.alter_map(user, campaign_id, file, name, story, x, y)
+    map_model = map_service.alter_map(user, map_id, None, name, story, x, y)
+    return map_model.to_json()
+
+
+@api.route("/maps/<int:map_id>/image", methods=["POST"])
+@json_api()
+@require_login()
+def alter_map_image(map_id):
+    img = request.files.get('image', None)
+    user = session_user()
+    map_model = map_service.alter_map(user, map_id, img)
     return map_model.to_json()
 
 

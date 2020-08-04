@@ -1,5 +1,6 @@
 import datetime
 import os
+import time
 
 import qrcode
 from sqlalchemy import Column, Integer, String, ForeignKey, LargeBinary, DateTime, Boolean
@@ -162,44 +163,18 @@ class CampaignModel(OrmModelBase):
     user_id = Column(Integer(), ForeignKey("user.id"))
     user = relationship("UserModel")
 
-    name = Column(String(), nullable=False)
-    date = Column(DateTime(), nullable=False)
+    name = Column(String(), nullable=False, default="New Campaign")
 
-    code = Column(String(), nullable=True)
-
-    @classmethod
-    def from_name_date(cls, name: str, date: datetime, user_id: int):
-        c = cls()
-        c.name = name
-        c.date = date
-        c.user_id = user_id
-        return c
-
-
-class CampaignJoinCodeModel(OrmModelBase):
-    """
-    A code for users to join a game.
-    This should be cleaned up regularly.
-    """
-
-    __tablename__ = "playthrough_code"
-
-    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"), primary_key=True)
-    playthrough = relationship("CampaignModel")
-
+    date = Column(DateTime(), nullable=False, default=datetime.datetime.now())
     code = Column(String(), nullable=True, unique=True)
-    date = Column(DateTime(), nullable=True)
 
-    @classmethod
-    def from_campaign_id(cls, playthrough_id: int):
-        c = cls()
-        c.playthrough_id = playthrough_id
-        return c
+    def __init__(self, user: UserModel):
+        self.user_id = user.id
 
-    def to_url(self):
+    def code_url(self):
         return "%s:5000/join/%s" % (app.host, self.code)
 
-    def qr_code(self):
+    def code_qr(self):
         """
         Checks if the qr code image already exists, if not, creates the image.
 
@@ -212,6 +187,18 @@ class CampaignJoinCodeModel(OrmModelBase):
             img.get_image().save(qr_filename)
 
         return "/static/images/qr_codes/%s.png" % self.code
+
+    def to_json(self, user: UserModel = None):
+        return {
+            "is_owner": self.user == user,
+            "owner": self.user.name,
+            "id": self.id,
+            "code": self.code,
+            "url": self.code_url(),
+            "qr_image": self.code_qr(),
+            "name": self.name,
+            "time": time.mktime(self.date.timetuple()) * 1000  # Python does time in seconds.
+        }
 
 
 class PlayerModel(OrmModelBase):
@@ -299,6 +286,7 @@ class MapModel(OrmModelBase):
     def children(self):
         db = request_session()
         return db.query(MapModel).filter(MapModel.parent_map_id == self.id).all()
+
 
 class CreatorMapModel(OrmModelBase):
     """

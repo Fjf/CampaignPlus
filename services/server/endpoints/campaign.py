@@ -20,45 +20,49 @@ def check_player(player: PlayerModel):
         raise Unauthorized("This player is not yours.")
 
 
-@api.route('/createplaythrough', methods=["POST"])
+@api.route('/campaigns', methods=["PUT"])
 @json_api()
 @require_login()
-def create_playthrough():
+def create_campaign():
+    user = session_user()
+    return campaign_service.create_campaign(user).to_json(user)
+
+
+@api.route('/campaigns/<int:campaign_id>', methods=["POST"])
+@json_api()
+@require_login()
+def update_campaign(campaign_id):
+    user = session_user()
     data = request.get_json()
 
-    if not data or "name" not in data:
-        raise BadRequest()
+    name = data.get("name")
 
+    return campaign_service.update_campaign(user, campaign_id, name).to_json(user)
+
+
+@api.route('/campaigns/<int:campaign_id>', methods=["DELETE"])
+@require_login()
+def delete_campaign(campaign_id):
     user = session_user()
-
-    return campaign_service.create_playthrough(data['name'], datetime.now(), user)
+    campaign_service.delete_campaign(user, campaign_id)
+    return get_campaigns()
 
 
 @api.route('/campaigns', methods=["GET"])
 @require_login()
 @json_api()
-def get_playthrough():
+def get_campaigns():
     user = session_user()
 
-    campaigns = campaign_service.get_campaigns(user)
+    m_campaigns = campaign_service.get_campaigns(user)
     p_campaigns = campaign_service.get_joined_campaigns(user)
 
-    data = []
-    for campaign in campaigns + p_campaigns:
-        code_model = campaign_repository.get_campaign_code(campaign.id)
+    campaigns = []
+    for campaign in m_campaigns + p_campaigns:
+        if campaign not in campaigns:
+            campaigns.append(campaign)
 
-        data.append({
-            "is_owner": campaign.user_id == user.id,
-            "owner": campaign.user.name,
-            "id": campaign.id,
-            "code": code_model.code,
-            "url": code_model.to_url(),
-            "qr_image": code_model.qr_code(),
-            "name": campaign.name,
-            "time": time.mktime(campaign.date.timetuple()) * 1000  # Python does time in seconds.
-        })
-
-    return data
+    return [campaign.to_json(user) for campaign in campaigns]
 
 
 @api.route('/campaigns/join/<campaign_code>', methods=["POST"])
