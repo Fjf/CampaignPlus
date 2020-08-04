@@ -186,14 +186,14 @@ function Map(c) {
                 markerWidth + w, markerHeight + h);
 
             if (hover) {
-                const fontHeight = 18;
+                const fontHeight = 20;
                 context.font = `900 ${fontHeight}px Arial`;
                 context.fillStyle = "white";
                 let size = context.measureText(child.name);
                 context.fillText(child.name, markerPosition.x + (markerWidth + w) / 2 - size.width / 2, markerPosition.y - fontHeight);
 
-                context.lineWidth = "0.5px";
-                context.strokeStyle = "black";
+                context.lineWidth = "1px";
+                context.strokeStyle = "#363636";
                 context.strokeText(child.name, markerPosition.x + (markerWidth + h) / 2 - size.width / 2, markerPosition.y - fontHeight);
                 context.stroke();
             }
