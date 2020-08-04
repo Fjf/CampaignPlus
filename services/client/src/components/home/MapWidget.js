@@ -94,6 +94,8 @@ function Map(c) {
     function setVisibleMap(newMap) {
         // Make sure the child always knows how to get back to the parent.
         newMap.parent = visibleMap;
+        newMap.hover = false;
+        newMap.bhover = false;
 
         overwriteVisibleMap(newMap);
     }
@@ -173,14 +175,28 @@ function Map(c) {
 
         for (let i = 0; i < visibleMap.children.length; i++) {
             let child = visibleMap.children[i];
-            let w = child.hover || child.bhover ? 5 : 0;
-            let h = child.hover || child.bhover ? 5 : 0;
+            let hover = child.hover || child.bhover;
+            let w = hover ? 5 : 0;
+            let h = hover ? 5 : 0;
 
             let markerPosition = getMarkerPosition(child);
             context.drawImage(icons.get("position-marker"),
                 markerPosition.x - w / 2,
                 markerPosition.y - h,
                 markerWidth + w, markerHeight + h);
+
+            if (hover) {
+                const fontHeight = 18;
+                context.font = `900 ${fontHeight}px Arial`;
+                context.fillStyle = "white";
+                let size = context.measureText(child.name);
+                context.fillText(child.name, markerPosition.x + (markerWidth + w) / 2 - size.width / 2, markerPosition.y - fontHeight);
+
+                context.lineWidth = "0.5px";
+                context.strokeStyle = "black";
+                context.strokeText(child.name, markerPosition.x + (markerWidth + h) / 2 - size.width / 2, markerPosition.y - fontHeight);
+                context.stroke();
+            }
         }
 
         if (hoverMarker !== null) {
@@ -268,10 +284,8 @@ function Map(c) {
                 child.hover = true;
                 document.body.style.cursor = "pointer";
                 break;
-            } else {
-                child.hover = false;
-                break;
             }
+            child.hover = false;
         }
 
         previousMousePosition = {x: event.x, y: event.y};
@@ -297,7 +311,7 @@ function Map(c) {
     };
     this.setHover = function(actualChild, b) {
         for (let i = 0; i < visibleMap.children.length; i++) {
-            if (visibleMap.children[i].id === actualChild.id){
+            if (visibleMap.children[i].id === actualChild.id) {
                 visibleMap.children[i].bhover = b;
             }
         }
