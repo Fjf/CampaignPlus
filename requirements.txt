@@ -14,5 +14,5 @@ pydot
 graphviz
 pdoc3
 Flask-SocketIO
-
+flask-cors
 

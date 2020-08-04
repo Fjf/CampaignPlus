@@ -13,7 +13,7 @@ def get_messages(playthrough_id: int, user: UserModel) -> (str, List[MessageMode
     :param user:
     :return: A tuple (Error message, List with messages)
     """
-    playthrough = campaign_service.find_campaign_with_id(playthrough_id)
+    playthrough = campaign_service.get_campaign(playthrough_id)
     if playthrough is None:
         return "This playthrough does not exist.", []
 

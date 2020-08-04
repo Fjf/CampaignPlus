@@ -54,19 +54,14 @@ def api_login():
     if password is None:
         raise BadRequest("No password specified.")
 
-    error = user_service.login(username, password)
-
-    success = error == ""
+    user = user_service.login(username, password)
 
     refer = "/"
     if "redirect" in data:
         refer += data["redirect"]
     user = None
-    if success:
-        user = session_user()
+
     return {
-        "success": success,
-        "error": error,
         "user": user.to_json() if user is not None else None,
         "refer": refer
     }

@@ -4,13 +4,6 @@ from lib.database import request_session
 from lib.model.models import MapModel, BattlemapModel, CreatorMapModel
 
 
-def get_map(map_id: int) -> Optional[MapModel]:
-    db = request_session()
-
-    return db.query(MapModel) \
-        .filter(MapModel.id == map_id) \
-        .one_or_none()
-
 
 def create_map(mapmodel: MapModel):
     db = request_session()
@@ -36,7 +29,7 @@ def get_all_maps(playthrough_id: str) -> List[MapModel]:
     db = request_session()
 
     return db.query(MapModel) \
-        .filter(MapModel.playthrough_id == playthrough_id) \
+        .filter(MapModel.campaign_id == playthrough_id) \
         .all()
 
 

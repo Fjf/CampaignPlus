@@ -13,5 +13,9 @@
 
   & > * {
     padding: 0 4px;
+
+    & > * {
+      padding: 2px;
+    }
   }
 }

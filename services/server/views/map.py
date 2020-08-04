@@ -17,7 +17,7 @@ def map_v2(campaign_id):
     if campaign_id is None:
         campaign = campaign_service.get_joined_campaigns(user)[0][0]
     else:
-        campaign = campaign_service.find_campaign_with_id(campaign_id)
+        campaign = campaign_service.get_campaign(campaign_id)
 
     # The user should get a notification it is not in the campaign it is trying to access.
     if not campaign_service.user_in_campaign(user, campaign):

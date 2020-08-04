@@ -60,6 +60,7 @@ h3 {
 
 .right-content-bar {
   background-color: lighten($primary, 30%);
+  flex: 2;
 
   @extend .left-content-bar;
 }
@@ -88,6 +89,7 @@ h3 {
   display: flex;
   flex-direction: row;
   height: 100%;
+  position: relative;
 }
 
 .player-list-wrapper {

@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 from functools import wraps
 
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, Unauthorized
 
 from lib import user_session
 
@@ -36,7 +36,7 @@ def require_login():
         @wraps(f)
         def decorated_function(*args, **kwargs):
             if not user_session.session_is_authed():
-                raise BadRequest("User is not logged in.")
+                raise Unauthorized("User is not logged in.")
 
             return f(*args, **kwargs)
 
@@ -48,6 +48,7 @@ def require_login():
 import endpoints.user  # noqa
 import endpoints.player  # noqa
 import endpoints.enemy  # noqa
+import endpoints.player  # noqa
 import endpoints.campaign  # noqa
 import endpoints.map  # noqa
 import endpoints.messages  # noqa

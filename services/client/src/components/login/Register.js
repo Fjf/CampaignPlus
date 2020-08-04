@@ -40,25 +40,21 @@ export default function Register(props) {
 
         userService.registerUser(username, password, email).then(
             r => {
-                if (!r.success) {
-                    if (r.error.includes("username")) {
-                        setErrors({
-                            ...errors,
-                            username: r.error
-                        })
-                    }
-                    if (r.error.includes("email")) {
-                        setErrors({
-                            ...errors,
-                            email: r.error
-                        })
-                    }
+                history.push(r.refer)
+            }, e => {
+                if (e.error.includes("username")) {
+                    setErrors({
+                        ...errors,
+                        username: e.error
+                    })
                 }
-                else {
-                    history.push("/")
+                if (r.error.includes("email")) {
+                    setErrors({
+                        ...errors,
+                        email: e.error
+                    })
                 }
-            }
-        );
+            });
     }
 
     return <div className={"authenticationInput"}>
