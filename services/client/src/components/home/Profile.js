@@ -13,7 +13,6 @@ export default function Profile(props) {
         });
     }, []);
 
-    console.log(selectedCharacter)
     return <>
         <div className={"left-content-bar"}>
             <h3>Character Overview for {user.name}</h3>

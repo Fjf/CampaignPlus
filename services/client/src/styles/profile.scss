@@ -1,0 +1,31 @@
+.stats-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 60px;
+
+  & > div {
+    font-size: 10px;
+  }
+
+  .MuiTextField-root {
+    width: 30px;
+
+    .MuiInput-input {
+      text-align: center;
+    }
+  }
+
+  .stats-duo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    & > * {
+      padding: 0;
+      margin: 0;
+    }
+  }
+}
