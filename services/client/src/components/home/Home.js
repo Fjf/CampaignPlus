@@ -6,6 +6,7 @@ import CampaignOverview from "./CampaignOverview";
 import EnemyCreation from "./EnemyCreation";
 import AudioPlayer from "../AudioPlayer";
 import {userService} from "../services/userService";
+import {useHistory} from "react-router-dom"
 import Profile from "./Profile";
 import MapWidget from "./MapWidget";
 import {dataService} from "../services/dataService";
@@ -13,6 +14,7 @@ import {dataService} from "../services/dataService";
 export default function Home(props) {
     const [campaigns, setCampaigns] = React.useState([]);
     const [user, setUser] = React.useState(userService.getUser());
+    const history = useHistory()
 
     React.useEffect(() => {
         if (user === null) return;
@@ -40,13 +42,17 @@ export default function Home(props) {
                         <div>Login</div>
                     </Link> :
                     <> <Link to="/profile">
-                         <div>{user.name}</div>
-                        </Link>
+                        <div>{user.name}</div>
+                    </Link>
                         <div onClick={() => {
-                        userService.logout().then(
-                            setUser(userService.getUser())
-                        )}}
-                        >Logout</div>
+                            userService.logout().then(
+                                setUser(userService.getUser())
+                            )
+                            console.log("got here")
+                            history.push('/login')
+                        }}
+                        >Logout
+                        </div>
                     </>
                 }
             </nav>
@@ -61,9 +67,9 @@ export default function Home(props) {
                     <MapWidget campaigns={campaigns}/>
                 </Route>
                 <Route exact path={"/profile"}>
-                <Profile user={user}/>
+                    <Profile user={user}/>
 
-            </Route>
+                </Route>
             </div>
         </div>
         <AudioPlayer/>
