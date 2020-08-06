@@ -1,0 +1,21 @@
+<svg style="height: 500px; width: 500px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+    <defs>
+        <filter id="shadow-1" height="300%" width="300%" x="-100%" y="-100%">
+            <feFlood flood-color="rgba(255, 255, 255, 1)" result="flood"></feFlood>
+            <feComposite in="flood" in2="SourceGraphic" operator="atop" result="composite"></feComposite>
+            <feGaussianBlur in="composite" stdDeviation="15" result="blur"></feGaussianBlur>
+            <feOffset dx="0" dy="0" result="offset"></feOffset>
+            <feComposite in="SourceGraphic" in2="offset" operator="over"></feComposite>
+        </filter>
+    </defs>
+    <path d="M0 0h512v512H0z" fill="#000000" fill-opacity="0.02"></path>
+    <g class="" style="touch-action: none;" transform="translate(0,0)">
+
+        <path d="M250,375 a150 150 0 1 0 0,-250 a150 150 0 1 0 0,250 z"
+            fill="#ffffff" fill-opacity="0" stroke="#2a2626" stroke-opacity="1" stroke-width="30"
+        />
+        <path d="M225,250 a110 110 0 1 0 0,-0.01 h-170 a110 110 0 1 0 0,-0.01 "
+            fill="#2a2626" fill-opacity="1"
+        />
+    </g>
+</svg>

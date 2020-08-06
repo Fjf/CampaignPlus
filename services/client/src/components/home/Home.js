@@ -9,6 +9,7 @@ import {userService} from "../services/userService";
 import Profile from "./Profile";
 import MapWidget from "./MapWidget";
 import {dataService} from "../services/dataService";
+import DiceRoller from "../DiceRoller";
 
 export default function Home(props) {
     const [campaigns, setCampaigns] = React.useState([]);
@@ -66,6 +67,7 @@ export default function Home(props) {
             </Route>
             </div>
         </div>
+        {/*<DiceRoller/>*/}
         <AudioPlayer/>
     </>
 }
