@@ -29,3 +29,27 @@
     }
   }
 }
+
+.proficiencies-column {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+
+  width: 150px;
+
+  & > div {
+    font-size: 12px;
+  }
+
+  .stats-duo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    & > * {
+      padding: 0;
+      margin: 0;
+    }
+  }
+}

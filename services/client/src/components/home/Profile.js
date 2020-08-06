@@ -22,19 +22,11 @@ export default function Profile(props) {
                 <div className={"icon-bar"}>
                     <IconButton aria-label="add" size={"small"} onClick={() => {
                         profileServices.create({"name": "test", "race_name": "Human"}).then(r => {
-                            setCharacters([
+                                setCharacters([
                                     ...characters,
                                     r
-                                ]
-                            )
-
-
-                            if (r === "success") {
-                                console.log("Zoop :point_right: :sunglasses: :point_right:")
-                            }
-                            // setSelectedCharacter(r);
-
-                        },
+                                ]);
+                            },
                             error => {
                                 console.log(error)
                             });
@@ -47,7 +39,9 @@ export default function Profile(props) {
                 characters.map((character, i) => {
                     return <div key={i}
                                 className={"campaign-list-entry"}
-                                onClick={() => setSelectedCharacter(characters[i])}>
+                                onClick={() => {
+                                    setSelectedCharacter(characters[i])
+                                }}>
                         <div>{character.name} - {character.race}</div>
                     </div>
                 })
@@ -55,7 +49,7 @@ export default function Profile(props) {
         </div>
         {selectedCharacter === null ?
             <div className={"main-content"}>Select a character to show information here.</div> :
-            <CharacterOverview character={selectedCharacter}/>
+            <CharacterOverview character={selectedCharacter} reset={() => setSelectedCharacter(null)}/>
         }
     </>
 
