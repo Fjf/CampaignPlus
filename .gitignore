@@ -20,3 +20,4 @@ config.ini
 index.js
 /build/
 /schema/
+/services/client/src/components/dice/

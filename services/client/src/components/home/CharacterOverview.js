@@ -19,7 +19,6 @@ export default function CharacterOverview(props) {
     }, [character]);
 
 
-
     function deleteCharacter() {
         if (prompt("Are you sure you want to delete this character? Type the name of the character to continue deleting.") === character.name) {
             characterServices.del(character.id).then(r => {
@@ -326,15 +325,138 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Intelligence"}>Insight ({getProficiencyBonus("int")})</span>
+                        <span title={"Wisdom"}>Insight ({getProficiencyBonus("wis")})</span>
                         <DoubleCheckbox
-                            value={characterInfo.proficiencies.history}
+                            value={characterInfo.proficiencies.insight}
                             onClick={(e) => {
                                 setCharacterInfo({
                                     ...characterInfo,
                                     proficiencies: {
                                         ...characterInfo.proficiencies,
-                                        history: e.target.value
+                                        insight: e.target.value
+                                    }
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className={"stats-duo"}>
+                        <span title={"Charisma"}>Intimidation ({getProficiencyBonus("cha")})</span>
+                        <DoubleCheckbox
+                            value={characterInfo.proficiencies.intimidation}
+                            onClick={(e) => {
+                                setCharacterInfo({
+                                    ...characterInfo,
+                                    proficiencies: {
+                                        ...characterInfo.proficiencies,
+                                        intimidation: e.target.value
+                                    }
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className={"stats-duo"}>
+                        <span title={"Intelligence"}>Investigation ({getProficiencyBonus("int")})</span>
+                        <DoubleCheckbox
+                            value={characterInfo.proficiencies.investigation}
+                            onClick={(e) => {
+                                setCharacterInfo({
+                                    ...characterInfo,
+                                    proficiencies: {
+                                        ...characterInfo.proficiencies,
+                                        investigation: e.target.value
+                                    }
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className={"stats-duo"}>
+                        <span title={"Wisdom"}>Medicine ({getProficiencyBonus("wis")})</span>
+                        <DoubleCheckbox
+                            value={characterInfo.proficiencies.medicine}
+                            onClick={(e) => {
+                                setCharacterInfo({
+                                    ...characterInfo,
+                                    proficiencies: {
+                                        ...characterInfo.proficiencies,
+                                        medicine: e.target.value
+                                    }
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className={"stats-duo"}>
+                        <span title={"Intelligence"}>Nature ({getProficiencyBonus("int")})</span>
+                        <DoubleCheckbox
+                            value={characterInfo.proficiencies.nature}
+                            onClick={(e) => {
+                                setCharacterInfo({
+                                    ...characterInfo,
+                                    proficiencies: {
+                                        ...characterInfo.proficiencies,
+                                        nature: e.target.value
+                                    }
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className={"stats-duo"}>
+                        <span title={"Wisdom"}>Perception ({getProficiencyBonus("wis")})</span>
+                        <DoubleCheckbox
+                            value={characterInfo.proficiencies.perception}
+                            onClick={(e) => {
+                                setCharacterInfo({
+                                    ...characterInfo,
+                                    proficiencies: {
+                                        ...characterInfo.proficiencies,
+                                        perception: e.target.value
+                                    }
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className={"stats-duo"}>
+                        <span title={"Charisma"}>Performance ({getProficiencyBonus("cha")})</span>
+                        <DoubleCheckbox
+                            value={characterInfo.proficiencies.performance}
+                            onClick={(e) => {
+                                setCharacterInfo({
+                                    ...characterInfo,
+                                    proficiencies: {
+                                        ...characterInfo.proficiencies,
+                                        performance: e.target.value
+                                    }
+                                })
+                            }}
+                        />
+                    </div>
+
+
+
+                    <div className={"stats-duo"}>
+                        <span title={"Dexterity"}>Stealth({getProficiencyBonus("dex")})</span>
+                        <DoubleCheckbox
+                            value={characterInfo.proficiencies.stealth}
+                            onClick={(e) => {
+                                setCharacterInfo({
+                                    ...characterInfo,
+                                    proficiencies: {
+                                        ...characterInfo.proficiencies,
+                                        stealth: e.target.value
+                                    }
+                                })
+                            }}
+                        />
+                    </div>
+                    <div className={"stats-duo"}>
+                        <span title={"Wisdom"}>Survival({getProficiencyBonus("wis")})</span>
+                        <DoubleCheckbox
+                            value={characterInfo.proficiencies.survival}
+                            onClick={(e) => {
+                                setCharacterInfo({
+                                    ...characterInfo,
+                                    proficiencies: {
+                                        ...characterInfo.proficiencies,
+                                        survival: e.target.value
                                     }
                                 })
                             }}
