@@ -10,15 +10,38 @@ export default function Login(props) {
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
     const history = useHistory();
+    const [errors, setErrors] = React.useState({username: null, password: null})
 
     function handleLogin() {
-        if (username === "" || password === "")
-            return;
+        let e = {...errors};
+        if (username === "") {
+            e.username = "Please fill in a username."
+        }
+
+        if (password === "") {
+            e.password = "Please fill in a password.";
+        }
+
+        setErrors(e);
+        if (!Object.values(e).every(i => i === null)) return;
+
 
         userService.login(username, password).then(r => {
             history.push(r.refer)
-        }, e => {
-            console.log("Error:", e);
+        }, error => {
+            console.log("Error:", error);
+            if (error.toLowerCase().includes("password")) {
+                setErrors({
+                        ...errors,
+                        password: error
+                    })
+            }
+            if (error.toLowerCase().includes("username")) {
+                setErrors({
+                        ...errors,
+                        username: error
+                    })
+            }
         });
     }
 
@@ -30,18 +53,30 @@ export default function Login(props) {
             value={username}
             onChange={(e) => {
                 setUsername(e.target.value);
+                setErrors({
+                    ...errors,
+                    username: null
+                })
             }}
             label={"Username"}
             color={"secondary"}
+            error={errors.username !== null}
+            helperText={errors.username}
         />
         <TextField
             type={"password"}
             value={password}
             onChange={(e) => {
                 setPassword(e.target.value);
+                setErrors({
+                    ...errors,
+                    password: null
+                })
             }}
             label={"Password"}
             color={"secondary"}
+            error={errors.password !== null}
+            helperText={errors.password}
         />
         <Button
             onClick={handleLogin}
