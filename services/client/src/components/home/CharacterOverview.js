@@ -1,6 +1,6 @@
 import React from "react";
 import {characterServices} from "../services/characterServices";
-import {Checkbox, TextField} from "@material-ui/core";
+import {Checkbox, SvgIcon, TextField} from "@material-ui/core";
 import "../../styles/profile.scss";
 import {BsDiamond, BsDiamondFill, FaTrash, MdSave} from "react-icons/all";
 import IconButton from "@material-ui/core/IconButton";
@@ -26,10 +26,11 @@ export default function CharacterOverview(props) {
                 // setSelectedCampaign(null);
                 // getPlayers();
                 props.reset();
-                console.log(r)
             })
         }
     }
+
+    console.log(characterInfo);
 
     function getBonus(value) {
         return Math.floor((value - 10) / 2);
@@ -509,6 +510,12 @@ export default function CharacterOverview(props) {
                                 })
                             }}
                         />
+                    </div>
+                </div>
+                <div>
+                    Level
+                    <div className={"level-stat"}>
+                        {characterInfo.info.level}
                     </div>
                 </div>
             </>

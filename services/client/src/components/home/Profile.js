@@ -52,6 +52,4 @@ export default function Profile(props) {
             <CharacterOverview character={selectedCharacter} reset={() => setSelectedCharacter(null)}/>
         }
     </>
-
-
 }
