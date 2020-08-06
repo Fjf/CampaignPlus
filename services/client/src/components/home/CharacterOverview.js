@@ -430,10 +430,58 @@ export default function CharacterOverview(props) {
                         />
                     </div>
 
+                    <div className={"stats-duo"}>
+                        <span title={"Charisma"}>Persuasion ({getProficiencyBonus("cha")})</span>
+                        <DoubleCheckbox
+                            value={characterInfo.proficiencies.persuasion}
+                            onClick={(e) => {
+                                setCharacterInfo({
+                                    ...characterInfo,
+                                    proficiencies: {
+                                        ...characterInfo.proficiencies,
+                                        persuasion: e.target.value
+                                    }
+                                })
+                            }}
+                        />
+
+                    </div>
+                    <div className={"stats-duo"}>
+                        <span title={"Intelligence"}>Religion ({getProficiencyBonus("int")})</span>
+                        <DoubleCheckbox
+                            value={characterInfo.proficiencies.religion}
+                            onClick={(e) => {
+                                setCharacterInfo({
+                                    ...characterInfo,
+                                    proficiencies: {
+                                        ...characterInfo.proficiencies,
+                                        religion: e.target.value
+                                    }
+                                })
+                            }}
+                        />
+
+                    </div>
+                    <div className={"stats-duo"}>
+                        <span title={"Dexterity"}>Sleight of Hand({getProficiencyBonus("dex")})</span>
+                        <DoubleCheckbox
+                            value={characterInfo.proficiencies.sleight_of_hand}
+                            onClick={(e) => {
+                                setCharacterInfo({
+                                    ...characterInfo,
+                                    proficiencies: {
+                                        ...characterInfo.proficiencies,
+                                        sleight_of_hand: e.target.value
+                                    }
+                                })
+                            }}
+                        />
+
+                    </div>
 
 
                     <div className={"stats-duo"}>
-                        <span title={"Dexterity"}>Stealth({getProficiencyBonus("dex")})</span>
+                        <span title={"Dexterity"}>Stealth ({getProficiencyBonus("dex")})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.stealth}
                             onClick={(e) => {
@@ -448,7 +496,7 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Wisdom"}>Survival({getProficiencyBonus("wis")})</span>
+                        <span title={"Wisdom"}>Survival ({getProficiencyBonus("wis")})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.survival}
                             onClick={(e) => {
