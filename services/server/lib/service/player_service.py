@@ -4,7 +4,8 @@ from typing import List, Optional, Tuple
 from werkzeug.exceptions import BadRequest
 
 from lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel, PlayerClassModel
-from lib.model.models import PlayerInfoModel, PlayerEquipmentModel, SpellModel, PlayerSpellModel, WeaponModel, PlayerProficiencyModel,PlayerModel, UserModel, CampaignModel
+from lib.model.models import PlayerInfoModel, PlayerEquipmentModel, SpellModel, PlayerSpellModel, WeaponModel, \
+    PlayerProficiencyModel, PlayerModel, UserModel, CampaignModel
 from lib.repository import player_repository, repository
 from lib.service import item_service
 
@@ -28,15 +29,14 @@ def add_classes_to_player(player, class_ids):
     for class_id in class_ids:
         playable_class = player_repository.get_class_by_id(class_id)
         if playable_class is None:
-            return "Undefined player class id '%d'" % class_id
+            raise BadRequest("Undefined player class id '%d'" % class_id)
 
         pcm = PlayerClassModel.from_player_class(player, playable_class)
         player_repository.add_and_commit(pcm)
 
-    return None
 
-
-def create_player(user: UserModel, name: str, race: str = "", class_ids=None, backstory: str = "", playthrough: CampaignModel = None):
+def create_player(user: UserModel, name: str, race: str = "", class_ids=None, backstory: str = "",
+                  playthrough: CampaignModel = None):
     if class_ids is None:
         class_ids = []
 
@@ -49,7 +49,7 @@ def create_player(user: UserModel, name: str, race: str = "", class_ids=None, ba
 
     error = add_classes_to_player(player, class_ids)
 
-    return player, error
+    return player
 
 
 def find_player(pid: int) -> Optional[PlayerModel]:

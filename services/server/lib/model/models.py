@@ -235,6 +235,20 @@ class PlayerModel(OrmModelBase):
             c.playthrough_id = playthrough.id
         return c
 
+    def to_json(self):
+        from lib.service import player_service
+        class_ids = [cls.id for cls in player_service.get_classes(self)]
+
+        return {
+            "name": self.name,
+            "owner": self.user.name,
+            "owner_id": self.user.id,
+            "id": self.id,
+            "race_name": self.race_name,
+            "class_name": self.class_name,
+            "backstory": self.backstory,
+            "class_ids": class_ids
+        }
 
 class MapModel(OrmModelBase):
     """

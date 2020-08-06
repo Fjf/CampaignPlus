@@ -2,6 +2,7 @@ import {apiUrl, handleResponse} from "./constants";
 
 export const characterServices = {
     getCharacterInfo,
+    del,
 };
 
 function getCharacterInfo(cid) {
@@ -11,5 +12,14 @@ function getCharacterInfo(cid) {
     };
 
     return fetch(`${apiUrl}/player/${cid}/data`, requestOptions)
+        .then(handleResponse);
+}
+
+function del(cid) {
+    const requestOptions = {
+        method: "DELETE",
+        headers: {'Content-Type': 'application/json'},
+    }
+    return fetch(`${apiUrl}/player/${cid}`, requestOptions)
         .then(handleResponse);
 }

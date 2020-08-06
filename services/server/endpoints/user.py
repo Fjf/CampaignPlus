@@ -198,19 +198,16 @@ def create_player():
     """
     user = session_user()
     data = request.get_json()
+    print(request)
 
     name = data.get("name", user.name)
     race = data.get("race", "Human")
     class_ids = data.get("class_ids", [])
     backstory = data.get("backstory", "")
 
-    player, error = player_service.create_player(user, name, race, class_ids, backstory)
+    player = player_service.create_player(user, name, race, class_ids, backstory)
 
-    return {
-        "success": error is None,
-        "player_id": player.id,
-        "error": error
-    }
+    return player.to_json()
 
 
 print("Registered user api endpoints.")

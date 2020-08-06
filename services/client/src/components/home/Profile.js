@@ -1,6 +1,8 @@
 import React from "react";
 import {profileServices} from "../services/profileServices";
 import CharacterOverview from "./CharacterOverview";
+import IconButton from "@material-ui/core/IconButton";
+import {FaPlusCircle} from "react-icons/all";
 
 export default function Profile(props) {
     const user = props.user
@@ -9,14 +11,38 @@ export default function Profile(props) {
 
     React.useEffect(() => {
         profileServices.get().then(r => {
+            console.log(r)
             setCharacters(r);
         });
     }, []);
 
     return <>
         <div className={"left-content-bar"}>
-            <h3>Character Overview for {user.name}</h3>
-            {console.log(characters)}
+            <div className={"standard-bar-entry"}><h3>Characters</h3>
+                <div className={"icon-bar"}>
+                    <IconButton aria-label="add" size={"small"} onClick={() => {
+                        profileServices.create({"name": "test", "race_name": "Human"}).then(r => {
+                            setCharacters([
+                                    ...characters,
+                                    r
+                                ]
+                            )
+
+
+                            if (r === "success") {
+                                console.log("Zoop :point_right: :sunglasses: :point_right:")
+                            }
+                            // setSelectedCharacter(r);
+
+                        },
+                            error => {
+                                console.log(error)
+                            });
+                    }}>
+                        <FaPlusCircle/>
+                    </IconButton>
+                </div>
+            </div>
             {
                 characters.map((character, i) => {
                     return <div key={i}
