@@ -1,8 +1,9 @@
 import re
 from typing import List, Optional, Tuple
 
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, Unauthorized
 
+from lib.database import request_session
 from lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel, PlayerClassModel
 from lib.model.models import PlayerInfoModel, PlayerEquipmentModel, SpellModel, PlayerSpellModel, WeaponModel, \
     PlayerProficiencyModel, PlayerModel, UserModel, CampaignModel
@@ -198,12 +199,22 @@ def player_add_item(player, item_id, amount: int):
     player_repository.add_and_commit(player_item)
 
 
-def get_player_spells(player: PlayerModel) -> List[SpellModel]:
-    return player_repository.get_player_spells(player)
+def get_player_spells(player: PlayerModel) -> List[PlayerSpellModel]:
+    db = request_session()
+
+    return db.query(PlayerSpellModel) \
+        .filter(PlayerSpellModel.player_id == player.id) \
+        .all()
 
 
 def get_spells(playthrough=None):
-    return player_repository.get_spells(playthrough)
+    db = request_session()
+
+    campaign_id = playthrough.id if playthrough is not None else -1
+
+    return db.query(SpellModel) \
+        .filter(campaign_id == SpellModel.playthrough_id or SpellModel.playthrough_id == -1) \
+        .all()
 
 
 def get_spell(player: PlayerModel, spell_id: int):
@@ -222,20 +233,28 @@ def player_add_spell(player: PlayerModel, spell_id: int):
     player_spell = PlayerSpellModel.from_player_spell(player, spell)
     repository.add_and_commit(player_spell)
 
-    return ""
+    return player_spell
 
 
 def delete_player_spell(user: UserModel, player: PlayerModel, spell_id: int):
+    """
+    Deletes the spell from a player, then returns the updated list of spells.
+
+    :param user:
+    :param player:
+    :param spell_id:
+    :return:
+    """
     if player.user is not user:
-        return "This player does not belong to you."
+        raise Unauthorized("This player does not belong to you.")
 
     spell = get_spell(player, spell_id)
     if spell is None:
-        return "This spell does not exist."
+        raise BadRequest("This spell does not exist.")
 
     player_repository.delete_spell(player, spell)
 
-    return ""
+    return get_player_spells(player)
 
 
 def delete_player_item(user, player, item_id):

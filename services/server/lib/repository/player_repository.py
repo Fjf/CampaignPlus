@@ -1,5 +1,7 @@
 from typing import Optional, List, Tuple
 
+from sqlalchemy import or_, and_
+
 from lib.database import request_session
 from lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel, PlayerClassModel
 from lib.model.models import PlayerModel, CampaignModel, PlayerInfoModel, PlayerEquipmentModel, ItemModel, \
@@ -82,29 +84,11 @@ def get_item(item_id: int) -> Optional[ItemModel]:
         .one_or_none()
 
 
-def get_player_spells(player: PlayerModel) -> List[PlayerSpellModel]:
-    db = request_session()
-
-    return db.query(PlayerSpellModel) \
-        .filter(PlayerSpellModel.player_id == player.id) \
-        .all()
-
-
-def get_spells(playthrough: CampaignModel) -> List[PlayerSpellModel]:
-    db = request_session()
-
-    campaign_id = playthrough.id if playthrough is not None else -1
-
-    return db.query(SpellModel) \
-        .filter(campaign_id == SpellModel.playthrough_id or SpellModel.playthrough_id == -1) \
-        .all()
-
-
 def get_spell(player: PlayerModel, spell_id: int) -> Optional[SpellModel]:
     db = request_session()
 
     return db.query(SpellModel) \
-        .filter(player.playthrough_id == SpellModel.playthrough_id or SpellModel.playthrough_id == -1) \
+        .filter(or_(player.playthrough_id == SpellModel.playthrough_id, SpellModel.playthrough_id == -1)) \
         .filter(SpellModel.id == spell_id) \
         .one_or_none()
 
@@ -113,7 +97,7 @@ def delete_spell(player: PlayerModel, spell: SpellModel):
     db = request_session()
 
     psm_list = db.query(PlayerSpellModel) \
-        .filter(PlayerSpellModel.spell_id == spell.id and PlayerSpellModel.player_id == player.id) \
+        .filter(and_(PlayerSpellModel.spell_id == spell.id, PlayerSpellModel.player_id == player.id)) \
         .all()
 
     for psm in psm_list:

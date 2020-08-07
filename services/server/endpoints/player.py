@@ -185,21 +185,13 @@ def add_player_item(player_id):
 @require_login()
 def add_player_spell(player_id):
     data = request.get_json()
-
-    required_fields = ["spell_id"]
-
-    if not data or (False in [x in data for x in required_fields]):
-        raise BadRequest()
+    spell_id = data.get("spell_id", None)
 
     player = player_service.find_player(player_id)
-
     check_player(player)
 
-    player_service.player_add_spell(player, data.get("spell_id"))
-
-    return {
-        "success": True,
-    }
+    player_spell = player_service.player_add_spell(player, spell_id)
+    return player_spell.spell.to_json()
 
 
 @api.route('/player/<int:player_id>/item', methods=["GET"])
@@ -258,13 +250,8 @@ def delete_player_spell(player_id, spell_id):
     player = player_service.find_player(player_id)
     check_player(player)
 
-    error = player_service.delete_player_spell(user, player, spell_id)
-    success = error == ""
-
-    return {
-        "success": success,
-        "error": error
-    }
+    player_spells = player_service.delete_player_spell(user, player, spell_id)
+    return [player_spell.spell.to_json() for player_spell in player_spells]
 
 
 @api.route('/player/<int:player_id>/item/<int:item_id>', methods=["DELETE"])
@@ -291,52 +278,17 @@ def get_player_spells(player_id):
     player = player_service.find_player(player_id)
     check_player(player)
 
-    spells = []
     player_spells = player_service.get_player_spells(player)
 
-    for player_spell in player_spells:
-        spell: SpellModel = player_spell.spell
-        spells.append({
-            "id": spell.id,
-            "name": spell.name,
-            "level": int(spell.level),
-            "duration": spell.duration,
-            "higher_level": spell.higher_level,
-            "casting_time": spell.casting_time,
-            "concentration": spell.concentration,
-            "ritual": spell.ritual,
-            "material": spell.material,
-            "components": spell.components,
-            "spell_range": spell.spell_range,
-            "description": spell.description,
-            "school": spell.school,
-            "phb_page": int(spell.phb_page)
-        })
-
-    return {
-        "success": True,
-        "spells": spells
-    }
+    return [player_spell.spell.to_json() for player_spell in player_spells]
 
 
-@api.route('/player/<int:player_id>/allspells', methods=["GET"])
+@api.route('/user/spells', methods=["GET"])
 @json_api()
 @require_login()
-def get_available_spells(player_id):
-    player = player_service.find_player(player_id)
-    check_player(player)
-
+def get_available_spells():
     spells_list = player_service.get_spells()
-
-    spells = []
-    for spell in spells_list:
-        spell: SpellModel
-        spells.append(spell.to_json())
-
-    return {
-        "success": True,
-        "spells": spells
-    }
+    return [spell.to_json() for spell in spells_list]
 
 
 @api.route('/player/<int:player_id>/proficiencies', methods=["GET"])

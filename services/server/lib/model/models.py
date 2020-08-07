@@ -635,6 +635,16 @@ class SpellModel(OrmModelBase):
             "id": self.id,
             "name": self.name,
             "level": self.level,
+            "duration": self.duration,
+            "higher_level": self.higher_level,
+            "casting_time": self.casting_time,
+            "concentration": self.concentration,
+            "ritual": self.ritual,
+            "material": self.material,
+            "components": self.components,
+            "self_range": self.spell_range,
+            "description": self.description,
+            "school": self.school,
             "phb_page": self.phb_page
         }
 

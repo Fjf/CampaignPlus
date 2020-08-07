@@ -1,9 +1,12 @@
+@import "colours";
+
+
 .stats-column {
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  width: 60px;
+  width: 70px;
 
   & > div {
     font-size: 10px;
@@ -60,8 +63,41 @@
 
   line-height: 48px;
   text-align: center;
-  font-size: 32px;
+  font-size: 28px !important;
 
   background: url("../images/circle-claws.png");
   background-size: 48px 48px;
+}
+
+.proficiency-stat {
+  font-size: 18px !important;
+}
+
+.spells-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  padding: 8px 16px;
+  background-color: lighten($primary, 35%);
+
+  & > div {
+    margin-bottom: 4px;
+  }
+}
+
+.spells-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+
+  text-align: start;
+  overflow-y: auto;
+
+  & > div {
+    padding: 4px;
+    &:hover {
+      background-color: darken($primary, 5%);
+    }
+  }
 }

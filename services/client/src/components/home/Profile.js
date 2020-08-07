@@ -1,5 +1,5 @@
 import React from "react";
-import {profileServices} from "../services/profileServices";
+import {profileService} from "../services/profileService";
 import CharacterOverview from "./CharacterOverview";
 import IconButton from "@material-ui/core/IconButton";
 import {FaPlusCircle} from "react-icons/all";
@@ -10,8 +10,7 @@ export default function Profile(props) {
     const [selectedCharacter, setSelectedCharacter] = React.useState(null);
 
     React.useEffect(() => {
-        profileServices.get().then(r => {
-            console.log(r)
+        profileService.get().then(r => {
             setCharacters(r);
         });
     }, []);
@@ -21,7 +20,7 @@ export default function Profile(props) {
             <div className={"standard-bar-entry"}><h3>Characters</h3>
                 <div className={"icon-bar"}>
                     <IconButton aria-label="add" size={"small"} onClick={() => {
-                        profileServices.create({"name": "test", "race_name": "Human"}).then(r => {
+                        profileService.create({"name": "test", "race_name": "Human"}).then(r => {
                                 setCharacters([
                                     ...characters,
                                     r

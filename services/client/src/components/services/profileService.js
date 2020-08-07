@@ -1,6 +1,6 @@
 import {apiUrl, handleResponse} from "./constants";
 
-export const profileServices = {
+export const profileService = {
     get,
     create,
 };

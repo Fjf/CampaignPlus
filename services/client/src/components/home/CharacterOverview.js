@@ -1,27 +1,38 @@
 import React from "react";
-import {characterServices} from "../services/characterServices";
+import {characterService} from "../services/characterService";
 import {Checkbox, SvgIcon, TextField} from "@material-ui/core";
 import "../../styles/profile.scss";
-import {BsDiamond, BsDiamondFill, FaTrash, MdSave} from "react-icons/all";
+import {BsDiamond, BsDiamondFill, FaPlusCircle, FaTrash, MdClose} from "react-icons/all";
 import IconButton from "@material-ui/core/IconButton";
 import {campaignService} from "../services/campaignService";
 import DoubleCheckbox from "./DoubleCheckbox";
+import SpellInfo from "./infoComponents/SpellInfo";
+import SpellsList from "./infoComponents/SpellsList";
 
 export default function CharacterOverview(props) {
     const character = props.character;
     const [characterInfo, setCharacterInfo] = React.useState(null);
+    const [characterSpells, setCharacterSpells] = React.useState([]);
     const [notEditing, setNotEditing] = React.useState(false);
+    const [selectedSpell, setSelectedSpell] = React.useState(null);
+    const [showSpellsList, setShowSpellsList] = React.useState(false);
 
     React.useEffect(() => {
-        characterServices.getCharacterInfo(character.id).then(r => {
+        characterService.getCharacterInfo(character.id).then(r => {
             setCharacterInfo(r);
         });
+        characterService.getCharacterSpells(character.id).then(r => {
+            setCharacterSpells(r);
+        }, e => {
+            console.error(e);
+        })
     }, [character]);
 
+    console.log(selectedSpell);
 
     function deleteCharacter() {
         if (prompt("Are you sure you want to delete this character? Type the name of the character to continue deleting.") === character.name) {
-            characterServices.del(character.id).then(r => {
+            characterService.del(character.id).then(r => {
                 // props.setCampaigns(r);
                 // setSelectedCampaign(null);
                 // getPlayers();
@@ -30,13 +41,15 @@ export default function CharacterOverview(props) {
         }
     }
 
-    console.log(characterInfo);
-
     function getBonus(value) {
         return Math.floor((value - 10) / 2);
     }
 
-    function getProficiencyBonus(stat) {
+    function getProficiencyBonus() {
+        return Math.round((characterInfo.info.level - 1) / 4) + 2;
+    }
+
+    function getSkillModifier(stat, prof) {
         if (characterInfo === null) return 0;
         let bonus;
         if (stat === "int") bonus = getBonus(characterInfo.info.intelligence);
@@ -45,8 +58,7 @@ export default function CharacterOverview(props) {
         if (stat === "dex") bonus = getBonus(characterInfo.info.dexterity);
         if (stat === "con") bonus = getBonus(characterInfo.info.constitution);
         if (stat === "wis") bonus = getBonus(characterInfo.info.wisdom);
-
-        return bonus + Math.round((characterInfo.info.level - 1) / 4) + 2;
+        return bonus + prof * getProficiencyBonus();
     }
 
     return <div className={"main-content"}>
@@ -65,6 +77,14 @@ export default function CharacterOverview(props) {
         {characterInfo === null ? null :
             <>
                 <div className={"stats-column"}>
+                    <div><h3>Level</h3></div>
+                    <div className={"level-stat"}>
+                        {characterInfo.info.level}
+                    </div>
+                    <div><h3>Proficiency</h3></div>
+                    <div className={"proficiency-stat"}>
+                        {getProficiencyBonus()}
+                    </div>
                     <div>Strength</div>
                     <div className={"stats-duo"}>
                         <TextField
@@ -236,7 +256,8 @@ export default function CharacterOverview(props) {
                 </div>
                 <div className={"proficiencies-column"}>
                     <div className={"stats-duo"}>
-                        <span title={"Dexterity"}>Acrobatics ({getProficiencyBonus("dex")})</span>
+                        <span
+                            title={"Dexterity"}>Acrobatics ({getSkillModifier("dex", characterInfo.proficiencies.acrobatics)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.acrobatics}
                             onClick={(e) => {
@@ -251,7 +272,8 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Wisdom"}>Animal Handling ({getProficiencyBonus("wis")})</span>
+                        <span
+                            title={"Wisdom"}>Animal Handling ({getSkillModifier("wis", characterInfo.proficiencies.animal_handling)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.animal_handling}
                             onClick={(e) => {
@@ -266,7 +288,8 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Intelligence"}>Arcana ({getProficiencyBonus("int")})</span>
+                        <span
+                            title={"Intelligence"}>Arcana ({getSkillModifier("int", characterInfo.proficiencies.arcana)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.arcana}
                             onClick={(e) => {
@@ -281,7 +304,8 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Strength"}>Athletics ({getProficiencyBonus("str")})</span>
+                        <span
+                            title={"Strength"}>Athletics ({getSkillModifier("str", characterInfo.proficiencies.athletics)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.athletics}
                             onClick={(e) => {
@@ -296,7 +320,8 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Charisma"}>Deception ({getProficiencyBonus("cha")})</span>
+                        <span
+                            title={"Charisma"}>Deception ({getSkillModifier("cha", characterInfo.proficiencies.deception)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.deception}
                             onClick={(e) => {
@@ -311,7 +336,8 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Intelligence"}>History ({getProficiencyBonus("int")})</span>
+                        <span
+                            title={"Intelligence"}>History ({getSkillModifier("int", characterInfo.proficiencies.history)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.history}
                             onClick={(e) => {
@@ -326,7 +352,8 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Wisdom"}>Insight ({getProficiencyBonus("wis")})</span>
+                        <span
+                            title={"Wisdom"}>Insight ({getSkillModifier("wis", characterInfo.proficiencies.insight)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.insight}
                             onClick={(e) => {
@@ -341,7 +368,8 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Charisma"}>Intimidation ({getProficiencyBonus("cha")})</span>
+                        <span
+                            title={"Charisma"}>Intimidation ({getSkillModifier("cha", characterInfo.proficiencies.intimidation)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.intimidation}
                             onClick={(e) => {
@@ -356,7 +384,8 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Intelligence"}>Investigation ({getProficiencyBonus("int")})</span>
+                        <span
+                            title={"Intelligence"}>Investigation ({getSkillModifier("int", characterInfo.proficiencies.investigation)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.investigation}
                             onClick={(e) => {
@@ -371,7 +400,8 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Wisdom"}>Medicine ({getProficiencyBonus("wis")})</span>
+                        <span
+                            title={"Wisdom"}>Medicine ({getSkillModifier("wis", characterInfo.proficiencies.medicine)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.medicine}
                             onClick={(e) => {
@@ -386,7 +416,8 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Intelligence"}>Nature ({getProficiencyBonus("int")})</span>
+                        <span
+                            title={"Intelligence"}>Nature ({getSkillModifier("int", characterInfo.proficiencies.nature)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.nature}
                             onClick={(e) => {
@@ -401,7 +432,8 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Wisdom"}>Perception ({getProficiencyBonus("wis")})</span>
+                        <span
+                            title={"Wisdom"}>Perception ({getSkillModifier("wis", characterInfo.proficiencies.perception)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.perception}
                             onClick={(e) => {
@@ -416,7 +448,8 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Charisma"}>Performance ({getProficiencyBonus("cha")})</span>
+                        <span
+                            title={"Charisma"}>Performance ({getSkillModifier("cha", characterInfo.proficiencies.performance)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.performance}
                             onClick={(e) => {
@@ -432,7 +465,8 @@ export default function CharacterOverview(props) {
                     </div>
 
                     <div className={"stats-duo"}>
-                        <span title={"Charisma"}>Persuasion ({getProficiencyBonus("cha")})</span>
+                        <span
+                            title={"Charisma"}>Persuasion ({getSkillModifier("cha", characterInfo.proficiencies.persuasion)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.persuasion}
                             onClick={(e) => {
@@ -448,7 +482,8 @@ export default function CharacterOverview(props) {
 
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Intelligence"}>Religion ({getProficiencyBonus("int")})</span>
+                        <span
+                            title={"Intelligence"}>Religion ({getSkillModifier("int", characterInfo.proficiencies.religion)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.religion}
                             onClick={(e) => {
@@ -464,7 +499,8 @@ export default function CharacterOverview(props) {
 
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Dexterity"}>Sleight of Hand({getProficiencyBonus("dex")})</span>
+                        <span
+                            title={"Dexterity"}>Sleight of Hand({getSkillModifier("dex", characterInfo.proficiencies.sleight_of_hand)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.sleight_of_hand}
                             onClick={(e) => {
@@ -482,7 +518,8 @@ export default function CharacterOverview(props) {
 
 
                     <div className={"stats-duo"}>
-                        <span title={"Dexterity"}>Stealth ({getProficiencyBonus("dex")})</span>
+                        <span
+                            title={"Dexterity"}>Stealth ({getSkillModifier("dex", characterInfo.proficiencies.stealth)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.stealth}
                             onClick={(e) => {
@@ -497,7 +534,8 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                     <div className={"stats-duo"}>
-                        <span title={"Wisdom"}>Survival ({getProficiencyBonus("wis")})</span>
+                        <span
+                            title={"Wisdom"}>Survival ({getSkillModifier("wis", characterInfo.proficiencies.survival)})</span>
                         <DoubleCheckbox
                             value={characterInfo.proficiencies.survival}
                             onClick={(e) => {
@@ -512,12 +550,35 @@ export default function CharacterOverview(props) {
                         />
                     </div>
                 </div>
-                <div>
-                    Level
-                    <div className={"level-stat"}>
-                        {characterInfo.info.level}
+                <div className={"spells-wrapper"}>
+                    <div className={"icon-bar"} style={{top: "8px", right: "8px", position: "absolute"}}>
+                        <IconButton size={"small"} onClick={() => {
+                            setShowSpellsList(!showSpellsList);
+                        }}>
+                            <FaPlusCircle/>
+                        </IconButton>
+                    </div>
+                    <h3>Spells</h3>
+                    <div className={"spells-list"}>
+                        {characterSpells.map((spell, i) => {
+                            return <div key={i} className={"standard-bar-entry"}>
+                                <div onClick={() => setSelectedSpell(spell)}>{spell.name} ({spell.level})</div>
+                                <div className={"icon-bar"}><IconButton size={"small"} onClick={() => {
+                                    characterService.deleteSpell(character.id, spell.id).then(r => {
+                                        setCharacterSpells(r);
+                                    });
+                                }}><FaTrash/></IconButton></div>
+                            </div>
+                        })}
                     </div>
                 </div>
+                {selectedSpell === null ? null :
+                    <SpellInfo spell={selectedSpell} onClose={() => setSelectedSpell(null)}/>
+                }
+                {showSpellsList ? <SpellsList character={character} onSelect={(spell) => {
+                    setCharacterSpells([...characterSpells, spell]);
+                    setShowSpellsList(false);
+                }} onClose={() => setShowSpellsList(false)}/> : null}
             </>
         }
     </div>
