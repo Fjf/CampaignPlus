@@ -28,8 +28,6 @@ export default function CharacterOverview(props) {
         })
     }, [character]);
 
-    console.log(selectedSpell);
-
     function deleteCharacter() {
         if (prompt("Are you sure you want to delete this character? Type the name of the character to continue deleting.") === character.name) {
             characterService.del(character.id).then(r => {
@@ -562,11 +560,14 @@ export default function CharacterOverview(props) {
                     <div className={"spells-list"}>
                         {characterSpells.map((spell, i) => {
                             return <div key={i} className={"standard-bar-entry"}>
-                                <div onClick={() => setSelectedSpell(spell)}>{spell.name} ({spell.level})</div>
-                                <div className={"icon-bar"}><IconButton size={"small"} onClick={() => {
+                                <div style={{flex: 1}} onClick={() => setSelectedSpell(spell)}>
+                                    {spell.name} ({spell.level})
+                                </div>
+                                <div className={"icon-bar"}><IconButton size={"small"} onClick={(e) => {
                                     characterService.deleteSpell(character.id, spell.id).then(r => {
                                         setCharacterSpells(r);
                                     });
+                                    e.preventDefault();
                                 }}><FaTrash/></IconButton></div>
                             </div>
                         })}

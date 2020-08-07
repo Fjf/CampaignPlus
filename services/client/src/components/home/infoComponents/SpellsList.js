@@ -17,7 +17,6 @@ export default function SpellsList(props) {
     }, []);
 
     React.useEffect(() => {
-        console.log("Filtering spells.");
         setFilteredSpells(spells.filter((val) => val.name.toLowerCase().includes(query.toLowerCase())));
     }, [query, spells]);
 
