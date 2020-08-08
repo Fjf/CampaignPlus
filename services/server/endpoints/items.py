@@ -15,5 +15,4 @@ def get_items():
     player = player_service.find_player(player_id)
 
     item_objects = item_service.get_items(user, player)
-    print(item_objects)
     return [item.to_json() for item in item_objects]

@@ -663,14 +663,11 @@ class PlayerEquipmentModel(OrmModelBase):
     item: ItemModel = relationship("ItemModel")
 
     amount = Column(Integer(), nullable=False, default=0)
-    extra_info = Column(String(), nullable=True)
+    extra_info = Column(String(), nullable=True, default="")
 
-    @classmethod
-    def from_player(cls, player: PlayerModel, item: ItemModel):
-        c = cls()
-        c.player_id = player.id
-        c.item_id = item.id
-        return c
+    def __init__(self, player: PlayerModel, item: ItemModel):
+        self.player_id = player.id
+        self.item_id = item.id
 
     def to_json(self):
         return {

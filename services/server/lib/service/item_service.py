@@ -57,6 +57,6 @@ def get_items(user: UserModel, player: Optional[PlayerModel]):
 
     return db.query(ItemModel) \
         .filter(or_(ItemModel.campaign_id == campaign_id, ItemModel.campaign_id == None)) \
-        .all()
+        .order_by(ItemModel.name).all()
 
 

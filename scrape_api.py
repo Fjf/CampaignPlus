@@ -23,7 +23,7 @@ def get_equipment():
     obj = result.json()
     db = request_session()
 
-    for elem in obj["results"][35:]:
+    for elem in obj["results"][:35]:
         # item = requests.get("http://www.dnd5eapi.co/api/equipment/dagger").json()
         item = requests.get("http://www.dnd5eapi.co" + elem["url"]).json()
 
@@ -234,7 +234,7 @@ def get_table():
 
 
 def main():
-    # get_equipment()
+    get_equipment()
     # get_spells()
     # get_classes()
     # update_class_levels()

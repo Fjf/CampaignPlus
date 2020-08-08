@@ -605,7 +605,7 @@ export default function CharacterOverview(props) {
                         })}
                     </div>
                 </div>
-                <CharacterInventory character={character}/>
+                <CharacterInventory character={characterInfo}/>
                 {selectedSpell === null ? null :
                     <SpellInfo spell={selectedSpell} onClose={() => setSelectedSpell(null)}/>
                 }

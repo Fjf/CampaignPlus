@@ -40,7 +40,6 @@ def get_player_info(player: PlayerModel) -> Optional[PlayerInfoModel]:
         .one_or_none()
 
 
-
 def get_player_item(item: ItemModel, player: Optional[PlayerModel]) -> Optional[ItemModel]:
     db = request_session()
 
@@ -48,7 +47,7 @@ def get_player_item(item: ItemModel, player: Optional[PlayerModel]) -> Optional[
         .filter(PlayerEquipmentModel.item_id == item.id)
 
     if player is not None:
-        intermediate.filter(PlayerEquipmentModel.player_id == player.id)
+        intermediate = intermediate.filter(PlayerEquipmentModel.player_id == player.id)
 
     return intermediate.one_or_none()
 
@@ -178,7 +177,8 @@ def get_visible_classes(user: UserModel) -> List[ClassModel]:
         .all()
 
 
-def get_class_abilities(class_model: ClassModel = None, subclass_model: SubClassModel = None) -> List[ClassAbilityModel]:
+def get_class_abilities(class_model: ClassModel = None, subclass_model: SubClassModel = None) -> List[
+    ClassAbilityModel]:
     db = request_session()
 
     intermediate = db.query(ClassAbilityModel)
@@ -201,5 +201,3 @@ def remove_classes_from_player(player: PlayerModel):
     db = request_session()
 
     db.query(PlayerClassModel).filter(PlayerClassModel.player_id == player.id).delete()
-
-

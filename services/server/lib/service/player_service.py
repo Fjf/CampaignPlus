@@ -182,7 +182,7 @@ def set_player_info(player, strength, dexterity, constitution, intelligence, wis
     player_repository.add_and_commit(player_info)
 
 
-def player_add_item(player, item_id, amount: int):
+def player_set_item(player, item_id, amount: int, extra_info: str = None):
     item = item_service.get_item(item_id)
 
     if item is None:
@@ -197,10 +197,14 @@ def player_add_item(player, item_id, amount: int):
 
     player_item = player_repository.get_player_item(item, player)
     if player_item is None:
-        player_item = PlayerEquipmentModel.from_player(player, item)
+        player_item = PlayerEquipmentModel(player, item)
         db.add(player_item)
 
-    player_item.amount += amount
+    player_item.amount = amount
+    player_item.extra_info = extra_info
+
+    if player_item.amount == 0:
+        db.delete(player_item)
 
     db.commit()
     return player_item

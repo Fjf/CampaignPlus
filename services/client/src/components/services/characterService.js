@@ -11,6 +11,7 @@ export const characterService = {
     deleteSpell,
     getItems,
     addItem,
+    saveItem,
 };
 
 function getCharacterInfo(cid) {
@@ -50,6 +51,17 @@ function getSpells() {
     };
 
     return fetch(`${apiUrl}/user/spells`, requestOptions)
+        .then(handleResponse);
+}
+
+function saveItem(character_id, item) {
+    const requestOptions = {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({amount: item.amount, extra_info: item.extra_info})
+    };
+
+    return fetch(`${apiUrl}/player/${character_id}/item/${item.info.id}`, requestOptions)
         .then(handleResponse);
 }
 

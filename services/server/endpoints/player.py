@@ -146,7 +146,21 @@ def add_player_item(player_id):
     player = player_service.find_player(player_id)
     check_player(player)
 
-    player_item = player_service.player_add_item(player, item_id, data.get("amount", 1))
+    player_item = player_service.player_set_item(player, item_id, data.get("amount", 1))
+
+    return player_item.to_json()
+
+
+@api.route('/player/<int:player_id>/item/<int:item_id>', methods=["PUT"])
+@json_api()
+@require_login()
+def update_player_item(player_id, item_id):
+    data = request.get_json()
+
+    player = player_service.find_player(player_id)
+    check_player(player)
+
+    player_item = player_service.player_set_item(player, item_id, data.get("amount"), data.get("extra_info"))
 
     return player_item.to_json()
 
