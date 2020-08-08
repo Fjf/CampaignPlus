@@ -6,7 +6,7 @@
   flex-direction: column;
   align-items: center;
 
-  width: 70px;
+  width: 80px;
 
   & > div {
     font-size: 10px;
@@ -86,18 +86,29 @@
   }
 }
 
-.spells-list {
+.basic-list {
   display: flex;
   flex-direction: column;
   max-height: 100%;
 
-  text-align: start;
+  padding: 8px;
   overflow-y: auto;
+}
+
+.spells-list {
+  @extend .basic-list;
+  text-align: start;
 
   & > div {
     padding: 4px;
+
     &:hover {
       background-color: darken($primary, 5%);
     }
   }
+}
+
+.spell-prop-title {
+  padding-right: 16px;
+  font-weight: bold;
 }

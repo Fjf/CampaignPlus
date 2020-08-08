@@ -2,7 +2,16 @@ import React from "react";
 import {characterService} from "../services/characterService";
 import {Checkbox, SvgIcon, TextField} from "@material-ui/core";
 import "../../styles/profile.scss";
-import {BsDiamond, BsDiamondFill, FaPlusCircle, FaTrash, MdClose, MdSave} from "react-icons/all";
+import {
+    BsDiamond,
+    BsDiamondFill,
+    FaPlusCircle,
+    FaTrash, GoArrowDown,
+    GoArrowLeft,
+    GoArrowRight, GoArrowSmallDown, GoArrowSmallUp, GoArrowUp,
+    MdClose,
+    MdSave
+} from "react-icons/all";
 import IconButton from "@material-ui/core/IconButton";
 import {campaignService} from "../services/campaignService";
 import DoubleCheckbox from "./DoubleCheckbox";
@@ -60,10 +69,8 @@ export default function CharacterOverview(props) {
     }
 
     function saveChanges() {
-        console.log(characterInfo);
-        return;
         characterService.save(characterInfo).then(r => {
-            props.reset();
+            console.log(r);
         })
     }
 
@@ -83,7 +90,23 @@ export default function CharacterOverview(props) {
         {characterInfo === null ? null :
             <>
                 <div className={"stats-column"}>
-                    <div><h3>Level</h3></div>
+                    <div className={"standard-bar-entry"}>
+                        <IconButton size={"small"} onClick={e => setCharacterInfo({
+                            ...characterInfo,
+                            info: {
+                                ...characterInfo.info,
+                                level: Math.max(1, characterInfo.info.level - 1)
+                            }
+                        })}><GoArrowDown/></IconButton>
+                        <h3>lvl</h3>
+                        <IconButton size={"small"} onClick={e => setCharacterInfo({
+                            ...characterInfo,
+                            info: {
+                                ...characterInfo.info,
+                                level: Math.min(20, characterInfo.info.level + 1)
+                            }
+                        })}><GoArrowUp/></IconButton>
+                    </div>
                     <div className={"level-stat"}>
                         {characterInfo.info.level}
                     </div>

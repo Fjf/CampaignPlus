@@ -74,7 +74,7 @@ function save(character) {
     const requestOptions = {
         method: "PUT",
         headers: {'Content-Type': 'application/json'},
-        data: JSON.stringify(character)
+        body: JSON.stringify(character)
     };
 
     return fetch(`${apiUrl}/player/${character.id}`, requestOptions)

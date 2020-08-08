@@ -250,6 +250,7 @@ class PlayerModel(OrmModelBase):
             "class_ids": class_ids
         }
 
+
 class MapModel(OrmModelBase):
     """
     The mapmodel contanis data about maps regarding their location on their parent maps.

@@ -12,17 +12,31 @@ export default function SpellInfo(props) {
             <IconButton size={"small"} onClick={props.onClose}
                         style={{top: "8px", left: "8px", position: "absolute"}}><MdClose/></IconButton>
         </div>
-        <div>Level: {spell.level}</div>
-        <div>Components: {spell.components}</div>
-        <div>Material: {spell.material}</div>
-        <div>Duration: {spell.duration}</div>
-        <div>Higher Level: {spell.higher_level}</div>
-        <div>Casting Time: {spell.casting_time}</div>
-        <div>Concentration: <Checkbox checked={spell.concentration} disabled/></div>
-        <div>Ritual: <Checkbox checked={spell.ritual} disabled/></div>
-        <div>Spell Range: {spell.spell_range}</div>
-        <div>Description: {spell.description}</div>
-        <div>School: {spell.school}</div>
-        <div>Phb Page: {spell.phb_page}</div>
+        <div className={"basic-list"}>
+            <div className={"spell-prop-title"}>Level</div>
+            <div>{spell.level}</div>
+            <div className={"spell-prop-title"}>Components</div>
+            <div>{spell.components}</div>
+            <div className={"spell-prop-title"}>Material</div>
+            <div>{spell.material}</div>
+            <div className={"spell-prop-title"}>Duration</div>
+            <div>{spell.duration}</div>
+            <div className={"spell-prop-title"}>Higher Level</div>
+            <div>{spell.higher_level}</div>
+            <div className={"spell-prop-title"}>Casting Time</div>
+            <div>{spell.casting_time}</div>
+            <div className={"spell-prop-title"}>Concentration</div>
+            <div><Checkbox checked={spell.concentration} disabled/></div>
+            <div className={"spell-prop-title"}>Ritual</div>
+            <div><Checkbox checked={spell.ritual} disabled/></div>
+            <div className={"spell-prop-title"}>Spell Range</div>
+            <div>{spell.spell_range}</div>
+            <div className={"spell-prop-title"}>Description</div>
+            <div>{spell.description}</div>
+            <div className={"spell-prop-title"}>School</div>
+            <div>{spell.school}</div>
+            <div className={"spell-prop-title"}>Phb Page</div>
+            <div>{spell.phb_page}</div>
+        </div>
     </div>
 }

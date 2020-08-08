@@ -21,43 +21,6 @@ def check_player(player: PlayerModel):
         raise Unauthorized("This player is not yours.")
 
 
-@api.route('/player/<int:player_id>', methods=["PUT"])
-@json_api()
-@require_login()
-def update_player(player_id):
-    """
-        Updates a specified player character
-
-        Required URL parameter:
-         - player_id: The player id for which to update their information.
-
-        Optional POST parameters:
-         - name: The new name of your PC
-         - race: The new race of your PC
-         - class_ids: The new class ids for your PC
-         - backstory: The new backstory for your PC
-        :return: A json object containing the updated player's id.
-    """
-    user = session_user()
-    data = request.get_json()
-
-    player = player_service.find_player(player_id)
-
-    check_player(player)
-
-    name = data.get("name", None)
-    race = data.get("race", None)
-    class_ids = data.get("class_ids", None)
-    backstory = data.get("backstory", None)
-
-    player_service.update_player(player, name=name, race=race, class_ids=class_ids, backstory=backstory)
-
-    return {
-        "success": True,
-        "player_id": player.id
-    }
-
-
 @api.route('/player/<int:player_id>', methods=["DELETE"])
 @json_api()
 @require_login()
@@ -113,16 +76,9 @@ def get_player(player_id):
     player_info = player_service.get_player_info(player)
     player_proficiencies = player_service.get_player_proficiencies(player)
 
-    data = {
-        "success": True,
-        "name": player.name,
-        "user_name": player.user.name,
-        "class": player.class_name,
-        "race": player.race_name,
-        "backstory": player.backstory,
-        "info": player_info.to_json(),
-        "proficiencies": player_proficiencies.to_json()
-    }
+    data = player.to_json()
+    data["info"] = player_info.to_json()
+    data["proficiencies"] = player_proficiencies.to_json()
 
     return data
 
@@ -131,6 +87,21 @@ def get_player(player_id):
 @json_api()
 @require_login()
 def set_player_info(player_id):
+    """
+        Updates a specified player character
+
+        Required URL parameter:
+         - player_id: The player id for which to update their information.
+
+        Optional POST parameters:
+         - name: The new name of your PC
+         - race: The new race of your PC
+         - class_ids: The new class ids for your PC
+         - backstory: The new backstory for your PC
+         - info: Json containing player info
+         - proficiencies: Json containing player proficiencies
+        :return: A json object containing the updated player's id.
+    """
     data = request.get_json()
 
     player = player_service.find_player(player_id)
@@ -139,7 +110,7 @@ def set_player_info(player_id):
     # Update main player information
     player_service.update_player(player, data.get("name"), data.get("race"), data.get("class_ids"), data.get("backstory"))
 
-    info = data.get("stats")
+    info = data.get("info")
     if info is not None:
         player_service.set_player_info(player, info.get("strength"), info.get("dexterity"), info.get("constitution"),
                                        info.get("intelligence"), info.get("wisdom"), info.get("charisma"),
@@ -152,9 +123,11 @@ def set_player_info(player_id):
     if profs is not None:
         player_service.update_proficiencies(player, profs)
 
+    # TODO: Maybe return something more useful here.
     return {
         "success": True,
-        "player_id": player.id
+        "updated_info": info is not None,
+        "updated_proficiencies": profs is not None
     }
 
 

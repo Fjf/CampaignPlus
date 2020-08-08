@@ -57,12 +57,16 @@ h3 {
   flex-direction: column;
   position: relative;
 
-  padding: 8px;
+  & > * {
+      padding: 8px;
+  }
 }
 
 .right-content-bar {
   background-color: lighten($primary, 30%);
   flex: 2;
+  position: relative;
+  right: 0;
   text-align: end;
   align-content: end;
 
@@ -72,7 +76,6 @@ h3 {
 
 .campaign-list-entry {
   height: 30px;
-  line-height: 30px;
   font-size: 16px;
   margin-bottom: 4px;
 
