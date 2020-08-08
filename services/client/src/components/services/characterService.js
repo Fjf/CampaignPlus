@@ -3,6 +3,7 @@ import {apiUrl, handleResponse} from "./constants";
 export const characterService = {
     getCharacterInfo,
     del,
+    save,
     getCharacterSpells,
     getSpells,
     addSpell,
@@ -63,8 +64,19 @@ function deleteSpell(pid, spell_id) {
 function del(cid) {
     const requestOptions = {
         method: "DELETE",
-        headers: {'Content-Type': 'application/json'},
-    }
+        headers: {'Content-Type': 'text/html'},
+    };
     return fetch(`${apiUrl}/player/${cid}`, requestOptions)
+        .then(handleResponse);
+}
+
+function save(character) {
+    const requestOptions = {
+        method: "PUT",
+        headers: {'Content-Type': 'application/json'},
+        data: JSON.stringify(character)
+    };
+
+    return fetch(`${apiUrl}/player/${character.id}`, requestOptions)
         .then(handleResponse);
 }

@@ -1,4 +1,4 @@
-export const apiUrl = "http://localhost:5000/api"; // Change this
+export const apiUrl = "http://192.168.0.227:5000/api"; // Change this
 
 export function handleResponse(response) {
     return response.text().then(text => {

@@ -127,7 +127,7 @@ def get_player(player_id):
     return data
 
 
-@api.route('/player/<int:player_id>/data', methods=["PUT"])
+@api.route('/player/<int:player_id>', methods=["PUT"])
 @json_api()
 @require_login()
 def set_player_info(player_id):

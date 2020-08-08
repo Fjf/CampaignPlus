@@ -2,7 +2,7 @@ import React from "react";
 import {characterService} from "../services/characterService";
 import {Checkbox, SvgIcon, TextField} from "@material-ui/core";
 import "../../styles/profile.scss";
-import {BsDiamond, BsDiamondFill, FaPlusCircle, FaTrash, MdClose} from "react-icons/all";
+import {BsDiamond, BsDiamondFill, FaPlusCircle, FaTrash, MdClose, MdSave} from "react-icons/all";
 import IconButton from "@material-ui/core/IconButton";
 import {campaignService} from "../services/campaignService";
 import DoubleCheckbox from "./DoubleCheckbox";
@@ -59,13 +59,21 @@ export default function CharacterOverview(props) {
         return bonus + prof * getProficiencyBonus();
     }
 
+    function saveChanges() {
+        console.log(characterInfo);
+        return;
+        characterService.save(characterInfo).then(r => {
+            props.reset();
+        })
+    }
+
     return <div className={"main-content"}>
         <div className={"icon-bar"} style={{top: "8px", right: "8px", position: "absolute"}}>
-            {/*<IconButton*/}
-            {/*    onClick={saveChanges}*/}
-            {/*>*/}
-            {/*    <MdSave/>*/}
-            {/*</IconButton>*/}
+            <IconButton
+                onClick={saveChanges}
+            >
+                <MdSave/>
+            </IconButton>
             <IconButton
                 onClick={deleteCharacter}
             >
