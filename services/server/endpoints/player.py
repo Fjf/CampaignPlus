@@ -6,6 +6,7 @@ from lib.service import player_service, campaign_service
 from lib.user_session import session_user, session_user_set
 from endpoints import api, json_api, require_login
 
+
 def check_player(player: PlayerModel):
     """
     Checks whether or not a player exists, and whether or not it belongs to the logged in user.
@@ -108,7 +109,8 @@ def set_player_info(player_id):
     check_player(player)
 
     # Update main player information
-    player_service.update_player(player, data.get("name"), data.get("race"), data.get("class_ids"), data.get("backstory"))
+    player_service.update_player(player, data.get("name"), data.get("race"), data.get("class_ids"),
+                                 data.get("backstory"))
 
     info = data.get("info")
     if info is not None:
@@ -137,20 +139,16 @@ def set_player_info(player_id):
 def add_player_item(player_id):
     data = request.get_json()
 
-    required_fields = ["item_id"]
-
-    if not data or (False in [x in data for x in required_fields]):
-        raise BadRequest()
+    item_id = data.get("item_id")
+    if item_id is None:
+        raise BadRequest("No item_id specified.")
 
     player = player_service.find_player(player_id)
-
     check_player(player)
 
-    player_service.player_add_item(player, data.get("item_id"), data.get("amount", 1))
+    player_item = player_service.player_add_item(player, item_id, data.get("amount", 1))
 
-    return {
-        "success": True
-    }
+    return player_item.to_json()
 
 
 @api.route('/player/<int:player_id>/spell', methods=["POST"])
@@ -167,51 +165,16 @@ def add_player_spell(player_id):
     return player_spell.spell.to_json()
 
 
-@api.route('/player/<int:player_id>/item', methods=["GET"])
+@api.route('/player/<int:player_id>/items', methods=["GET"])
 @json_api()
 @require_login()
 def get_player_items(player_id):
     player = player_service.find_player(player_id)
     check_player(player)
 
-    items = []
+    player_items = player_service.get_player_items(player)
 
-    data = player_service.get_player_items(player)
-    player_item: PlayerEquipmentModel
-    weapon: WeaponModel
-    for player_item, weapon in data:
-        data = {
-            "id": player_item.item.id,
-            "category": player_item.item.category,
-
-            "name": player_item.item.name,
-            "amount": int(player_item.amount),
-            "weight": int(player_item.item.weight),
-            "value": player_item.item.cost
-        }
-
-        if weapon is not None:
-            data.update({
-                "dice": weapon.dice,
-                "damage_type": weapon.damage_type,
-                "damage_bonus": weapon.damage_bonus,
-
-                "2h_dice": weapon.two_dice,
-                "2h_damage_type": weapon.two_damage_type,
-                "2h_damage_bonus": weapon.two_damage_bonus,
-
-                "range_normal": weapon.range_normal,
-                "range_long": weapon.range_long,
-                "throw_range_normal": weapon.throw_range_normal,
-                "throw_range_long": weapon.throw_range_long
-            })
-
-        items.append(data)
-
-    return {
-        "success": True,
-        "items": items
-    }
+    return [player_item.to_json() for player_item in player_items]
 
 
 @api.route('/player/<int:player_id>/spell/<int:spell_id>', methods=["DELETE"])
@@ -317,5 +280,6 @@ def get_player_class(player_id):
         "success": True,
         "classes": classes
     }
+
 
 print("Loaded player endpoints")

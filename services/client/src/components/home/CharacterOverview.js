@@ -17,6 +17,7 @@ import {campaignService} from "../services/campaignService";
 import DoubleCheckbox from "./DoubleCheckbox";
 import SpellInfo from "./infoComponents/SpellInfo";
 import SpellsList from "./infoComponents/SpellsList";
+import CharacterInventory from "./infoComponents/CharacterInventory";
 
 export default function CharacterOverview(props) {
     const character = props.character;
@@ -34,7 +35,7 @@ export default function CharacterOverview(props) {
             setCharacterSpells(r);
         }, e => {
             console.error(e);
-        })
+        });
     }, [character]);
 
     function deleteCharacter() {
@@ -90,7 +91,7 @@ export default function CharacterOverview(props) {
         {characterInfo === null ? null :
             <>
                 <div className={"stats-column"}>
-                    <div className={"standard-bar-entry"}>
+                    <div className={"basic-list-entry"}>
                         <IconButton size={"small"} onClick={e => setCharacterInfo({
                             ...characterInfo,
                             info: {
@@ -590,7 +591,7 @@ export default function CharacterOverview(props) {
                     <h3>Spells</h3>
                     <div className={"spells-list"}>
                         {characterSpells.map((spell, i) => {
-                            return <div key={i} className={"standard-bar-entry"}>
+                            return <div key={i} className={"basic-list-entry"}>
                                 <div style={{flex: 1}} onClick={() => setSelectedSpell(spell)}>
                                     {spell.name} ({spell.level})
                                 </div>
@@ -604,6 +605,7 @@ export default function CharacterOverview(props) {
                         })}
                     </div>
                 </div>
+                <CharacterInventory character={character}/>
                 {selectedSpell === null ? null :
                     <SpellInfo spell={selectedSpell} onClose={() => setSelectedSpell(null)}/>
                 }

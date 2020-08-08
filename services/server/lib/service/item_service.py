@@ -1,5 +1,9 @@
 from typing import Optional
 
+from sqlalchemy import or_
+from werkzeug.exceptions import Unauthorized
+
+from lib.database import request_session
 from lib.model.models import ItemModel, PlayerModel, WeaponModel, UserModel
 from lib.repository import item_repository, player_repository, repository
 
@@ -45,7 +49,14 @@ def get_item(item_id: int):
 
 def get_items(user: UserModel, player: Optional[PlayerModel]):
     if player is not None and player.user is not user:
-        return "This player does not belong to you."
+        raise Unauthorized("This player does not belong to you.")
 
-    return [item for item, _ in item_repository.get_all_items(player)]
+    db = request_session()
+
+    campaign_id = -1 if player is None else player.playthrough_id
+
+    return db.query(ItemModel) \
+        .filter(or_(ItemModel.campaign_id == campaign_id, ItemModel.campaign_id == None)) \
+        .all()
+
 

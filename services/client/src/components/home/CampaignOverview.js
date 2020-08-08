@@ -54,7 +54,7 @@ export default function CampaignOverview(props) {
 
     return <>
         <div className={"left-content-bar"}>
-            <div className={"standard-bar-entry"}><h3>Campaigns</h3>
+            <div className={"basic-list-entry"}><h3>Campaigns</h3>
                 <div className={"icon-bar"}>
                     <IconButton aria-label="add" size={"small"} onClick={() => {
                         campaignService.create().then(r => {

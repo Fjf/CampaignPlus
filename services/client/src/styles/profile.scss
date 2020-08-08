@@ -77,9 +77,22 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 400px;
+  flex: 1;
   padding: 8px 16px;
   background-color: lighten($primary, 35%);
+
+  & > div {
+    margin-bottom: 4px;
+  }
+}
+
+.inventory-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1px;
+  padding: 8px;
+  background-color: lighten($primary, 40%);
 
   & > div {
     margin-bottom: 4px;
@@ -107,8 +120,15 @@
     }
   }
 }
+.items-list {
+  @extend .spells-list
+}
 
 .spell-prop-title {
   padding-right: 16px;
   font-weight: bold;
+}
+
+.item-prop-title {
+  @extend .spell-prop-title
 }

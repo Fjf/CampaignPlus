@@ -40,14 +40,6 @@ def get_player_info(player: PlayerModel) -> Optional[PlayerInfoModel]:
         .one_or_none()
 
 
-def get_player_items(player: PlayerModel) -> List[Tuple[PlayerEquipmentModel, WeaponModel]]:
-    db = request_session()
-
-    return db.query(PlayerEquipmentModel, WeaponModel) \
-        .filter(PlayerEquipmentModel.player_id == player.id) \
-        .join(WeaponModel, PlayerEquipmentModel.item_id == WeaponModel.item_id, isouter=True) \
-        .all()
-
 
 def get_player_item(item: ItemModel, player: Optional[PlayerModel]) -> Optional[ItemModel]:
     db = request_session()
@@ -126,8 +118,8 @@ def player_get_item(player, item_id):
     db = request_session()
 
     return db.query(ItemModel) \
-        .filter((player.playthrough_id == ItemModel.playthrough_id) or (ItemModel.playthrough_id == -1)) \
-        .filter((player.playthrough_id == ItemModel.playthrough_id) or (ItemModel.playthrough_id == -1)) \
+        .filter((player.playthrough_id == ItemModel.campaign_id) or (ItemModel.campaign_id == -1)) \
+        .filter((player.playthrough_id == ItemModel.campaign_id) or (ItemModel.campaign_id == -1)) \
         .filter(ItemModel.id == item_id) \
         .one_or_none()
 

@@ -17,7 +17,7 @@ export default function Profile(props) {
 
     return <>
         <div className={"left-content-bar"}>
-            <div className={"standard-bar-entry"}><h3>Characters</h3>
+            <div className={"basic-list-entry"}><h3>Characters</h3>
                 <div className={"icon-bar"}>
                     <IconButton aria-label="add" size={"small"} onClick={() => {
                         profileService.create({"name": "test", "race_name": "Human"}).then(r => {

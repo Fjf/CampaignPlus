@@ -431,7 +431,7 @@ export default function MapWidget(props) {
                 </div> : null}
         </div>
         <div className={"right-content-bar"}>
-            <div className={"standard-bar-entry"}>
+            <div className={"basic-list-entry"}>
                 <h3>Map Info</h3>
                 <div className={"icon-bar"}>
                     <IconButton

@@ -135,9 +135,12 @@ def get_player_info(player: PlayerModel) -> PlayerInfoModel:
     return result
 
 
-def get_player_items(player: PlayerModel) -> List[Tuple[PlayerEquipmentModel, WeaponModel]]:
-    return player_repository.get_player_items(player)
+def get_player_items(player: PlayerModel) -> List[PlayerEquipmentModel]:
+    db = request_session()
 
+    return db.query(PlayerEquipmentModel) \
+        .filter(PlayerEquipmentModel.player_id == player.id) \
+        .all()
 
 def check_backstory(backstory: str) -> bool:
     return True
@@ -187,16 +190,20 @@ def player_add_item(player, item_id, amount: int):
 
     try:
         amount = int(amount)
-    except:
+    except ValueError:
         amount = 1
+
+    db = request_session()
 
     player_item = player_repository.get_player_item(item, player)
     if player_item is None:
         player_item = PlayerEquipmentModel.from_player(player, item)
+        db.add(player_item)
 
     player_item.amount += amount
 
-    player_repository.add_and_commit(player_item)
+    db.commit()
+    return player_item
 
 
 def get_player_spells(player: PlayerModel) -> List[PlayerSpellModel]:

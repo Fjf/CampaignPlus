@@ -5,9 +5,12 @@ export const characterService = {
     del,
     save,
     getCharacterSpells,
+    getCharacterInventory,
     getSpells,
     addSpell,
     deleteSpell,
+    getItems,
+    addItem,
 };
 
 function getCharacterInfo(cid) {
@@ -30,6 +33,16 @@ function getCharacterSpells(cid) {
         .then(handleResponse);
 }
 
+function getCharacterInventory(player_id) {
+    const requestOptions = {
+        method: 'GET',
+        headers: {'Content-Type': 'text/html'},
+    };
+
+    return fetch(`${apiUrl}/player/${player_id}/items`, requestOptions)
+        .then(handleResponse);
+}
+
 function getSpells() {
     const requestOptions = {
         method: 'GET',
@@ -37,6 +50,16 @@ function getSpells() {
     };
 
     return fetch(`${apiUrl}/user/spells`, requestOptions)
+        .then(handleResponse);
+}
+
+function getItems() {
+    const requestOptions = {
+        method: 'GET',
+        headers: {'Content-Type': 'text/html'},
+    };
+
+    return fetch(`${apiUrl}/items`, requestOptions)
         .then(handleResponse);
 }
 
@@ -48,6 +71,17 @@ function addSpell(pid, spell_id) {
     };
 
     return fetch(`${apiUrl}/player/${pid}/spell`, requestOptions)
+        .then(handleResponse);
+}
+
+function addItem(pid, item_id) {
+    const requestOptions = {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({item_id})
+    };
+
+    return fetch(`${apiUrl}/player/${pid}/item`, requestOptions)
         .then(handleResponse);
 }
 
