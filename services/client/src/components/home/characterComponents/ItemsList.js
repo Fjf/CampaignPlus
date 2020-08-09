@@ -9,7 +9,7 @@ function ItemsList(props) {
     const [query, setQuery] = React.useState("");
     const [filteredItems, setFilteredItems] = React.useState([]);
     const [items, setItems] = React.useState([]);
-        const bar = useRef(null);
+    const bar = useRef(null);
 
     React.useEffect(() => {
         toggleRightContentBar(bar);

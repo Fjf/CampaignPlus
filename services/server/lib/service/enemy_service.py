@@ -1,5 +1,7 @@
 from typing import List
 
+from werkzeug.exceptions import BadRequest, Unauthorized, NotFound
+
 from lib.database import request_session
 from lib.model.models import EnemyModel, EnemyAbilityModel, UserModel
 from lib.repository import enemy_repository, repository
@@ -9,35 +11,46 @@ def get_enemies(user: UserModel):
     return enemy_repository.get_enemies(user.id)
 
 
-def create_enemy(name, max_hp, ac, stre, dex, con, inte, wis, cha, user):
+def create_enemy(name, max_hp, armor_class, strength, dex, con, intelligence, wis, cha, user):
     enemies = get_enemies(user)
     for enemy in enemies:
         if enemy.name == name:
-            return "You have already used this enemy name."
+            raise BadRequest("You have already used this enemy name.")
 
-    enemy = EnemyModel.from_name_hp_ac(name, max_hp, ac, user.id)
+    enemy = EnemyModel.from_name_hp_ac(name, max_hp, armor_class, user.id)
 
-    enemy.strength = stre
+    enemy.strength = strength
     enemy.dexterity = dex
     enemy.constitution = con
-    enemy.intelligence = inte
+    enemy.intelligence = intelligence
     enemy.wisdom = wis
     enemy.charisma = cha
 
-    enemy_repository.create_enemy(enemy)
-    return ""
+    db = request_session()
+    db.add(enemy)
+    db.commit()
+    return enemy
 
 
 def delete_enemy(enemy_id: int, user: UserModel):
+    """
+    Deletes an enemy from the db, and returns the updated enemy list.
+
+    :param enemy_id:
+    :param user:
+    :return:
+    """
     enemy = get_enemy(enemy_id)
     if not enemy:
-        return "This enemy does not exist"
+        raise BadRequest("This enemy does not exist")
 
-    if enemy.user != user:
-        return "This enemy does not belong to this user"
+    if enemy.user.id != user.id:
+        raise Unauthorized("This enemy does not belong to this user")
 
-    enemy_repository.delete_enemy(enemy)
-    return ""
+    db = request_session()
+    db.delete(enemy)
+    db.commit()
+    return enemy_repository.get_enemies(user.id)
 
 
 def get_enemy(enemy_id: int):
@@ -48,26 +61,29 @@ def add_ability(enemy_id: int, text: str, user: UserModel):
     enemy = get_enemy(enemy_id)
 
     if enemy is None:
-        return "This enemy does not exist."
+        raise NotFound("This enemy does not exist.")
 
     if enemy.user != user:
-        return "This enemy does not belong to this user."
+        raise Unauthorized("This enemy does not belong to this user.")
 
     ability = EnemyAbilityModel.from_id_text(enemy.id, text)
-    enemy_repository.add_ability(ability)
-    return ""
+    ability.owner_id = user.id
+    db = request_session()
+
+    db.add(ability)
+    db.commit()
+    return ability
 
 
 def get_abilities(user: UserModel, enemy_id=None) -> List[EnemyAbilityModel]:
     db = request_session()
     sub = db.query(EnemyAbilityModel) \
-        .join(EnemyModel) \
-        # .filter(EnemyModel.user_id == user.id)
+        .filter(EnemyAbilityModel.owner_id == user.id)
 
     if enemy_id is not None:
-        sub = sub.filter(EnemyModel.id == enemy_id)
+        sub = sub.filter(EnemyAbilityModel.enemy_id == enemy_id)
 
-    return sub.all()
+    return sub.distinct(EnemyAbilityModel.text).all()
 
 
 def delete_ability(ability_id: int, enemy_id: int, user: UserModel):

@@ -8,30 +8,9 @@ def get_enemies(user_id: int):
     db = request_session()
 
     return db.query(EnemyModel)\
+        .filter(EnemyModel.user_id == user_id)\
         .all()
-        # .filter(EnemyModel.user_id == user_id)\
-        # .all()
 
-
-def create_enemy(enemy):
-    db = request_session()
-
-    db.add(enemy)
-    db.commit()
-
-
-def delete_enemy(enemy: EnemyModel):
-    db = request_session()
-
-    db.delete(enemy)
-    db.commit()
-
-
-def add_ability(ability: EnemyAbilityModel):
-    db = request_session()
-
-    db.add(ability)
-    db.commit()
 
 
 def get_enemy(enemy_id: int) -> Optional[EnemyModel]:
@@ -48,8 +27,6 @@ def get_enemy_abilities(enemy: EnemyModel):
     return db.query(EnemyAbilityModel) \
         .filter(EnemyAbilityModel.enemy == enemy) \
         .all()
-        # .filter(EnemyModel.user_id == user_id)\
-
 
 
 def get_ability(ability_id: int) -> Optional[EnemyAbilityModel]:

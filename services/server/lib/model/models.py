@@ -129,6 +129,9 @@ class EnemyAbilityModel(OrmModelBase):
     enemy_id = Column(Integer(), ForeignKey("enemy.id"), nullable=False)
     enemy: EnemyModel = relationship("EnemyModel")
 
+    owner_id = Column(Integer(), ForeignKey("user.id"), nullable=False)
+    owner: UserModel = relationship("UserModel")
+
     text = Column(String(), nullable=False)
 
     @classmethod

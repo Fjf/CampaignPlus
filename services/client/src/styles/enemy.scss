@@ -10,6 +10,7 @@
   flex-direction: row;
   justify-content: space-between;
   max-width: 100%;
+  padding: 8px;
 
   &:hover {
     background-color: darken($primary, $hover_percent);
@@ -23,7 +24,7 @@
   height: 100%;
 }
 
-.stats-column {
+.enemy-stats-column {
   display: flex;
   flex-direction: column;
   padding: 8px;
@@ -34,7 +35,7 @@
 }
 
 .abilities-column {
-  width: 400px;
+  flex: 1;
   display: flex;
   flex-direction: column;
   padding: 8px;
@@ -48,6 +49,12 @@
 .ability-list-entry {
   max-width: 100%;
   display: flex;
+  padding: 4px 2px;
   flex-direction: row;
   justify-content: space-between;
+  border-bottom: 1px solid darken($primary, 20%);
+
+  &:hover {
+    background-color: darken($primary, 5%);
+  }
 }

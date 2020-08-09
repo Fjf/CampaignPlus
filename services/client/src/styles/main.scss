@@ -45,6 +45,7 @@ h3 {
 .content-wrapper {
   height: 100 - $title_bar_percent;
   display: flex;
+  position: relative;
   flex-direction: row;
 }
 

@@ -15,12 +15,12 @@ import {
 import IconButton from "@material-ui/core/IconButton";
 import {campaignService} from "../services/campaignService";
 import DoubleCheckbox from "./DoubleCheckbox";
-import SpellInfo from "./infoComponents/SpellInfo";
-import SpellsList from "./infoComponents/SpellsList";
-import CharacterInventory from "./infoComponents/CharacterInventory";
-import CharacterStats from "./infoComponents/CharacterStats";
-import CharacterSpells from "./infoComponents/CharacterSpells";
-import CharacterProficiencies from "./infoComponents/CharacterProficiencies";
+import SpellInfo from "./characterComponents/SpellInfo";
+import SpellsList from "./characterComponents/SpellsList";
+import CharacterInventory from "./characterComponents/CharacterInventory";
+import CharacterStats from "./characterComponents/CharacterStats";
+import CharacterSpells from "./characterComponents/CharacterSpells";
+import CharacterProficiencies from "./characterComponents/CharacterProficiencies";
 
 export default function CharacterOverview(props) {
     const basicCharacter = props.character;
@@ -45,9 +45,6 @@ export default function CharacterOverview(props) {
     function deleteCharacter() {
         if (prompt("Are you sure you want to delete this character? Type the name of the character to continue deleting.") === basicCharacter.name) {
             characterService.del(basicCharacter.id).then(r => {
-                // props.setCampaigns(r);
-                // setSelectedCampaign(null);
-                // getPlayers();
                 props.reset();
             })
         }
@@ -61,8 +58,8 @@ export default function CharacterOverview(props) {
         })
     }
 
-    return <div className={"main-content"}>
-        <div className={"icon-bar"} style={{top: "8px", right: "8px", position: "absolute", zIndex: 1}}>
+    return <div className={"main-content"} style={{paddingRight: 48}}>
+        <div className={"icon-bar"} style={{flexDirection: "column", top: 0, right: 0, position: "absolute", zIndex: 1}}>
             <IconButton
                 onClick={saveChanges}
             >

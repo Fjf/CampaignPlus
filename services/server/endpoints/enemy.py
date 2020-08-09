@@ -6,26 +6,26 @@ from endpoints import api, json_api, require_login
 from lib.service import enemy_service
 
 
-@api.route('/createenemy', methods=["POST"])
+@api.route('/enemies', methods=["PUT"])
 @json_api()
 @require_login()
 def create_enemy():
     data = request.get_json()
 
-    required_fields = ["name", "maxhp", "ac", "stre", "dex", "con", "inte", "wis", "cha"]
-
-    if not data or (False in [x in data for x in required_fields]):
-        raise BadRequest()
+    name = data.get("name", "New Enemy")
+    max_hp = data.get("max_hp", 0)
+    armor_class = data.get("armor_class", 0)
+    strength = data.get("str", 0)
+    dex = data.get("dex", 0)
+    con = data.get("con", 0)
+    intelligence = data.get("int", 0)
+    wisdom = data.get("wis", 0)
+    cha = data.get("cha", 0)
 
     user = session_user()
 
-    error = enemy_service.create_enemy(data["name"], data["maxhp"], data["ac"], data["stre"], data["dex"], data["con"],
-                                       data["inte"], data["wis"], data["cha"], user)
-    success = error == ""
-    return {
-        "success": success,
-        "error": error
-    }
+    enemy = enemy_service.create_enemy(name, max_hp, armor_class, strength, dex, con, intelligence, wisdom, cha, user)
+    return enemy.to_json()
 
 
 @api.route('/enemies', methods=["GET"])
@@ -46,25 +46,27 @@ def get_enemy_abilities(enemy_id):
     return [d.to_json() for d in data]
 
 
-@api.route('/addability', methods=["POST"])
+@api.route('/enemies/<int:enemy_id>', methods=["DELETE"])
 @json_api()
 @require_login()
-def add_ability():
+def delete_enemy(enemy_id):
+    user = session_user()
+
+    new_enemies = enemy_service.delete_enemy(enemy_id, user)
+    return [enemy.to_json() for enemy in new_enemies]
+
+
+@api.route('/enemies/<int:enemy_id>/abilities', methods=["PUT"])
+@json_api()
+@require_login()
+def add_ability(enemy_id):
     data = request.get_json()
 
-    required_fields = ["id", "text"]
-
-    if not data or (False in [x in required_fields for x in data]):
-        raise BadRequest()
+    ability = data.get("ability")
 
     user = session_user()
-    error = enemy_service.add_ability(data["id"], data["text"], user)
-
-    success = error == ""
-    return {
-        "success": success,
-        "error": error
-    }
+    ability = enemy_service.add_ability(enemy_id, ability, user)
+    return ability.to_json()
 
 
 @api.route('/editability', methods=["POST"])
@@ -112,28 +114,6 @@ def delete_ability():
     user = session_user()
 
     error = enemy_service.delete_ability(data["id"], data["enemy_id"], user)
-    success = error == ""
-
-    return {
-        "success": success,
-        "error": error
-    }
-
-
-@api.route('/deleteenemy', methods=["POST"])
-@json_api()
-@require_login()
-def delete_enemy():
-    data = request.get_json()
-
-    required_fields = ["enemy_id"]
-
-    if not data or (False in [x in required_fields for x in data]):
-        raise BadRequest()
-
-    user = session_user()
-
-    error = enemy_service.delete_enemy(data["enemy_id"], user)
     success = error == ""
 
     return {

@@ -2,7 +2,10 @@ import {apiUrl, handleResponse} from "./constants";
 
 export const dataService = {
     getEnemies,
+    deleteEnemy,
+    createEnemy,
     getAbilities,
+    addAbility,
     getMaps,
     createMap,
     alterMap,
@@ -10,6 +13,38 @@ export const dataService = {
     setMapImage,
 };
 
+
+function deleteEnemy(eid) {
+    const requestOptions = {
+        method: 'DELETE',
+        headers: {'Content-Type': 'text/html'},
+    };
+
+    return fetch(`${apiUrl}/enemies/${eid}`, requestOptions)
+        .then(handleResponse);
+}
+
+function createEnemy(data) {
+    const requestOptions = {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    };
+
+    return fetch(`${apiUrl}/enemies`, requestOptions)
+        .then(handleResponse);
+}
+
+function addAbility(eid, ability) {
+    const requestOptions = {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ability})
+    };
+
+    return fetch(`${apiUrl}/enemies/${eid}/abilities`, requestOptions)
+        .then(handleResponse);
+}
 
 function getEnemies() {
     const requestOptions = {
