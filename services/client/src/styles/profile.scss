@@ -138,3 +138,12 @@
 .item-prop-title {
   @extend .spell-prop-title
 }
+
+.currency-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  & > div:first-child {
+    font-weight: bold;
+  }
+}

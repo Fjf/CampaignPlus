@@ -110,7 +110,7 @@ def set_player_info(player_id):
 
     # Update main player information
     player_service.update_player(player, data.get("name"), data.get("race"), data.get("class_ids"),
-                                 data.get("backstory"))
+                                 data.get("backstory"), data.get("money"))
 
     info = data.get("info")
     if info is not None:

@@ -1,16 +1,25 @@
 import IconButton from "@material-ui/core/IconButton";
 import {MdClose} from "react-icons/all";
 import {Checkbox} from "@material-ui/core";
-import React from "react";
+import React, {useRef} from "react";
+import {toggleRightContentBar} from "../../services/constants";
 
 
-export default function SpellInfo(props) {
+function SpellInfo(props) {
     const spell = props.spell;
+    const bar = useRef(null);
 
-    return <div className={"right-content-bar"}>
+    React.useEffect(() => {
+        toggleRightContentBar(bar);
+    }, []);
+
+    return <div ref={bar} className={"right-content-bar right-content-bar-invisible"}>
         <div><h3>{spell.name}</h3>
-            <IconButton size={"small"} onClick={props.onClose}
-                        style={{top: "8px", left: "8px", position: "absolute"}}><MdClose/></IconButton>
+            <IconButton
+                size={"small"} onClick={() => {
+                    toggleRightContentBar(bar, props.onClose)
+                }}
+                style={{top: "8px", left: "8px", position: "absolute"}}><MdClose/></IconButton>
         </div>
         <div className={"basic-list"}>
             <div className={"spell-prop-title"}>Level</div>
@@ -40,3 +49,5 @@ export default function SpellInfo(props) {
         </div>
     </div>
 }
+
+export default React.memo(SpellInfo);

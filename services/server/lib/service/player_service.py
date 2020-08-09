@@ -62,7 +62,7 @@ def delete_player(player: PlayerModel):
 
 
 def update_player(player: PlayerModel, name: str = None, race: str = None, class_ids=None,
-                  backstory: str = None):
+                  backstory: str = None, money = None):
     """
     Updates the given PlayerModel to contain the new given data.
 
@@ -79,6 +79,14 @@ def update_player(player: PlayerModel, name: str = None, race: str = None, class
     player.backstory = backstory or player.backstory
     player.name = name or player.name
     player.race_name = race or player.race_name
+
+    # Update currency
+    if money is not None:
+        player.copper = money.copper
+        player.silver = money.silver
+        player.gold = money.gold
+        player.electron = money.electron
+        player.platinum = money.platinum
 
     player_repository.add_and_commit(player)
 

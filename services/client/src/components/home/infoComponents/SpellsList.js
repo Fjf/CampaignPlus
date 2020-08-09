@@ -1,29 +1,34 @@
-import React from "react";
+import React, {useRef} from "react";
 import {characterService} from "../../services/characterService";
 import {userService} from "../../services/userService";
 import {TextField} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import {MdClose} from "react-icons/all";
+import {toggleRightContentBar} from "../../services/constants";
 
-export default function SpellsList(props) {
+function SpellsList(props) {
     const [query, setQuery] = React.useState("");
     const [filteredSpells, setFilteredSpells] = React.useState([]);
     const [spells, setSpells] = React.useState([]);
+    const bar = useRef(null);
 
     React.useEffect(() => {
         characterService.getSpells().then(r => {
             setSpells(r);
         });
+        toggleRightContentBar(bar);
     }, []);
 
     React.useEffect(() => {
         setFilteredSpells(spells.filter((val) => val.name.toLowerCase().includes(query.toLowerCase())));
     }, [query, spells]);
 
-    return <div className={"right-content-bar"}>
+    return <div ref={bar} className={"right-content-bar right-content-bar-invisible"}>
         <div>
             <h3>Spells</h3>
-            <IconButton size={"small"} onClick={props.onClose}
+            <IconButton size={"small"} onClick={() => {
+                toggleRightContentBar(bar, props.onClose)
+            }}
                         style={{top: "8px", left: "8px", position: "absolute"}}><MdClose/></IconButton>
         </div>
         <TextField
@@ -45,3 +50,5 @@ export default function SpellsList(props) {
     </div>
 
 }
+
+export default React.memo(SpellsList);

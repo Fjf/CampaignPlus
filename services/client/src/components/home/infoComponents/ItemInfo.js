@@ -1,23 +1,29 @@
-import React from "react";
+import React, {useRef} from "react";
 import IconButton from "@material-ui/core/IconButton";
 import {FaPlusCircle, MdClose, MdSave} from "react-icons/all";
 import {TextField} from "@material-ui/core";
+import {toggleRightContentBar} from "../../services/constants";
 
-export default function ItemInfo(props) {
+function ItemInfo(props) {
     const [item, setItem] = React.useState(props.item);
+    const bar = useRef(null);
 
     React.useEffect(() => {
         setItem(props.item);
     }, [props.item]);
 
+    React.useEffect(() => {
+        toggleRightContentBar(bar);
+    }, []);
+
     const info = item.info;
 
-    return <div className={"right-content-bar"}>
+    return <div ref={bar} className={"right-content-bar right-content-bar-invisible"}>
         <div className={"icon-bar"} style={{top: "0px", left: "0px", position: "absolute"}}>
-            <IconButton onClick={props.onClose}>
+            <IconButton onClick={() => toggleRightContentBar(bar, props.onClose)}>
                 <MdClose/>
             </IconButton>
-            <IconButton onClick={() => props.onSave(item)}>
+            <IconButton onClick={() => toggleRightContentBar(bar, () => props.onSave(item))}>
                 <MdSave/>
             </IconButton>
         </div>
@@ -76,3 +82,5 @@ export default function ItemInfo(props) {
         </div>
     </div>
 }
+
+export default React.memo(ItemInfo);

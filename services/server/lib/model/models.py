@@ -227,6 +227,12 @@ class PlayerModel(OrmModelBase):
     class_name = Column(String(), nullable=False)
     backstory = Column(String(), nullable=True)
 
+    copper = Column(Integer(), nullable=False, default=0)
+    silver = Column(Integer(), nullable=False, default=0)
+    electron = Column(Integer(), nullable=False, default=0)
+    gold = Column(Integer(), nullable=False, default=0)
+    platinum = Column(Integer(), nullable=False, default=0)
+
     @classmethod
     def from_name_playthrough_user(cls, name: str, playthrough: CampaignModel, user: UserModel):
         c = cls()
@@ -249,7 +255,14 @@ class PlayerModel(OrmModelBase):
             "race_name": self.race_name,
             "class_name": self.class_name,
             "backstory": self.backstory,
-            "class_ids": class_ids
+            "class_ids": class_ids,
+            "money": {
+                "gold": self.gold,
+                "silver": self.silver,
+                "electron": self.electron,
+                "platinum": self.platinum,
+                "copper": self.copper
+            }
         }
 
 

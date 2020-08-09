@@ -5,6 +5,7 @@
   height: 100vh - $audio_bar_percent;
 
   background-color: lighten($primary, 40%);
+  overflow: hidden;
 }
 
 * {
@@ -64,13 +65,20 @@ h3 {
 
 .right-content-bar {
   background-color: lighten($primary, 30%);
-  flex: 2;
-  position: relative;
+  width: 33%;
+  position: absolute;
   right: 0;
   text-align: end;
   align-content: end;
+  z-index: 1;
+
+  transition: right .4s cubic-bezier(0.820, 0.085, 0.395, 0.895);
 
   @extend .left-content-bar;
+}
+
+.right-content-bar-invisible {
+  right: -33%;
 }
 
 
