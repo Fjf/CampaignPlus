@@ -62,10 +62,11 @@ def delete_player(player: PlayerModel):
 
 
 def update_player(player: PlayerModel, name: str = None, race: str = None, class_ids=None,
-                  backstory: str = None, money = None):
+                  backstory: str = None, money=None):
     """
     Updates the given PlayerModel to contain the new given data.
 
+    :param money:
     :param player: The PlayerModel to update.
     :param [Optional] name: The new name for the player.
     :param [Optional] race: The new race for the player.
@@ -82,11 +83,11 @@ def update_player(player: PlayerModel, name: str = None, race: str = None, class
 
     # Update currency
     if money is not None:
-        player.copper = money.copper
-        player.silver = money.silver
-        player.gold = money.gold
-        player.electron = money.electron
-        player.platinum = money.platinum
+        player.copper = money["copper"]
+        player.silver = money["silver"]
+        player.gold = money["gold"]
+        player.electron = money["electron"]
+        player.platinum = money["platinum"]
 
     player_repository.add_and_commit(player)
 
@@ -149,6 +150,7 @@ def get_player_items(player: PlayerModel) -> List[PlayerEquipmentModel]:
     return db.query(PlayerEquipmentModel) \
         .filter(PlayerEquipmentModel.player_id == player.id) \
         .all()
+
 
 def check_backstory(backstory: str) -> bool:
     return True
