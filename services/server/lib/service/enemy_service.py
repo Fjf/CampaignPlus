@@ -5,6 +5,7 @@ from werkzeug.exceptions import BadRequest, Unauthorized, NotFound
 from lib.database import request_session
 from lib.model.models import EnemyModel, EnemyAbilityModel, UserModel
 from lib.repository import enemy_repository, repository
+from lib.repository.enemy_repository import get_ability
 
 
 def get_enemies(user: UserModel):
@@ -113,3 +114,41 @@ def edit_ability(ability_id, text, user):
     repository.add_and_commit(ability)
 
     return ""
+
+
+def edit_enemy(user, data):
+    enemy_id = data.get("id")
+    enemy = get_enemy(enemy_id)
+    if enemy is None:
+        raise NotFound("This enemy does not exist.")
+
+    if enemy.user_id != user.id:
+        raise Unauthorized("This enemy does not belong to you.")
+
+    enemy.name = data.get("name")
+    enemy.armor_class = data.get("armor_class")
+    enemy.max_hp = data.get("max_hp")
+
+    enemy.strength = data.get("str")
+    enemy.dexterity = data.get("dex")
+    enemy.constitution = data.get("con")
+    enemy.intelligence = data.get("int")
+    enemy.wisdom = data.get("wis")
+    enemy.charisma = data.get("cha")
+
+    abilities = data.get("abilities")
+    for ability in abilities:
+        ability_model = get_ability(ability.get("id"))
+
+        # Skip all abilities that are not connected to this enemy.
+        if ability_model.enemy_id != enemy.id:
+            continue
+
+        ability_model.text = ability.get("text")
+
+    db = request_session()
+    db.commit()
+
+
+
+

@@ -11,6 +11,7 @@ export const dataService = {
     alterMap,
     deleteMap,
     setMapImage,
+    saveEnemy,
 };
 
 
@@ -32,6 +33,17 @@ function createEnemy(data) {
     };
 
     return fetch(`${apiUrl}/enemies`, requestOptions)
+        .then(handleResponse);
+}
+
+function saveEnemy(enemy) {
+    const requestOptions = {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(enemy)
+    };
+
+    return fetch(`${apiUrl}/enemies/${enemy.id}`, requestOptions)
         .then(handleResponse);
 }
 

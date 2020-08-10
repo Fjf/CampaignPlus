@@ -402,7 +402,7 @@ export default function MapWidget(props) {
 
     return <>
         <div className={"left-content-bar"}>
-            <h3>Campaigns</h3>
+            <div className={"basic-list-entry"}><h3>Campaigns</h3></div>
             {
                 props.campaigns.map((lCampaign, i) => {
                     return <div key={i}

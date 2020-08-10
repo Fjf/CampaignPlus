@@ -17,13 +17,17 @@ export default function CampaignOverview(props) {
     const [playerToggled, setPlayerToggled] = React.useState([]);
 
     function getPlayers() {
-        console.log(selectedCampaign);
+        console.log("Getting players.");
         if (selectedCampaign === null) return;
         campaignService.getData(selectedCampaign.id).then(r => {
             setPlayers(r);
             setPlayerToggled(new Array(r.length).fill(true));
         });
     }
+
+    React.useEffect(() => {
+        getPlayers();
+    }, [selectedCampaign]);
 
     function togglePlayerList(i) {
         let p;
@@ -47,7 +51,6 @@ export default function CampaignOverview(props) {
             campaignService.del(selectedCampaign.id).then(r => {
                 props.setCampaigns(r);
                 setSelectedCampaign(null);
-                getPlayers();
             })
         }
     }
@@ -60,7 +63,6 @@ export default function CampaignOverview(props) {
                         campaignService.create().then(r => {
                             props.campaigns.push(r);
                             setSelectedCampaign(r);
-                            getPlayers();
                         });
                     }}>
                         <FaPlusCircle/>

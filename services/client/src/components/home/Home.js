@@ -11,11 +11,12 @@ import Profile from "./Profile";
 import MapWidget from "./MapWidget";
 import {dataService} from "../services/dataService";
 import DiceRoller from "../DiceRoller";
+import Encounter from "./Encounter";
 
 export default function Home(props) {
     const [campaigns, setCampaigns] = React.useState([]);
     const [user, setUser] = React.useState(userService.getUser());
-    const history = useHistory()
+    const history = useHistory();
 
     React.useEffect(() => {
         if (user === null) return;
@@ -38,6 +39,9 @@ export default function Home(props) {
                 <Link to="/enemies">
                     <div>Enemies</div>
                 </Link>
+                <Link to="/encounter">
+                    <div>Encounter</div>
+                </Link>
                 {user === null ?
                     <Link to="/login">
                         <div>Login</div>
@@ -48,8 +52,7 @@ export default function Home(props) {
                         <div onClick={() => {
                             userService.logout().then(
                                 setUser(userService.getUser())
-                            )
-                            console.log("got here")
+                            );
                             history.push('/login')
                         }}
                         >Logout
@@ -69,7 +72,9 @@ export default function Home(props) {
                 </Route>
                 <Route exact path={"/profile"}>
                     <Profile user={user}/>
-
+                </Route>
+                <Route exact path={"/encounter"}>
+                    <Encounter/>
                 </Route>
             </div>
         </div>
