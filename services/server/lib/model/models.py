@@ -841,7 +841,6 @@ class PlayerProficiencyModel(OrmModelBase):
 
 class RaceModel(OrmModelBase):
     __tablename__ = 'race'
-    print("got here")
     id = Column(Integer(), primary_key=True)
     name = Column(String(), nullable=False)
 
@@ -857,8 +856,6 @@ class RaceModel(OrmModelBase):
     languages = Column(String())
     vision = Column(String())
     traits = Column(String())
-
-
 
     # ability_bonuses 1:many
     # starting_proficiencies 1:*
@@ -881,4 +878,13 @@ class RaceModel(OrmModelBase):
         return {
             "id": self.id,
             "name": self.name,
+            "speed": self.speed,
+            "desc": self.desc,
+            "speed_desc": self.speed_desc,
+            "age": self.age,
+            "alignment": self.alignment,
+            "size": self.size,
+            "languages": self.languages,
+            "vision": self.vision,
+            "traits": self.traits
         }

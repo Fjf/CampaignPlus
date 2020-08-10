@@ -24,12 +24,14 @@ export default function Profile(props) {
         <div className={"left-content-bar"}>
             <div className={"basic-list-entry"}><h3>Characters</h3>
                 <div className={"icon-bar"}>
-                    <IconButton aria-label="add" size={"small"} onClick={() => {
-                        setSelectedCharacter(null);
-                        <CharacterCreation user={user}/>;
-                    }}>
-                        <FaPlusCircle/>
-                    </IconButton>
+
+                    {/*<IconButton aria-label="add" size={"small"} onClick={() => {*/}
+                    {/*    setSelectedCharacter(null);*/}
+                    {/*    console.log("got here");*/}
+                    {/*    <CharacterCreation user={user}/>;*/}
+                    {/*}}>*/}
+                    {/*    <FaPlusCircle/>*/}
+                    {/*</IconButton>*/}
                 </div>
             </div>
             {
@@ -43,6 +45,8 @@ export default function Profile(props) {
                     </div>
                 })
             }
+        Add new character
+
         </div>
         {selectedCharacter === null ?
             <div className={"main-content"}>Select a character to show information here.</div> :

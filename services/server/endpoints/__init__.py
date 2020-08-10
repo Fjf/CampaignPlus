@@ -55,4 +55,5 @@ import endpoints.messages  # noqa
 import endpoints.logs  # noqa
 import endpoints.items  # noqa
 import endpoints.socket  # noqa
+import endpoints.race   # noqa
 
