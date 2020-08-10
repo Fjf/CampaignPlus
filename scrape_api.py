@@ -4,7 +4,7 @@ import requests
 
 from lib.database import request_session
 from lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel
-from lib.model.models import ItemModel, WeaponModel, SpellModel, ArmorModel
+from lib.model.models import ItemModel, WeaponModel, SpellModel, ArmorModel, RaceModel
 from lib.repository import player_repository, repository
 from services.server import app
 
@@ -233,12 +233,35 @@ def get_table():
     db.commit()
 
 
+def get_races():
+    result = requests.get("http://api.open5e.com/races/")
+    obj = result.json()
+
+    for result in obj['results']:
+        racemodel = RaceModel.from_owner(owner=None)
+        racemodel.name = result.get("name")
+        racemodel.desc = result.get("desc")
+        racemodel.age = result.get("age")
+        racemodel.alignment = result.get("alignment")
+        racemodel.size = result.get("size")
+        racemodel.speed = result.get("speed")['walk']
+        racemodel.speed_desc = result.get("speed_desc")
+        racemodel.languages = result.get("languages")
+        racemodel.vision = result.get("vision")
+        racemodel.traits = result.get("traits")
+        repository.add_and_commit(racemodel)
+
+        # TODO handle subraces, asi, asi_desc and traits better
+
+
+
 def main():
-    get_equipment()
+    # get_equipment()
     # get_spells()
     # get_classes()
     # update_class_levels()
     # get_table()
+    get_races()
     pass
 
 

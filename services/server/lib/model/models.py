@@ -255,7 +255,7 @@ class PlayerModel(OrmModelBase):
             "owner": self.user.name,
             "owner_id": self.user.id,
             "id": self.id,
-            "race_name": self.race_name,
+            "race": self.race_name,
             "class_name": self.class_name,
             "backstory": self.backstory,
             "class_ids": class_ids,
@@ -837,3 +837,48 @@ class PlayerProficiencyModel(OrmModelBase):
         c = cls()
         c.player_id = player.id
         return c
+
+
+class RaceModel(OrmModelBase):
+    __tablename__ = 'race'
+    print("got here")
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(), nullable=False)
+
+    owner_id = Column(Integer(), ForeignKey(UserModel.id), nullable=True)
+    owner = relationship("UserModel")
+
+    speed = Column(Integer())
+    desc = Column(String())
+    speed_desc = Column(String())
+    age = Column(String())
+    alignment = Column(String())
+    size = Column(String())
+    languages = Column(String())
+    vision = Column(String())
+    traits = Column(String())
+
+
+
+    # ability_bonuses 1:many
+    # starting_proficiencies 1:*
+    # languages 1:1/many
+    # language_desc string 1:1
+    # traits 1:many
+    # trait_options 1:many
+    # subraces 1:*
+
+    @classmethod
+    def from_owner(cls, owner: UserModel = None):
+        c = cls()
+        if owner:
+            c.owner_id = owner.id
+        else:
+            c.owner_id = None
+        return c
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+        }

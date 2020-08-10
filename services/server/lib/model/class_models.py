@@ -38,9 +38,13 @@ class ClassModel(OrmModelBase):
 
     def to_json(self):
         return {
-
+            "id": self.id,
+            "owner_id": self.owner_id,
+            "hit_die": self.hit_die,
+            "table": self.table,
+            "name": self.name,
+            "info": self.info
         }
-
 
 class SubClassModel(OrmModelBase):
     """

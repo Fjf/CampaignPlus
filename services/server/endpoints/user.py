@@ -138,22 +138,9 @@ def reset_password():
 def get_user_players():
     user = session_user()
 
-    data = []
-
     players = player_service.get_user_players(user)
-    for player in players:
-        class_ids = [cls.id for cls in player_service.get_classes(player)]
 
-        data.append({
-            "id": player.id,
-            "user_name": player.user.name,
-            "name": player.name,
-            "race": player.race_name,
-            "class_ids": class_ids,
-            "backstory": player.backstory,
-        })
-
-    return data
+    return [player.to_json() for player in players]
 
 
 @api.route('/user/classes', methods=["GET"])

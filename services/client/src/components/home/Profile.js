@@ -3,6 +3,7 @@ import {profileService} from "../services/profileService";
 import CharacterOverview from "./CharacterOverview";
 import IconButton from "@material-ui/core/IconButton";
 import {FaPlusCircle} from "react-icons/all";
+import CharacterCreation from "./CharacterCreation";
 
 export default function Profile(props) {
     const user = props.user
@@ -10,25 +11,22 @@ export default function Profile(props) {
     const [selectedCharacter, setSelectedCharacter] = React.useState(null);
 
     React.useEffect(() => {
+        updateCharacters()
+    }, []);
+
+    function updateCharacters() {
         profileService.get().then(r => {
             setCharacters(r);
         });
-    }, []);
+    }
 
     return <>
         <div className={"left-content-bar"}>
             <div className={"basic-list-entry"}><h3>Characters</h3>
                 <div className={"icon-bar"}>
                     <IconButton aria-label="add" size={"small"} onClick={() => {
-                        profileService.create({"name": "test", "race_name": "Human"}).then(r => {
-                                setCharacters([
-                                    ...characters,
-                                    r
-                                ]);
-                            },
-                            error => {
-                                console.log(error)
-                            });
+                        setSelectedCharacter(null);
+                        <CharacterCreation user={user}/>;
                     }}>
                         <FaPlusCircle/>
                     </IconButton>
@@ -48,7 +46,11 @@ export default function Profile(props) {
         </div>
         {selectedCharacter === null ?
             <div className={"main-content"}>Select a character to show information here.</div> :
-            <CharacterOverview character={selectedCharacter} reset={() => setSelectedCharacter(null)}/>
+            <CharacterOverview character={selectedCharacter} reset={() => {
+                setSelectedCharacter(null)
+                updateCharacters()
+            }}
+            />
         }
     </>
 }
