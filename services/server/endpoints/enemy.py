@@ -37,6 +37,22 @@ def get_enemies():
     return [d.to_json() for d in enemies]
 
 
+@api.route('/enemies/<int:enemy_id>', methods=["POST"])
+@json_api()
+@require_login()
+def edit_ability(enemy_id):
+    data = request.get_json()
+
+    user = session_user()
+    error = enemy_service.edit_enemy(user, data)
+
+    success = error == ""
+    return {
+        "success": success,
+        "error": error
+    }
+
+
 @api.route('/enemies/<int:enemy_id>/abilities', methods=["GET"])
 @json_api()
 @require_login()
@@ -67,27 +83,6 @@ def add_ability(enemy_id):
     user = session_user()
     ability = enemy_service.add_ability(enemy_id, ability, user)
     return ability.to_json()
-
-
-@api.route('/editability', methods=["POST"])
-@json_api()
-@require_login()
-def edit_ability():
-    data = request.get_json()
-
-    required_fields = ["ability_id", "text"]
-
-    if not data or (False in [x in required_fields for x in data]):
-        raise BadRequest()
-
-    user = session_user()
-    error = enemy_service.edit_ability(data["ability_id"], data["text"], user)
-
-    success = error == ""
-    return {
-        "success": success,
-        "error": error
-    }
 
 
 @api.route('/abilities', methods=["GET"])

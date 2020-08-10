@@ -1,19 +1,16 @@
 import IconButton from "@material-ui/core/IconButton";
 import React from "react";
-import DeleteIcon from '@material-ui/icons/Delete';
 import {dataService} from "../services/dataService";
 import "../../styles/enemy.scss"
 import TextField from "@material-ui/core/TextField";
-import {FaPlusCircle, FaTrash, MdCreate} from "react-icons/all";
+import {FaPlusCircle, FaTrash, MdCreate, MdSave} from "react-icons/all";
 import EnemyAbilityList from "./EnemyComponents/EnemyAbilityList";
-import {characterService} from "../services/characterService";
+import EnemyList from "./EnemyComponents/EnemyList";
 
-let timeout = null;
+
 export default function EnemyCreation(props) {
     const [selectedEnemy, setSelectedEnemy] = React.useState(null);
     const [enemies, setEnemies] = React.useState([]);
-    const [filteredEnemies, setFilteredEnemies] = React.useState([]);
-    const [query, setQuery] = React.useState("");
 
     const [abilities, setAbilities] = React.useState([]);
 
@@ -32,9 +29,7 @@ export default function EnemyCreation(props) {
     }, []);
 
 
-    React.useEffect(() => {
-        setFilteredEnemies(enemies.filter((val) => val.name.toLowerCase().includes(query.toLowerCase())));
-    }, [query, enemies]);
+
 
     function openEditEnemy(enemy) {
         dataService.getAbilities(enemy.id).then(r => {
@@ -84,36 +79,17 @@ export default function EnemyCreation(props) {
 
     return <>
         <div className={"left-content-bar"}>
-            <div className={"basic-list-entry"}>
-                <h3>Enemies ({filteredEnemies.length} / {enemies.length})</h3>
-                <div className={"icon-bar"}>
-                    <IconButton size={"small"} onClick={createEnemy}>
-                        <FaPlusCircle/>
-                    </IconButton>
-                </div>
-            </div>
-            <TextField
-                onChange={(e) => setQuery(e.target.value)}
-                label={"Filter"}
-            />
-            <div className={"list-wrapper"}>
-                {
-                    filteredEnemies.map((enemy, i) => {
-                        return <div key={enemy.id} className={"enemy-list-entry"} onClick={() => openEditEnemy(enemy)}>
-                            <div><b>{enemy.name}</b></div>
-                        </div>
-                    })
-                }
-            </div>
+            <EnemyList enemies={enemies} onCreate={createEnemy} onClick={(enemy) => openEditEnemy(enemy)}/>
         </div>
         {selectedEnemy === null ?
-            <div className={"main-content"}>
-                Click an enemy to show editor.
-            </div> :
+            <div className={"main-content"}>Click an enemy to show editor.</div> :
             <div className={"main-content"} style={{paddingRight: 48}}>
-                <div className={"icon-bar"} style={{position: "absolute", top: 0, right: 0}}>
+                <div className={"icon-bar"} style={{flexDirection: "column", position: "absolute", top: 0, right: 0}}>
                     <IconButton onClick={() => deleteEnemy()}>
                         <FaTrash fontSize="inherit"/>
+                    </IconButton>
+                    <IconButton onClick={() => dataService.saveEnemy(selectedEnemy).then(r => alert("Saved!"))}>
+                        <MdSave/>
                     </IconButton>
                 </div>
                 <div className={"enemy-stats-column"}>
@@ -225,9 +201,20 @@ export default function EnemyCreation(props) {
                     <div className={"abilities-list"}>
                         {
                             selectedEnemy.abilities.map((ability, i) => {
-                                return <div className={"ability-list-entry"} key={i}>
-                                    {ability.text}
-                                </div>
+                                return <TextField
+                                    rows={3}
+                                    fullWidth={true}
+                                    multiline={true}
+                                    value={ability.text}
+                                    onChange={(e) => {
+                                        let a = [...abilities];
+                                        a[i].text = e.target.value;
+                                        setSelectedEnemy({
+                                            ...selectedEnemy,
+                                            abilities: a
+                                        })
+                                    }}
+                                    key={ability.id}/>
                             })
                         }
                     </div>
