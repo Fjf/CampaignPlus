@@ -12,7 +12,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
 import {dataService} from "../services/dataService";
 import Paper from '@material-ui/core/Paper';
-import EnemyList from "./EnemyComponents/EnemyList";
+import EnemyList from "./enemyComponents/EnemyList";
 import "../../styles/enemy.scss";
 
 

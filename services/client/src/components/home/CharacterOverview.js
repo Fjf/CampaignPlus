@@ -1,22 +1,8 @@
 import React from "react";
 import {characterService} from "../services/characterService";
-import {Checkbox, SvgIcon, TextField} from "@material-ui/core";
 import "../../styles/profile.scss";
-import {
-    BsDiamond,
-    BsDiamondFill,
-    FaPlusCircle,
-    FaTrash, GoArrowDown,
-    GoArrowLeft,
-    GoArrowRight, GoArrowSmallDown, GoArrowSmallUp, GoArrowUp,
-    MdClose,
-    MdSave
-} from "react-icons/all";
+import {FaTrash, MdSave} from "react-icons/all";
 import IconButton from "@material-ui/core/IconButton";
-import {campaignService} from "../services/campaignService";
-import DoubleCheckbox from "./DoubleCheckbox";
-import SpellInfo from "./characterComponents/SpellInfo";
-import SpellsList from "./characterComponents/SpellsList";
 import CharacterInventory from "./characterComponents/CharacterInventory";
 import CharacterStats from "./characterComponents/CharacterStats";
 import CharacterSpells from "./characterComponents/CharacterSpells";

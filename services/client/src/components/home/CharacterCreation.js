@@ -7,6 +7,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import {characterCreationService} from "../services/characterCreationService";
 import ListSubheader from "@material-ui/core/ListSubheader";
+import Alignment from "../util/Alignment";
 
 
 const useStyles = makeStyles((theme) => ({
