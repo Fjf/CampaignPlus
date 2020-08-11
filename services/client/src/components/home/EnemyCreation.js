@@ -20,7 +20,6 @@ export default function EnemyCreation(props) {
         // Load your enemies on initialization
         dataService.getEnemies().then(r => {
             setEnemies(r);
-            setFilteredEnemies(r);
         });
         // Store abilities here between renders of the list to reduce traffic.
         dataService.getAbilities().then(r => {
@@ -207,7 +206,7 @@ export default function EnemyCreation(props) {
                                     multiline={true}
                                     value={ability.text}
                                     onChange={(e) => {
-                                        let a = [...abilities];
+                                        let a = [...selectedEnemy.abilities];
                                         a[i].text = e.target.value;
                                         setSelectedEnemy({
                                             ...selectedEnemy,

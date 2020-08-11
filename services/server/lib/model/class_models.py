@@ -27,14 +27,11 @@ class ClassModel(OrmModelBase):
 
     info = Column(String(), nullable=True)
 
-    @classmethod
-    def from_owner(cls, owner: UserModel = None):
-        c = cls()
+    def __init__(self, owner: UserModel = None):
         if owner:
-            c.owner_id = owner.id
+            self.owner_id = owner.id
         else:
-            c.owner_id = None
-        return c
+            self.owner_id = None
 
     def to_json(self):
         return {
@@ -45,6 +42,7 @@ class ClassModel(OrmModelBase):
             "name": self.name,
             "info": self.info
         }
+
 
 class SubClassModel(OrmModelBase):
     """
