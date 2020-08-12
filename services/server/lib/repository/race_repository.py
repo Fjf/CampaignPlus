@@ -16,4 +16,4 @@ def get_race_by_name(race_name) -> RaceModel:
 
 def get_race_by_id(race_id) -> RaceModel:
     db = request_session()
-    return db.query(RaceModel).get(race_id)
+    return db.query(RaceModel).get(race_id)  # TODO Add error handling with erroneous input

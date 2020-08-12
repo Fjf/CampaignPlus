@@ -4,6 +4,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import {makeStyles} from "@material-ui/core/styles";
+
 import {characterCreationService} from "../../services/characterCreationService";
 
 const useStyles = makeStyles((theme) => ({
@@ -15,12 +16,13 @@ const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(2),
     },
 
+
 }));
 
-export default function RaceSelection(props) {
-    const [dndclasses, setClasses] = React.useState('')
+export default function classSelection(props) {
+    const [dndclasses, setClasses] = React.useState([])
     const classes = useStyles();
-    const [selectedClass, setSelectedClass] = React.useState(null)
+    const [selectedClass, setSelectedClass] = React.useState('')
 
 
     const handleChange = (event) => {
@@ -38,21 +40,24 @@ export default function RaceSelection(props) {
         })
     }
 
-    return <FormControl className={classes.formControl}>
-        <InputLabel id="race-simple-select-label">Class</InputLabel>
-        <Select
-            labelId="class-select-label"
-            id="class-select"
-            value={selectedClass}
-            onChange={handleChange}
-        >
-            {
-                classes.map((selectedClass, i) => {
-                    return <MenuItem key={i} value={selectedClass.name}>
-                        {selectedClass.name}
-                    </MenuItem>;
-                })
-            }
-        </Select>
-    </FormControl>;
+    return <>
+        <FormControl className={classes.formControl}>
+            <InputLabel id="class-simple-select-label">Class</InputLabel>
+            <Select
+                labelId="class-select-label"
+                id="class-select"
+                value={selectedClass}
+                onChange={handleChange}
+            >
+                {
+                    dndclasses.map((dndclass, i) => {
+                        return <MenuItem key={i} value={dndclass.name}>
+                            {dndclass.name}
+                        </MenuItem>;
+                    })
+                }
+            </Select>
+        </FormControl>
+
+    </>
 }
