@@ -56,4 +56,5 @@ import endpoints.logs  # noqa
 import endpoints.items  # noqa
 import endpoints.socket  # noqa
 import endpoints.race   # noqa
+import endpoints.dnd_class  # noqa
 
