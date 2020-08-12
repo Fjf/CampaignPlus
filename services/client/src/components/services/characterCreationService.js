@@ -21,6 +21,6 @@ function getClasses() {
         headers: {'Content-Type': 'text/html'},
     };
 
-    return fetch(`${apiUrl}/classes`, requestOptions) // TODO IMPLEMENT THIS ENDPOINT
+    return fetch(`${apiUrl}/classes`, requestOptions)
         .then(handleResponse);
 }
