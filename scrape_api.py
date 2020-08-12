@@ -148,6 +148,17 @@ def get_classes():
     db = request_session()
     for result in results["results"]:
         data = requests.get("https://www.dnd5eapi.co" + result["url"]).json()
+
+        eq = requests.get("https://www.dnd5eapi.co" + data["starting_equipment"]["url"]).json()
+        data["starting_equipment"] = clean_object(eq)
+
+        eq = requests.get("https://www.dnd5eapi.co" + data["class_levels"]["url"]).json()
+        data["class_levels"] = clean_object(eq)
+
+        if "spellcasting" in data:
+            eq = requests.get("https://www.dnd5eapi.co" + data["spellcasting"]["url"]).json()
+            data["spellcasting"] = clean_object(eq)
+
         clean_data = clean_object(data)
         del clean_data["index"]
         del clean_data["name"]

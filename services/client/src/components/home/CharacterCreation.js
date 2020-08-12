@@ -19,6 +19,8 @@ import ClassSelection from "./characterCreationComponents/ClassSelection";
 const useStyles = makeStyles((theme) => ({
     root: {
         width: '100%',
+        display: "flex",
+        flexDirection: "column",
     },
     backButton: {
         marginRight: theme.spacing(1),
@@ -44,7 +46,7 @@ export default function CharacterCreation(props) {
     const getStepContent = (stepIndex) => {
         switch (stepIndex) {
             case 0:
-                return <RaceSelection/>
+                return <RaceSelection/>;
             case 1:
                 return <ClassSelection/>;
             case 2:
@@ -54,8 +56,7 @@ export default function CharacterCreation(props) {
             default:
                 return 'Unknown stepIndex';
         }
-    }
-
+    };
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -78,29 +79,27 @@ export default function CharacterCreation(props) {
                     </Step>
                 ))}
             </Stepper>
-            <div>
-                {activeStep === steps.length ? (
-                    <div>
-                        <Typography className={classes.instructions}>All steps completed</Typography>
-                        <Button onClick={handleReset}>Reset</Button>
-                    </div>
-                ) : (
-                    <div>
-                        {getStepContent(activeStep)}
-                        <div>
-                            <Button
-                                disabled={activeStep === 0}
-                                onClick={handleBack}
-                                className={classes.backButton}
-                            >
-                                Back
-                            </Button>
-                            <Button variant="contained" color="primary" onClick={handleNext}>
-                                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                            </Button>
-                        </div>
-                    </div>
-                )}
+            {getStepContent(activeStep)}
+            <div style={{display: "flex", justifyContent: "end", padding: 8}}>
+            {activeStep === steps.length ? (
+                <>
+                    <Typography className={classes.instructions}>All steps completed</Typography>
+                    <Button onClick={handleReset}>Reset</Button>
+                </>
+            ) : (
+                <>
+                    <Button
+                        disabled={activeStep === 0}
+                        onClick={handleBack}
+                        className={classes.backButton}
+                    >
+                        Back
+                    </Button>
+                    <Button variant="contained" color="primary" onClick={handleNext}>
+                        {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                    </Button>
+                </>
+            )}
             </div>
         </div>
     </div>

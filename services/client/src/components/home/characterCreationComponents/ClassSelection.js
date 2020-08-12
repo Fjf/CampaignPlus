@@ -19,10 +19,11 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
+let stateStorage = null;
 export default function classSelection(props) {
-    const [dndclasses, setClasses] = React.useState([])
-    const classes = useStyles();
-    const [selectedClass, setSelectedClass] = React.useState('')
+    const [classes, setClasses] = React.useState([]);
+    const styles = useStyles();
+    const [selectedClass, setSelectedClass] = React.useState("");
 
 
     const handleChange = (event) => {
@@ -30,18 +31,28 @@ export default function classSelection(props) {
     };
 
     React.useEffect(() => {
-        getClasses();
+        if (stateStorage !== null) {
+            setClasses(stateStorage.classes);
+            setSelectedClass(stateStorage.classes.filter(e => {
+                return e.name === stateStorage.className
+            })[0]);
+        } else {
+            characterCreationService.getClasses().then(r => {
+                setClasses(r);
+            });
+        }
     }, []);
 
+    React.useEffect(() => {
+        stateStorage = {
+            classes: [...classes],
+            className: selectedClass === "" ? "" : selectedClass.name
+        }
+    }, [classes, selectedClass]);
 
-    function getClasses() {
-        characterCreationService.getClasses().then(r => {
-            setClasses(r);
-        })
-    }
 
     return <>
-        <FormControl className={classes.formControl}>
+        <FormControl className={styles.formControl}>
             <InputLabel id="class-simple-select-label">Class</InputLabel>
             <Select
                 labelId="class-select-label"
@@ -50,13 +61,18 @@ export default function classSelection(props) {
                 onChange={handleChange}
             >
                 {
-                    dndclasses.map((dndclass, i) => {
-                        return <MenuItem key={i} value={dndclass.name}>
-                            {dndclass.name}
+                    classes.map((cls, i) => {
+                        return <MenuItem key={i} value={cls}>
+                            {cls.name}
                         </MenuItem>;
                     })
                 }
             </Select>
+            {selectedClass === "" ? null :
+                <div>
+                    ashidoashdoihasdiohadsoi
+                    {JSON.stringify(selectedClass.name)}
+                </div>}
         </FormControl>
 
     </>

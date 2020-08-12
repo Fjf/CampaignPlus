@@ -1,4 +1,5 @@
 import React from "react";
+import ReactMarkdown from "react-markdown";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
@@ -17,6 +18,7 @@ import red from "@material-ui/core/colors/red";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import IconButton from "@material-ui/core/IconButton";
 import clsx from "clsx";
+import Grid from "@material-ui/core/Grid";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -29,7 +31,8 @@ const useStyles = makeStyles((theme) => ({
     },
 
     root: {
-        maxWidth: 345,
+        height: "100%",
+        overflowY: "auto"
     },
     media: {
         height: 0,
@@ -51,31 +54,34 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
+let stateStorage = null;
 export default function RaceSelection(props) {
-    const [races, setRaces] = React.useState([])
+    const [races, setRaces] = React.useState([]);
     const classes = useStyles();
-    const [race, setRace] = React.useState('');
-    const [expanded, setExpanded] = React.useState(false);
-
+    const [selectedRace, setSelectedRace] = React.useState("");
 
     const handleChange = (event) => {
-        setRace(event.target.value);
+        setSelectedRace(event.target.value);
     };
 
     React.useEffect(() => {
-        getRaces()
+        if (stateStorage !== null) {
+            console.log(stateStorage);
+            setRaces(stateStorage.races);
+            setSelectedRace(stateStorage.races.filter(e => {return e.name === stateStorage.raceName})[0]);
+        } else {
+            characterCreationService.getRaces().then(r => {
+                setRaces(r);
+            });
+        }
     }, []);
 
-
-    function getRaces() {
-        characterCreationService.getRaces().then(r => {
-            setRaces(r);
-        })
-    }
-
-    const handleExpandClick = () => {
-        setExpanded(!expanded);
-    };
+    React.useEffect(() => {
+        stateStorage = {
+            races: [...races],
+            raceName: selectedRace === "" ? "" : selectedRace.name
+        }
+    }, [races, selectedRace]);
 
     return <>
         <FormControl className={classes.formControl}>
@@ -83,10 +89,11 @@ export default function RaceSelection(props) {
             <Select
                 labelId="race-select-label"
                 id="race-select"
-                value={race}
+                value={selectedRace}
                 onChange={handleChange}
             >
                 {
+
                     races.map((race, i) => {
                         return <MenuItem key={i} value={race}>
                             {race.name}
@@ -96,72 +103,65 @@ export default function RaceSelection(props) {
                 }
             </Select>
         </FormControl>
-        {race === '' ?
-            <div/> :
-            <Card className={classes.root}>
-                <CardActionArea>
-                    <CardMedia
-                        className={classes.media}
-                        image="/static/images/races/dwarf.jpg"
-                        title={race.name}
-                    />
-                    <CardContent>
-                        <Typography gutterBottom variant="h5" component="h2">
-                            {race.name}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary" component="p">
-                            {race.desc}
-                        </Typography>
-                    </CardContent>
-                </CardActionArea>
-                <CardActions>
-                    <Button size="small" color="primary">
-                        Share
-                    </Button>
-                    <Button size="small" color="primary">
-                        Learn More
-                    </Button>
-                    <IconButton
-                        className={clsx(classes.expand, {
-                            [classes.expandOpen]: expanded,
-                        })}
-                        onClick={handleExpandClick}
-                        aria-expanded={expanded}
-                        aria-label="show more"
-                    >
-                        <ExpandMoreIcon/>
-                    </IconButton>
-                </CardActions>
-                <Collapse in={expanded} timeout="auto" unmountOnExit>
-                    <CardContent>
-                        <Typography paragraph>Method:</Typography>
-                        <Typography paragraph>
-                            Heat 1/2 cup of the broth in a pot until simmering, add saffron and set aside for 10
-                            minutes.
-                        </Typography>
-                        <Typography paragraph>
-                            Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over medium-high
-                            heat. Add chicken, shrimp and chorizo, and cook, stirring occasionally until lightly
-                            browned, 6 to 8 minutes. Transfer shrimp to a large plate and set aside, leaving chicken
-                            and chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes, onion, salt and
-                            pepper, and cook, stirring often until thickened and fragrant, about 10 minutes. Add
-                            saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-                        </Typography>
-                        <Typography paragraph>
-                            Add rice and stir very gently to distribute. Top with artichokes and peppers, and cook
-                            without stirring, until most of the liquid is absorbed, 15 to 18 minutes. Reduce heat to
-                            medium-low, add reserved shrimp and mussels, tucking them down into the rice, and cook
-                            again without stirring, until mussels have opened and rice is just tender, 5 to 7
-                            minutes more. (Discard any mussels that don’t open.)
-                        </Typography>
-                        <Typography>
-                            Set aside off of the heat to let rest for 10 minutes, and then serve.
-                        </Typography>
-                    </CardContent>
-                </Collapse>
-            </Card>
-
+        {selectedRace === "" ? null :
+            <Grid style={{flex: 1, display: "flex", minHeight: 0}} container spacing={1}>
+                <Grid item xs={3} className={classes.root}>
+                    <Card>
+                        <CardMedia
+                            className={classes.media}
+                            image="/static/images/races/dwarf.jpg"
+                            title={selectedRace.name}
+                        />
+                        <CardContent>
+                            <Typography gutterBottom variant="h5" component="h2">
+                                {selectedRace.name}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary" component="div">
+                                <ReactMarkdown source={selectedRace.desc}/>
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary" component="div">
+                                <ReactMarkdown source={selectedRace.traits}/>
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item xs={3} className={classes.root}>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="body2" color="textSecondary" component="div">
+                                <ReactMarkdown source={selectedRace.speed_desc}/>
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary" component="div">
+                                <ReactMarkdown source={selectedRace.age}/>
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item xs={3} className={classes.root}>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="body2" color="textSecondary" component="div">
+                                <ReactMarkdown source={selectedRace.alignment}/>
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary" component="div">
+                                <ReactMarkdown source={selectedRace.size}/>
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item xs={3} className={classes.root}>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="body2" color="textSecondary" component="div">
+                                <ReactMarkdown source={selectedRace.languages}/>
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary" component="div">
+                                <ReactMarkdown source={selectedRace.vision}/>
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
         }
-
     </>
 }
