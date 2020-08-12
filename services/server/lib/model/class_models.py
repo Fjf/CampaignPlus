@@ -1,3 +1,5 @@
+import json
+
 from sqlalchemy import Integer, Column, String, ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -20,12 +22,8 @@ class ClassModel(OrmModelBase):
     owner_id = Column(Integer(), ForeignKey(UserModel.id), nullable=True)
     owner = relationship("UserModel")
 
-    name = Column(String(), nullable=False)
-    hit_die = Column(Integer(), nullable=False)
-
-    table = Column(String(), nullable=True)
-
-    info = Column(String(), nullable=True)
+    name = Column(String())
+    data = Column(String())
 
     def __init__(self, owner: UserModel = None):
         if owner:
@@ -34,14 +32,11 @@ class ClassModel(OrmModelBase):
             self.owner_id = None
 
     def to_json(self):
-        return {
-            "id": self.id,
-            "owner_id": self.owner_id,
-            "hit_die": self.hit_die,
-            "table": self.table,
-            "name": self.name,
-            "info": self.info
-        }
+        data = json.loads(self.data)
+        data["name"] = self.name
+        data["id"] = self.id
+        data["owner_id"] = self.owner_id
+        return data
 
 
 class SubClassModel(OrmModelBase):

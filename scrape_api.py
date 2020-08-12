@@ -1,3 +1,4 @@
+import json
 import re
 
 import requests
@@ -128,17 +129,36 @@ def get_spells():
         repository.add_and_commit(spell_model)
 
 
+def clean_object(data):
+    if type(data) == list:
+        return [clean_object(entry) for entry in data]
+    elif type(data) == dict:
+        new_data = {}
+        for key in data.keys():
+            if key == "url" or key == "_id":
+                continue
+            new_data[key] = clean_object(data[key])
+        return new_data
+    else:
+        return data
+
+
 def get_classes():
-    result = requests.get("https://www.dnd5eapi.co/api/classes")
-    obj = result.json()
+    results = requests.get("https://www.dnd5eapi.co/api/classes").json()
+    db = request_session()
+    for result in results["results"]:
+        data = requests.get("https://www.dnd5eapi.co" + result["url"]).json()
+        clean_data = clean_object(data)
+        del clean_data["index"]
+        del clean_data["name"]
+        clean_data = json.dumps(clean_data)
 
-    print(obj)
-
-    for result in obj["results"]:
         class_model = ClassModel()
-        class_model.name = "pannekoek"
+        class_model.name = data["name"]
+        class_model.data = clean_data
 
-
+        db.add(class_model)
+    db.commit()
 
 def get_table():
     result = requests.get("http://api.open5e.com/classes/")
@@ -187,7 +207,6 @@ def get_races():
         repository.add_and_commit(racemodel)
 
         # TODO handle subraces, asi, asi_desc and traits better
-
 
 
 def main():
