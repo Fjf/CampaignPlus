@@ -7,61 +7,101 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import {characterCreationService} from "../services/characterCreationService";
 import ListSubheader from "@material-ui/core/ListSubheader";
-import Alignment from "../util/Alignment";
+import Stepper from '@material-ui/core/Stepper';
+import Step from '@material-ui/core/Step';
+import StepLabel from '@material-ui/core/StepLabel';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import RaceSelection from "./characterCreationComponents/RaceSelection";
+import ClassSelection from "./characterCreationComponents/ClassSelection";
 
 
 const useStyles = makeStyles((theme) => ({
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 120,
+    root: {
+        width: '100%',
     },
-    selectEmpty: {
-        marginTop: theme.spacing(2),
+    backButton: {
+        marginRight: theme.spacing(1),
+    },
+    instructions: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
     },
 }));
 
+function getSteps() {
+    return ['Race', 'Class', 'Skills', 'Equipment'];
+}
+
+
 export default function CharacterCreation(props) {
     const user = props.user
-    const [races, setRaces] = React.useState([])
 
+    const [activeStep, setActiveStep] = React.useState(0);
+    const steps = getSteps()
     const classes = useStyles();
-    const [race, setRace] = React.useState('');
 
-    const handleChange = (event) => {
-        console.log(event.target.value);
-        setRace(event.target.value);
-    };
-
-    React.useEffect(() => {
-        getRaces()
-    }, []);
-
-    function getRaces() {
-        characterCreationService.getRaces().then(r => {
-            setRaces(r);
-        })
+    const getStepContent = (stepIndex) => {
+        switch (stepIndex) {
+            case 0:
+                return <RaceSelection/>
+            case 1:
+                return <ClassSelection/>;
+            case 2:
+                return 'This is where your skills are selected';
+            case 3:
+                return 'This is where the equipment is selected';
+            default:
+                return 'Unknown stepIndex';
+        }
     }
 
-    console.log(races)
+
+    const handleNext = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    };
+
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
+
+    const handleReset = () => {
+        setActiveStep(0);
+    };
 
     return <div className={"main-content"}>
-        <FormControl className={classes.formControl}>
-            <InputLabel id="race-simple-select-label">Race</InputLabel>
-            <Select
-                labelId="race-select-label"
-                id="race-select"
-                value={race}
-                onChange={handleChange}
-            >
-                {
-                    races.map((race, i) => {
-                        return <MenuItem key={i} value={race.name}>
-                            {race.name}
-                        </MenuItem>;
-
-                    })
-                }
-            </Select>
-        </FormControl>
+        <div className={classes.root}>
+            <Stepper activeStep={activeStep} alternativeLabel>
+                {steps.map((label) => (
+                    <Step key={label}>
+                        <StepLabel>{label}</StepLabel>
+                    </Step>
+                ))}
+            </Stepper>
+            <div>
+                {activeStep === steps.length ? (
+                    <div>
+                        <Typography className={classes.instructions}>All steps completed</Typography>
+                        <Button onClick={handleReset}>Reset</Button>
+                    </div>
+                ) : (
+                    <div>
+                        {getStepContent(activeStep)}
+                        <div>
+                            <Button
+                                disabled={activeStep === 0}
+                                onClick={handleBack}
+                                className={classes.backButton}
+                            >
+                                Back
+                            </Button>
+                            <Button variant="contained" color="primary" onClick={handleNext}>
+                                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                            </Button>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
     </div>
 }
