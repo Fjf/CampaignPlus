@@ -26,6 +26,7 @@
     "sass-loader": "^9.0.2",
     "socket.io-client": "^2.3.0",
     "style-loader": "^1.2.1",
+    "typeface-roboto": "0.0.75",
     "webpack-cli": "^3.3.12"
   },
   "devDependencies": {
