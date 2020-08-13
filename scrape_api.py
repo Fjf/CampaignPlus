@@ -64,8 +64,6 @@ def get_equipment():
         elif item_model.category == "Weapon":
             weapon_model = WeaponModel(item_model)
 
-            weapon_model.category_range = item.get("category_range")
-
             weapon_model.properties = ", ".join(prop["name"] for prop in list(item.get("properties", [])))
 
             # Not all items have all sub-JSON objects, so continue with the next item if that is the case.

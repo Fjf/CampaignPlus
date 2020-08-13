@@ -78,8 +78,8 @@ export default function RaceSelection(props) {
             </Select>
         </FormControl>
         {selectedRace === "" ? null :
-            <Grid container spacing={1} style={{flex: 1, display: "flex", minHeight: 0}}>
-                <Grid item xs={3} className={classes.root}>
+            <Grid container spacing={1} className={"card-container"}>
+                <Grid item xs={3} className={"creation-card"}>
                     <Card>
                         <CardMedia
                             className={classes.media}
@@ -99,7 +99,7 @@ export default function RaceSelection(props) {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={3} className={classes.root}>
+                <Grid item xs={3} className={"creation-card"}>
                     <Card>
                         <CardContent>
                             <Typography variant="body2" color="textSecondary" component="div">
@@ -111,7 +111,7 @@ export default function RaceSelection(props) {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={3} className={classes.root}>
+                <Grid item xs={3} className={"creation-card"}>
                     <Card>
                         <CardContent>
                             <Typography variant="body2" color="textSecondary" component="div">
@@ -123,7 +123,7 @@ export default function RaceSelection(props) {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={3} className={classes.root}>
+                <Grid item xs={3} className={"creation-card"}>
                     <Card>
                         <CardContent>
                             <Typography variant="body2" color="textSecondary" component="div">

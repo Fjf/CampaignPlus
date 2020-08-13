@@ -144,6 +144,9 @@ export default function CharacterInventory(props) {
             }}
             onSelect={(item) => {
                 setInventory([...inventory, item]);
+                characterService.addItem(props.character.id, item.id).then(r => {
+                    console.log("Saved item successfully.");
+                });
             }}
         />}
     </>

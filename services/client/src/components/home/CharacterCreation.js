@@ -14,6 +14,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import RaceSelection from "./characterCreationComponents/RaceSelection";
 import ClassSelection from "./characterCreationComponents/ClassSelection";
+import ItemsList from "./characterComponents/ItemsList";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -21,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
         display: "flex",
         flexDirection: "column",
+        padding: 8
     },
     backButton: {
         marginRight: theme.spacing(1),
@@ -33,7 +35,6 @@ const useStyles = makeStyles((theme) => ({
 
 
 const blankCharacter = {race: "", cls: "", skills: {}, equipment: {}};
-
 export default function CharacterCreation(props) {
     const user = props.user;
 
@@ -92,7 +93,10 @@ export default function CharacterCreation(props) {
                 ))}
             </Stepper>
             <div style={{
-                padding: 8
+                padding: 8,
+                display: "flex",
+                flexDirection: "column",
+                minHeight: 0
             }}>{getStepContent(activeStep)}</div>
             <div style={{display: "flex", justifyContent: "end"}}>
                 {activeStep === steps.length ? (

@@ -3,6 +3,7 @@
 .creation-card {
   height: 100%;
   overflow-y: scroll;
+  margin-bottom: 8px;
 
   @extend .disable-scrollbars;
 }
