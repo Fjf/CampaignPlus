@@ -31,24 +31,36 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function getSteps() {
-    return ['Race', 'Class', 'Skills', 'Equipment'];
-}
 
+const blankCharacter = {race: "", cls: "", skills: {}, equipment: {}};
 
 export default function CharacterCreation(props) {
-    const user = props.user
+    const user = props.user;
 
     const [activeStep, setActiveStep] = React.useState(0);
-    const steps = getSteps()
+    const [character, setCharacter] = React.useState(blankCharacter);
+
+    function getSteps() {
+        return [
+            `Race ${character.race === "" ? "" : character.race.name}`,
+            `Class ${character.cls === "" ? "" : character.cls.name}`,
+            "Skills",
+            "Equipment"]
+    }
+
+    const steps = getSteps();
     const classes = useStyles();
 
     const getStepContent = (stepIndex) => {
         switch (stepIndex) {
             case 0:
-                return <RaceSelection/>;
+                return <RaceSelection
+                    race={character.race}
+                    setRace={(race) => setCharacter({...character, race: race})}/>;
             case 1:
-                return <ClassSelection/>;
+                return <ClassSelection
+                    cls={character.cls}
+                    setClass={(cls) => setCharacter({...character, cls: cls})}/>;
             case 2:
                 return 'This is where your skills are selected';
             case 3:
@@ -79,27 +91,29 @@ export default function CharacterCreation(props) {
                     </Step>
                 ))}
             </Stepper>
-            {getStepContent(activeStep)}
-            <div style={{display: "flex", justifyContent: "end", padding: 8}}>
-            {activeStep === steps.length ? (
-                <>
-                    <Typography className={classes.instructions}>All steps completed</Typography>
-                    <Button onClick={handleReset}>Reset</Button>
-                </>
-            ) : (
-                <>
-                    <Button
-                        disabled={activeStep === 0}
-                        onClick={handleBack}
-                        className={classes.backButton}
-                    >
-                        Back
-                    </Button>
-                    <Button variant="contained" color="primary" onClick={handleNext}>
-                        {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                    </Button>
-                </>
-            )}
+            <div style={{
+                padding: 8
+            }}>{getStepContent(activeStep)}</div>
+            <div style={{display: "flex", justifyContent: "end"}}>
+                {activeStep === steps.length ? (
+                    <>
+                        <Typography className={classes.instructions}>All steps completed</Typography>
+                        <Button onClick={handleReset}>Reset</Button>
+                    </>
+                ) : (
+                    <>
+                        <Button
+                            disabled={activeStep === 0}
+                            onClick={handleBack}
+                            className={classes.backButton}
+                        >
+                            Back
+                        </Button>
+                        <Button variant="contained" color="primary" onClick={handleNext}>
+                            {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                        </Button>
+                    </>
+                )}
             </div>
         </div>
     </div>
