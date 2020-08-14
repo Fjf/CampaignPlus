@@ -23,9 +23,10 @@ class ClassModel(OrmModelBase):
     name = Column(String(), nullable=False)
     hit_die = Column(Integer(), nullable=False)
 
-    table = Column(String(), nullable=True)
+    standard_proficiencies = Column(String())
+    extra_proficiencies = Column(String())
+    extra_proficiencies_amount = Column(Integer(), nullable=False)
 
-    info = Column(String(), nullable=True)
 
     def __init__(self, owner: UserModel = None):
         if owner:

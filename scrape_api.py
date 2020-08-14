@@ -128,18 +128,6 @@ def get_spells():
         repository.add_and_commit(spell_model)
 
 
-def get_classes():
-    result = requests.get("https://www.dnd5eapi.co/api/classes")
-    obj = result.json()
-
-    print(obj)
-
-    for result in obj["results"]:
-        class_model = ClassModel()
-        class_model.name = "pannekoek"
-
-
-
 def get_table():
     result = requests.get("http://api.open5e.com/classes/")
     obj = result.json()
@@ -189,13 +177,43 @@ def get_races():
         # TODO handle subraces, asi, asi_desc and traits better
 
 
+def get_backgrounds():
+    result = requests.get("https://api.open5e.com/backgrounds/")
+    obj = result.json()
+
+    for result in obj["results"]:
+        name = result.get("name")
+        desc = result.get("desc")
+        skills = result.get("skill_proficiencies")
+        tools = result.get("tool_proficiencies")
+        feature = result.get("feature")
+        feature_desc = result.get("feature_desc")
+
+
+def get_classes():
+    result = requests.get("https://www.dnd5eapi.co/api/classes")
+    obj = result.json()
+
+    for result in obj["results"][0:1]:
+        class_model = ClassModel()
+
+        class_model.name = result.get("name")
+        class_model.hit_die = result.get("hit_die")
+
+        cls = requests.get("http://www.dnd5eapi.co" + result["url"]).json()
+        class_model.standard_proficiencies = ", ".join(profs["name"] for profs in cls["proficiencies"])
+
+        class_model.extra_proficiencies_amount = cls["proficiency_choices"]["choose"]
+        print(class_model.extra_proficiencies_amount)
+
 
 def main():
     # get_equipment()
     # get_spells()
-    get_classes()
+    #get_classes()
     # get_table()
     # get_races()
+    get_backgrounds()
     pass
 
 
