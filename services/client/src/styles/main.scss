@@ -49,40 +49,6 @@ h3 {
   flex-direction: row;
 }
 
-.left-content-bar {
-  flex: 1;
-  height: 100%;
-  box-sizing: border-box;
-
-  background-color: lighten($primary, 20%);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-
-  & > * {
-      padding: 8px;
-  }
-}
-
-.right-content-bar {
-  background-color: lighten($primary, 30%);
-  width: 33%;
-  position: absolute;
-  right: 0;
-  text-align: end;
-  align-content: end;
-  z-index: 1;
-
-  transition: right .4s cubic-bezier(0.820, 0.085, 0.395, 0.895);
-
-  @extend .left-content-bar;
-}
-
-.right-content-bar-invisible {
-  right: -33%;
-}
-
-
 .campaign-list-entry {
   height: 30px;
   font-size: 16px;

@@ -636,7 +636,6 @@ class WeaponModel(OrmModelBase):
     throw_range_long = Column(Integer(), nullable=True)
 
     properties = Column(String(), nullable=True)
-    category_range = Column(String(), nullable=True)
 
     def __init__(self, item):
         self.item_id = item.id
@@ -657,7 +656,6 @@ class WeaponModel(OrmModelBase):
             },
             "throw_range": throw_range,
             "properties": self.properties,
-            "category_range": self.category_range
         }
 
 

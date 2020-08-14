@@ -6,6 +6,7 @@ import {Route, BrowserRouter, Switch} from "react-router-dom";
 import Home from "./home/Home";
 import Profile from "./home/Profile"
 import {userService} from "./services/userService";
+require('typeface-roboto');
 
 export default function App(props) {
 

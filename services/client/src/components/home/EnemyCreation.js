@@ -4,8 +4,8 @@ import {dataService} from "../services/dataService";
 import "../../styles/enemy.scss"
 import TextField from "@material-ui/core/TextField";
 import {FaPlusCircle, FaTrash, MdCreate, MdSave} from "react-icons/all";
-import EnemyAbilityList from "./EnemyComponents/EnemyAbilityList";
-import EnemyList from "./EnemyComponents/EnemyList";
+import EnemyAbilityList from "./enemyComponents/EnemyAbilityList";
+import EnemyList from "./enemyComponents/EnemyList";
 
 
 export default function EnemyCreation(props) {

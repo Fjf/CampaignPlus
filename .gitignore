@@ -2,7 +2,6 @@ env/*
 .idea/*
 *.pyc
 *.db
-*.jpg
 *.dump
 *.exe
 !services/server/views/static/images/base/*

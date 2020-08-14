@@ -20,11 +20,13 @@
     "react-file-drop": "^3.0.7",
     "react-hexgrid": "^1.0.3",
     "react-icons": "^3.10.0",
+    "react-markdown": "^4.3.1",
     "react-router-dom": "^5.2.0",
     "sass": "^1.26.10",
     "sass-loader": "^9.0.2",
     "socket.io-client": "^2.3.0",
     "style-loader": "^1.2.1",
+    "typeface-roboto": "0.0.75",
     "webpack-cli": "^3.3.12"
   },
   "devDependencies": {

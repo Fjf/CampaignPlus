@@ -1,3 +1,4 @@
+import json
 import re
 
 import requests
@@ -63,8 +64,6 @@ def get_equipment():
         elif item_model.category == "Weapon":
             weapon_model = WeaponModel(item_model)
 
-            weapon_model.category_range = item.get("category_range")
-
             weapon_model.properties = ", ".join(prop["name"] for prop in list(item.get("properties", [])))
 
             # Not all items have all sub-JSON objects, so continue with the next item if that is the case.
@@ -128,6 +127,48 @@ def get_spells():
         repository.add_and_commit(spell_model)
 
 
+def clean_object(data):
+    if type(data) == list:
+        return [clean_object(entry) for entry in data]
+    elif type(data) == dict:
+        new_data = {}
+        for key in data.keys():
+            if key == "url" or key == "_id":
+                continue
+            new_data[key] = clean_object(data[key])
+        return new_data
+    else:
+        return data
+
+
+def get_classes():
+    results = requests.get("https://www.dnd5eapi.co/api/classes").json()
+    db = request_session()
+    for result in results["results"]:
+        data = requests.get("https://www.dnd5eapi.co" + result["url"]).json()
+
+        eq = requests.get("https://www.dnd5eapi.co" + data["starting_equipment"]["url"]).json()
+        data["starting_equipment"] = clean_object(eq)
+
+        eq = requests.get("https://www.dnd5eapi.co" + data["class_levels"]["url"]).json()
+        data["class_levels"] = clean_object(eq)
+
+        if "spellcasting" in data:
+            eq = requests.get("https://www.dnd5eapi.co" + data["spellcasting"]["url"]).json()
+            data["spellcasting"] = clean_object(eq)
+
+        clean_data = clean_object(data)
+        del clean_data["index"]
+        del clean_data["name"]
+        clean_data = json.dumps(clean_data)
+
+        class_model = ClassModel()
+        class_model.name = data["name"]
+        class_model.data = clean_data
+
+        db.add(class_model)
+    db.commit()
+
 def get_table():
     result = requests.get("http://api.open5e.com/classes/")
     obj = result.json()
@@ -189,22 +230,6 @@ def get_backgrounds():
         feature = result.get("feature")
         feature_desc = result.get("feature_desc")
 
-
-def get_classes():
-    result = requests.get("https://www.dnd5eapi.co/api/classes")
-    obj = result.json()
-
-    for result in obj["results"][0:1]:
-        class_model = ClassModel()
-
-        class_model.name = result.get("name")
-        class_model.hit_die = result.get("hit_die")
-
-        cls = requests.get("http://www.dnd5eapi.co" + result["url"]).json()
-        class_model.standard_proficiencies = ", ".join(profs["name"] for profs in cls["proficiencies"])
-
-        class_model.extra_proficiencies_amount = cls["proficiency_choices"]["choose"]
-        print(class_model.extra_proficiencies_amount)
 
 
 def main():

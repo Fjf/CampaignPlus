@@ -1,0 +1,10 @@
+
+
+.alignment-container {
+  width: 520px;
+  height: 140px;
+
+  & > * > * > * {
+    width: 100%;
+  }
+}
