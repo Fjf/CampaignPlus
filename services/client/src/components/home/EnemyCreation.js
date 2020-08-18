@@ -30,7 +30,7 @@ export default function EnemyCreation(props) {
 
 
 
-    function openEditEnemy(enemy) {
+        function openEditEnemy(enemy) {
         dataService.getAbilities(enemy.id).then(r => {
             console.log(r);
             setSelectedEnemy({

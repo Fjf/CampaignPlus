@@ -886,3 +886,37 @@ class RaceModel(OrmModelBase):
             "vision": self.vision,
             "traits": self.traits
         }
+
+
+class BackgroundModel(OrmModelBase):
+    __tablename__ = 'background'
+    id = Column(Integer(), primary_key=True)
+    name = Column(String(), nullable=False)
+
+    owner_id = Column(Integer(), ForeignKey(UserModel.id), nullable=True)
+    owner = relationship("UserModel")
+
+    desc = Column(String())
+    skills = Column(String())
+    tools = Column(String())
+    languages = Column(String())
+    equipment = Column(String())
+    feature = Column(String())
+    feature_desc = Column(String())
+    extra = Column(String())
+
+    def __init__(self, name) -> None:
+        self.name = name
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "desc": self.desc,
+            "skills": self.skills,
+            "tools": self.tools,
+            "languages": self.languages,
+            "equipment": self.equipment,
+            "feature": self.feature,
+            "feature_desc": self.feature_desc,
+        }

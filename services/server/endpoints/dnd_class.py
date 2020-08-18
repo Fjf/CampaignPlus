@@ -1,5 +1,6 @@
 from endpoints import api, json_api, require_login
 from lib.repository import class_repository
+from lib.service import background_service
 
 
 @api.route('/classes', methods=["GET"])
@@ -25,5 +26,12 @@ def get_class_by_id(class_id):
     cls = class_repository.get_class_by_id(class_id)
     return cls.to_json()
 
+
+@api.route('/backgrounds', methods=["GET"])
+@json_api()
+@require_login()
+def get_backgrounds():
+    backgrounds = background_service.get_backgrounds()
+    return [background.to_json() for background in backgrounds]
 
 

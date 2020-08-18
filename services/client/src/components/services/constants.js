@@ -3,11 +3,12 @@ export const apiUrl = "/api"; // Change this
 
 export function handleResponse(response) {
     return response.text().then(text => {
+        let result = JSON.parse(text);
         if (!response.ok) {
-            let error = `${response.statusText}: ${text}`;
+            let error = `${response.statusText}: ${result.message}`;
             return Promise.reject(error);
         }
-        return text && JSON.parse(text);
+        return result;
     });
 }
 

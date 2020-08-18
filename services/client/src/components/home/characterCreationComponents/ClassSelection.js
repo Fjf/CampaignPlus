@@ -183,9 +183,7 @@ export default function classSelection(props) {
                             <Typography color="textSecondary" variant="h6"
                                         component="h2">Fixed Proficiencies</Typography>
                             <Typography component={"span"} color="textSecondary">
-                                {selectedClass.proficiencies.map((choice, i) => {
-                                    return <div key={i}>{choice.name}</div>
-                                })}
+                                {selectedClass.proficiencies.map(e => {return e.name}).join(", ")}
                             </Typography>
                         </CardContent>
                     </Card>

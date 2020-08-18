@@ -21,7 +21,7 @@ export default function Login(props) {
         if (password === "") {
             e.password = "Please fill in a password.";
         }
-
+        console.log(username, password)
         setErrors(e);
         if (!Object.values(e).every(i => i === null)) return;
 
@@ -32,20 +32,22 @@ export default function Login(props) {
             console.log("Error:", error);
             if (error.toLowerCase().includes("password")) {
                 setErrors({
-                        ...errors,
-                        password: error
-                    })
+                    ...errors,
+                    password: error
+                })
             }
             if (error.toLowerCase().includes("username")) {
                 setErrors({
-                        ...errors,
-                        username: error
-                    })
+                    ...errors,
+                    username: error
+                })
             }
         });
     }
 
-    return <div className={"authenticationInput"}>
+
+
+    return <form className={"authenticationInput"} onSubmit={handleLogin} action='#'>
         <h3>Login</h3>
 
         <TextField
@@ -78,9 +80,9 @@ export default function Login(props) {
             error={errors.password !== null}
             helperText={errors.password}
         />
-        <Button
+        <Button type="submit"
             onClick={handleLogin}
         >Submit</Button>
-    </div>
+    </form>
 }
 

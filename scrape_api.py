@@ -5,7 +5,7 @@ import requests
 
 from lib.database import request_session
 from lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel
-from lib.model.models import ItemModel, WeaponModel, SpellModel, ArmorModel, RaceModel
+from lib.model.models import ItemModel, WeaponModel, SpellModel, ArmorModel, RaceModel, BackgroundModel
 from lib.repository import player_repository, repository
 from services.server import app
 
@@ -221,15 +221,21 @@ def get_races():
 def get_backgrounds():
     result = requests.get("https://api.open5e.com/backgrounds/")
     obj = result.json()
+    db = request_session()
 
     for result in obj["results"]:
-        name = result.get("name")
-        desc = result.get("desc")
-        skills = result.get("skill_proficiencies")
-        tools = result.get("tool_proficiencies")
-        feature = result.get("feature")
-        feature_desc = result.get("feature_desc")
+        background_model = BackgroundModel(result.get("name"))
 
+        background_model.desc = result.get("desc")
+        background_model.skills = result.get("skill_proficiencies")
+        background_model.tools = result.get("tool_proficiencies")
+        background_model.languages = result.get("languages")
+        background_model.equipment = result.get("equipment")
+        background_model.feature = result.get("feature")
+        background_model.feature_desc = result.get("feature_desc")
+
+        db.add(background_model)
+    db.commit()
 
 
 def main():

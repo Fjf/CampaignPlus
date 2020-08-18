@@ -1,12 +1,5 @@
 import React from "react";
 import {makeStyles} from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import {characterCreationService} from "../services/characterCreationService";
-import ListSubheader from "@material-ui/core/ListSubheader";
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -14,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import RaceSelection from "./characterCreationComponents/RaceSelection";
 import ClassSelection from "./characterCreationComponents/ClassSelection";
-import ItemsList from "./characterComponents/ItemsList";
+import BackgroundSelection from "./characterCreationComponents/BackgroundSelection";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -22,7 +15,6 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
         display: "flex",
         flexDirection: "column",
-        padding: 8
     },
     backButton: {
         marginRight: theme.spacing(1),
@@ -34,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const blankCharacter = {race: "", cls: "", skills: {}, equipment: {}};
+const blankCharacter = {race: "", cls: "", background: "", equipment: {}};
 export default function CharacterCreation(props) {
     const user = props.user;
 
@@ -43,10 +35,11 @@ export default function CharacterCreation(props) {
 
     function getSteps() {
         return [
-            `Race ${character.race === "" ? "" : character.race.name}`,
-            `Class ${character.cls === "" ? "" : character.cls.name}`,
-            "Skills",
-            "Equipment"]
+            character.race === "" ? "Race" : character.race.name,
+            character.cls === "" ? "Class" : character.cls.name,
+            character.background === "" ? "Background" : character.background.name,
+            "Equipment"
+        ]
     }
 
     const steps = getSteps();
@@ -63,7 +56,9 @@ export default function CharacterCreation(props) {
                     cls={character.cls}
                     setClass={(cls) => setCharacter({...character, cls: cls})}/>;
             case 2:
-                return 'This is where your skills are selected';
+                return <BackgroundSelection
+                    background={character.background}
+                    setBackground={(background) => setCharacter({...character, background: background})}/>;
             case 3:
                 return 'This is where the equipment is selected';
             default:
@@ -98,7 +93,7 @@ export default function CharacterCreation(props) {
                 flexDirection: "column",
                 minHeight: 0
             }}>{getStepContent(activeStep)}</div>
-            <div style={{display: "flex", justifyContent: "end"}}>
+            <div style={{display: "flex", justifyContent: "end", padding: 8}}>
                 {activeStep === steps.length ? (
                     <>
                         <Typography className={classes.instructions}>All steps completed</Typography>

@@ -2,8 +2,14 @@ import React from "react";
 import {FileDrop} from 'react-file-drop';
 import {dataService} from "../services/dataService";
 import {IconButton, TextField, TextareaAutosize} from "@material-ui/core"
-import {BsTrash, BsUpload, FaArrowLeft, FaPlusCircle} from "react-icons/all"
+import {BsTrash, BsUpload, FaArrowLeft, FaPlusCircle, MdCreate, MdSave} from "react-icons/all"
 import {campaignService} from "../services/campaignService";
+import ReactMarkdown from "react-markdown";
+import Paper from "@material-ui/core/Paper";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
+import makeStyles from "@material-ui/core/styles/makeStyles";
+
 
 function distance(p1, p2) {
     return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
@@ -30,14 +36,14 @@ function clamp(d, l, u) {
 function Icons() {
     let _icons = {};
     let _filenames = ["position-marker"];
-    this.load = function() {
+    this.load = function () {
         _filenames.forEach(name => {
             _icons[name] = new Image();
             _icons[name].src = `/static/images/icons/${name}.png`;
         })
     };
 
-    this.get = function(name) {
+    this.get = function (name) {
         return _icons[name];
     };
 }
@@ -100,7 +106,7 @@ function Map(c) {
         overwriteVisibleMap(newMap);
     }
 
-    this.forceUpdate = function(newMap) {
+    this.forceUpdate = function (newMap) {
         visibleMap = newMap;
 
         let parent = visibleMap.parent;
@@ -127,17 +133,17 @@ function Map(c) {
         }
     }
 
-    this.setOverwriteVisibleMap = function(newMap) {
+    this.setOverwriteVisibleMap = function (newMap) {
         overwriteVisibleMap(newMap)
     };
 
-    this.setOnMapChange = function(f) {
+    this.setOnMapChange = function (f) {
         onMapChange = f;
     };
 
     let maps = null;
     let visibleMap = null;
-    this.setMap = function(new_map) {
+    this.setMap = function (new_map) {
         console.log(new_map);
         maps = new_map;
         setVisibleMap(new_map);
@@ -148,8 +154,9 @@ function Map(c) {
         hoverMarker = h
     };
 
-    this.render = function() {
+    this.render = function () {
         if (visibleMap === null) return;
+        if (visibleMap.image === undefined) return;
 
         // Take into account window resizes.
         c.width = c.offsetWidth;
@@ -207,7 +214,7 @@ function Map(c) {
         }
     };
 
-    this.onMouseScroll = function(event) {
+    this.onMouseScroll = function (event) {
         if (visibleMap === null) return;
 
         let diff = (event.deltaY * 0.02) * zoom;
@@ -226,7 +233,7 @@ function Map(c) {
         event.preventDefault();
     };
 
-    this.onMouseDown = function(event) {
+    this.onMouseDown = function (event) {
         if (visibleMap === null) return;
         if (event.button === 2 && hoverMarker !== null) {
             hoverMarker = null;
@@ -238,7 +245,7 @@ function Map(c) {
         previousMousePosition = {x: event.x, y: event.y};
     };
 
-    this.onMouseUp = function(event) {
+    this.onMouseUp = function (event) {
         if (visibleMap === null) return;
         isMousedown = isMoving = false;
 
@@ -268,7 +275,7 @@ function Map(c) {
     };
 
 
-    this.onMouseMove = function(event) {
+    this.onMouseMove = function (event) {
         if (visibleMap === null) return;
         if (isMoving ||
             (distance(mouseDownPosition, event) > moveThreshold && isMousedown)
@@ -294,11 +301,11 @@ function Map(c) {
         }
     };
 
-    this.hasParent = function() {
+    this.hasParent = function () {
         return visibleMap !== null && visibleMap.parent_map_id !== null;
     };
 
-    this.toParent = function() {
+    this.toParent = function () {
         if (this.hasParent()) {
             visibleMap = visibleMap.parent;
             zoom = visibleMap.zoom;
@@ -309,7 +316,7 @@ function Map(c) {
             onMapChange(visibleMap);
         }
     };
-    this.setHover = function(actualChild, b) {
+    this.setHover = function (actualChild, b) {
         for (let i = 0; i < visibleMap.children.length; i++) {
             if (visibleMap.children[i].id === actualChild.id) {
                 visibleMap.children[i].bhover = b;
@@ -317,7 +324,7 @@ function Map(c) {
         }
     };
 
-    this.onKeyDown = function(event) {
+    this.onKeyDown = function (event) {
         if (event.key === "Escape" && hoverMarker !== null) hoverMarker = null;
     };
 
@@ -329,6 +336,8 @@ icons.load();
 
 export default function MapWidget(props) {
     const [campaign, setCampaign] = React.useState(null);
+    const [isEditing, setIsEditing] = React.useState(false);
+    const [message, setMessage] = React.useState(null);
     const [selectedMap, setSelectedMap] = React.useState({
         name: "",
         story: "",
@@ -360,7 +369,12 @@ export default function MapWidget(props) {
 
         let interval = setInterval(map.render, 1000 / 60);
         return () => {
-            clearInterval(interval)
+            clearInterval(interval);
+            canvas.removeEventListener("mousedown", map.onMouseDown);
+            document.removeEventListener("mouseup", map.onMouseUp);
+            document.removeEventListener("mousemove", map.onMouseMove);
+            document.removeEventListener("keydown", map.onKeyDown);
+            canvas.removeEventListener("wheel", map.onMouseScroll);
         }
     }, []);
 
@@ -379,7 +393,7 @@ export default function MapWidget(props) {
         }
 
         const reader = new FileReader();
-        reader.addEventListener("load", function() {
+        reader.addEventListener("load", function () {
             selectedMap.image.src = reader.result;
             map.forceUpdate(selectedMap);
         }, false);
@@ -395,8 +409,13 @@ export default function MapWidget(props) {
         dataService.alterMap(selectedMap.id, {
             name: selectedMap.name,
             story: selectedMap.story
-        }).then(r => { /* Upload successful. */
-        });
+        }).then(r => {
+                setMessage(<Alert severity="success">Saved Map Information!</Alert>)
+            },
+            e => {
+                console.log(e);
+                setMessage(<Alert severity="error">{e}</Alert>)
+            });
         map.forceUpdate(selectedMap);
     }
 
@@ -457,8 +476,15 @@ export default function MapWidget(props) {
                     ...selectedMap,
                     name: e.target.value
                 })}/>
-            <b>Additional Information</b>
-            <TextareaAutosize
+            <div className={"basic-list-entry"}>
+                <div className={"icon-bar"}>
+                    <IconButton size={"small"} onClick={() => setIsEditing(!isEditing)}>
+                        {isEditing ? <MdSave/> : <MdCreate/>}
+                    </IconButton>
+                </div>
+                <b>Additional Information</b>
+            </div>
+            {isEditing ? <TextareaAutosize
                 rowsMin={5}
                 label={"Additional Information"}
                 value={selectedMap.story}
@@ -466,7 +492,7 @@ export default function MapWidget(props) {
                     ...selectedMap,
                     story: e.target.value
                 })}
-            />
+            /> : <Paper style={{margin: 4}}><ReactMarkdown source={selectedMap.story}/></Paper>}
             <b>Children</b>
             {
                 selectedMap.children.map((child, i) => {
@@ -488,6 +514,10 @@ export default function MapWidget(props) {
                     Drop an image here to overwrite the current map.
                 </FileDrop>
             </div>
+        </div>
+
+        <div>
+            <Snackbar open={message !== null} autoHideDuration={100000} onClose={() => setMessage(null)} message={message} style={{padding: 0, margin: 0}}/>
         </div>
     </>
 }
