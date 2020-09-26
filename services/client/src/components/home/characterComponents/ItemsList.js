@@ -6,6 +6,9 @@ import {MdClose} from "react-icons/all";
 import {toggleRightContentBar} from "../../services/constants";
 
 let itemStorage = null;
+ItemsList.defaultProps = {
+    closeOnSelect: false
+};
 
 function ItemsList(props) {
     const [query, setQuery] = React.useState("");
@@ -28,7 +31,7 @@ function ItemsList(props) {
 
     React.useEffect(() => {
         let fItems = items;
-        if (typeof(props.filter) === "function") {
+        if (typeof (props.filter) === "function") {
             fItems = fItems.filter(props.filter);
         }
         setFilteredItems(fItems.filter((val) => val.name.toLowerCase().includes(query.toLowerCase())));
@@ -51,7 +54,7 @@ function ItemsList(props) {
             {filteredItems.map((item, i) => {
                 return <div key={i} onClick={() => {
                     props.onSelect(item);
-
+                    if (props.closeOnSelect) toggleRightContentBar(bar, props.onClose);
                 }}>
                     <div>{item.name}</div>
                     <div>{item.value}</div>

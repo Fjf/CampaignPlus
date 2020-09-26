@@ -12,6 +12,7 @@ import MapWidget from "./MapWidget";
 import {dataService} from "../services/dataService";
 import DiceRoller from "../DiceRoller";
 import Encounter from "./Encounter";
+import BattleMap from "../battlemap/BattleMap";
 
 export default function Home(props) {
     const [campaigns, setCampaigns] = React.useState([]);
@@ -35,6 +36,9 @@ export default function Home(props) {
                 </Link>
                 <Link to="/maps">
                     <div>Maps</div>
+                </Link>
+                <Link to="/battle_map">
+                    <div>Battle Map</div>
                 </Link>
                 <Link to="/enemies">
                     <div>Enemies</div>
@@ -68,7 +72,10 @@ export default function Home(props) {
                     <EnemyCreation campaigns={campaigns}/>
                 </Route>
                 <Route exact path={"/maps"}>
-                    <MapWidget campaigns={campaigns}/>
+                    <MapWidget campaigns={campaigns} widget={Map}/>
+                </Route>
+                <Route exact path={"/battle_map"}>
+                    <BattleMap/>
                 </Route>
                 <Route exact path={"/profile"}>
                     <Profile user={user}/>

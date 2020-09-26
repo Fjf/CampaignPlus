@@ -55,7 +55,7 @@ export default function classSelection(props) {
             <div>{item.selected}</div>
             <Button onClick={() => {
                 itemFilter = (item) => {
-                    if (item.weapon === null) return false;
+                    if (item.gear_category === null) return false;
                     return item.gear_category.includes(categoryRange)
                 };
                 onSelect = (result) => {
@@ -68,14 +68,16 @@ export default function classSelection(props) {
 
     function Equipment(props) {
         const entry = props.item;
-        return <Typography color="textSecondary" component="span"
-                           className={"basic-list-entry"}>
-            <div>{entry.equipment.name}</div>
-            <div>{entry.quantity}</div>
-        </Typography>
+        return <Typography color="textSecondary">{entry.equipment.name} ({entry.quantity})</Typography>
     }
 
     function itemRepresentation(item) {
+        if (Array.isArray(item)) return <Typography color="textSecondary">
+            {item.map((entry, i) => {
+                return `${entry.equipment.name} (${entry.quantity})`
+            }).join(", ")}
+        </Typography>;
+
         if ("equipment" in item) return <Equipment item={item}/>;
         else {
             return <EquipmentOptions item={item.equipment_option}/>;
@@ -87,12 +89,15 @@ export default function classSelection(props) {
         const entry = props.item;
 
         if (Array.isArray(entry.from)) {
-            return <>
+            return <FormGroup>
                 {entry.from.map((item, j) => {
-                    console.log(item);
-                    return <div key={j}>{itemRepresentation(item)}</div>
+                    return <FormControlLabel
+                        key={j}
+                        control={<Checkbox name="checkedA"/>}
+                        label={itemRepresentation(item)}
+                    />
                 })}
-            </>
+            </FormGroup>
         } else {
             let d = {equipment_option: entry};
             return <div>{itemRepresentation(d)}</div>
@@ -183,7 +188,9 @@ export default function classSelection(props) {
                             <Typography color="textSecondary" variant="h6"
                                         component="h2">Fixed Proficiencies</Typography>
                             <Typography component={"span"} color="textSecondary">
-                                {selectedClass.proficiencies.map(e => {return e.name}).join(", ")}
+                                {selectedClass.proficiencies.map(e => {
+                                    return e.name
+                                }).join(", ")}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -193,14 +200,14 @@ export default function classSelection(props) {
                         <CardContent>
                             <Typography color="textSecondary" variant="h6"
                                         component="h2">Equipment</Typography>
-                            {selectedClass.starting_equipment.starting_equipment.map((entry, i) => {
+                            {selectedClass.starting_equipment.map((entry, i) => {
                                 return <Equipment key={i} item={entry}/>
                             })}
                             <Typography color="textSecondary" variant="h6"
                                         component="h2">Equipment Options</Typography>
-                            {selectedClass.starting_equipment.starting_equipment_options.map((entry, i) => {
+                            {selectedClass.starting_equipment_options.map((entry, i) => {
                                 return <Typography key={i} color="textSecondary" component="span">
-                                    <div>Pick {entry.choose}</div>
+                                    <FormLabel component={"legend"}>Pick {entry.choose}</FormLabel>
                                     <EquipmentChoiceSelector item={entry}/>
                                 </Typography>
                             })}
@@ -209,6 +216,7 @@ export default function classSelection(props) {
                 </Grid>
             </Grid>}
         {selectingItem ? <ItemsList
+            closeOnSelect={true}
             filter={itemFilter}
             onSelect={onSelect}
             onClose={() => {

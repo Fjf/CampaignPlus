@@ -1,3 +1,5 @@
+let map;
+
 import React from "react";
 import {FileDrop} from 'react-file-drop';
 import {dataService} from "../services/dataService";
@@ -327,10 +329,7 @@ function Map(c) {
     this.onKeyDown = function (event) {
         if (event.key === "Escape" && hoverMarker !== null) hoverMarker = null;
     };
-
 }
-
-let map;
 const icons = new Icons();
 icons.load();
 
@@ -352,7 +351,7 @@ export default function MapWidget(props) {
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
 
-        map = new Map(canvas);
+        map = new props.widget(canvas);
         map.setOnMapChange((m) => {
             setSelectedMap(m);
         });

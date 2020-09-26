@@ -24,13 +24,12 @@ def get_equipment():
     obj = result.json()
     db = request_session()
 
-    for elem in obj["results"][:35]:
+    for elem in obj["results"]:
         # item = requests.get("http://www.dnd5eapi.co/api/equipment/dagger").json()
         item = requests.get("http://www.dnd5eapi.co" + elem["url"]).json()
 
         # All unknown elements will return None instead of error.
         item_model = ItemModel(item["name"])
-        print(item_model.name)
 
         item_model.category = item["equipment_category"]["name"]
         item_model.cost = convert_copper(item["cost"])
@@ -133,7 +132,7 @@ def clean_object(data):
     elif type(data) == dict:
         new_data = {}
         for key in data.keys():
-            if key == "url" or key == "_id":
+            if key == "url" or key == "_id" or key == "index" or key == "class":
                 continue
             new_data[key] = clean_object(data[key])
         return new_data
@@ -148,7 +147,7 @@ def get_classes():
         data = requests.get("https://www.dnd5eapi.co" + result["url"]).json()
 
         eq = requests.get("https://www.dnd5eapi.co" + data["starting_equipment"]["url"]).json()
-        data["starting_equipment"] = clean_object(eq)
+        data.update(clean_object(eq))
 
         eq = requests.get("https://www.dnd5eapi.co" + data["class_levels"]["url"]).json()
         data["class_levels"] = clean_object(eq)
@@ -158,7 +157,6 @@ def get_classes():
             data["spellcasting"] = clean_object(eq)
 
         clean_data = clean_object(data)
-        del clean_data["index"]
         del clean_data["name"]
         clean_data = json.dumps(clean_data)
 
@@ -168,6 +166,7 @@ def get_classes():
 
         db.add(class_model)
     db.commit()
+
 
 def get_table():
     result = requests.get("http://api.open5e.com/classes/")
@@ -241,10 +240,10 @@ def get_backgrounds():
 def main():
     # get_equipment()
     # get_spells()
-    #get_classes()
+    get_classes()
     # get_table()
     # get_races()
-    get_backgrounds()
+    # get_backgrounds()
     pass
 
 
