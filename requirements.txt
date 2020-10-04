@@ -15,4 +15,6 @@ graphviz
 pdoc3
 Flask-SocketIO
 flask-cors
+gevent
+gevent-websocket
 

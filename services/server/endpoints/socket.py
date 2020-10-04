@@ -47,3 +47,15 @@ def handle_message(message):
         "message": user.name + ": " + message.get("message")
     }
     emit("message", json.dumps(message), json=True, room=room)
+
+
+@socketio.on('update')
+@require_login()
+def on_join(data):
+    room = data['campaign']
+    user = session_user()
+
+    if room == "Testing" and user.name != "duncan":
+        return
+
+    emit("update", data, json=True, room=room, include_self=False)

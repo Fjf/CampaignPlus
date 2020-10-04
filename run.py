@@ -1,7 +1,13 @@
 from __future__ import unicode_literals, absolute_import
 
+
+from gevent import monkey
+monkey.patch_all()
+
+
 import argparse
 
+from geventwebsocket import WebSocketServer
 
 def get_args():
     parser = argparse.ArgumentParser(description="Start a server")
@@ -52,5 +58,7 @@ if __name__ == "__main__":
 
     create_documentation()
 
-    # server.app.run(ssl_context='adhoc', threaded=True, host=args.host, port=args.port)
-    server.app.run(threaded=True, host="0.0.0.0", port=args.port)
+    http_server = WebSocketServer(('0.0.0.0', args.port), server.app, debug=True)
+    http_server.serve_forever()
+
+    # server.app.run(threaded=True, host="0.0.0.0", port=args.port)

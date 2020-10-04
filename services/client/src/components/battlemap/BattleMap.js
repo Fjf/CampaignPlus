@@ -1,4 +1,7 @@
 import React from "react";
+import socketIOClient from "socket.io-client";
+
+const CAMPAIGN_NAME = "Testing";
 
 let lineColour = {value: "555555"};
 let lineRadiusSlider = {value: 10};
@@ -141,8 +144,7 @@ function Map(c, room_id) {
     this.canvas.height = c.offsetHeight * 3;
     this.context = this.canvas.getContext("2d");
 
-    let battleMap = null;
-    // let socket = io();
+    let socket = socketIOClient();
 
     let zoom = 1;
     let isMousedown = false;
@@ -185,17 +187,36 @@ function Map(c, room_id) {
         };
     }
 
+    this.shareMap = function() {
+        let data = this.canvas.toDataURL("image/png");
+        socket.emit("update", {
+            image: data,
+            campaign: CAMPAIGN_NAME
+        });
+    };
 
     this.initialize = function() {
-        // socket.on("join", (data) => {
-        //     console.log("New user detected: " + data);
-        // });
-        // socket.on("update", (data) => {
-        //     battleMap = data;
-        // });
-        //
-        //
-        // socket.emit("join", room_id);
+        socket.on("join", (data) => {
+            console.log("New user detected: " + data);
+        });
+        socket.on("update", (data) => {
+            let ctx = this.context;
+            let cvs = this.canvas;
+            let img = new Image();
+            img.onload = function() {
+                ctx.clearRect(0, 0, cvs.width, cvs.height);
+                ctx.drawImage(img, 0, 0);
+            };
+            img.src = data.image;
+        });
+
+        socket.emit("join", {
+            "campaign": CAMPAIGN_NAME
+        });
+
+        setInterval(() => this.shareMap(), 1000);
+
+        this.snapshot();
     };
 
     this.destroy = function() {
@@ -230,6 +251,7 @@ function Map(c, room_id) {
     };
 
     this.undo = function() {
+        console.log("Undoing wiht length", drawingHistory.length);
         if (drawingHistory.length === 0) return;
 
         // Remember current board state to go back to later.
@@ -253,12 +275,12 @@ function Map(c, room_id) {
     };
 
     this.snapshot = function() {
-        let image = this.context.getImageData(0, 0, c.offsetWidth, c.offsetHeight);
+        let image = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
         drawingHistory.push(image);
     };
 
     this.futureSnapshot = function() {
-        let image = this.context.getImageData(0, 0, c.offsetWidth, c.offsetHeight);
+        let image = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
         drawingFuture.push(image);
     };
 
@@ -319,16 +341,22 @@ function Map(c, room_id) {
             context.lineWidth = "1";
 
             let increment = this.gridSize * zoom;
-            for (let x = viewboxOffset.x % increment; x < c.width; x += increment) {
+
+            let xMin = 0 + viewboxOffset.x;
+            let yMin = 0 + viewboxOffset.y;
+            let xMax = this.canvas.width * zoom + viewboxOffset.x;
+            let yMax = this.canvas.height * zoom + viewboxOffset.y;
+            for (let x = xMin; x < xMax; x += increment) {
                 context.beginPath();
-                context.moveTo(x, 0);
-                context.lineTo(x, c.offsetHeight);
+                context.moveTo(x, yMin);
+                context.lineTo(x, yMax);
                 context.stroke();
             }
-            for (let y = viewboxOffset.y % increment; y < c.height; y += increment) {
+            for (let y = yMin; y < yMax; y += increment) {
+
                 context.beginPath();
-                context.moveTo(0, y);
-                context.lineTo(c.offsetWidth, y);
+                context.moveTo(xMin, y);
+                context.lineTo(xMax, y);
                 context.stroke();
             }
         }
@@ -363,12 +391,13 @@ function Map(c, room_id) {
     this.onMouseDown = function(event) {
         isMousedown = true;
 
-        if ((event.buttons & 2) === 1) { // Left mouse button does actions, right mouse doesnt.
+        if ((event.buttons & 1) === 1) { // Left mouse button does actions, right mouse doesnt.
             if (this.action === "drawing") {
                 select.end = null;
 
-                drawingFuture = [];
                 this.snapshot();
+
+                drawingFuture = [];
                 this.drawAction(event);
             } else if (this.action === "selecting") {
                 this.startSelect(event);
@@ -398,7 +427,7 @@ function Map(c, room_id) {
         ) {
             isMoving = true;
             if ((event.buttons & 2) === 2) { // Right mouse button only offsets viewbox
-                viewboxOffset = pAdd(viewboxOffset, pMul(pSub(previousMousePosition, event), zoom));
+                viewboxOffset = pSub(viewboxOffset, pMul(pSub(previousMousePosition, event), zoom));
             } else {
                 if (this.action === "drawing") {
                     this.drawAction(event);
