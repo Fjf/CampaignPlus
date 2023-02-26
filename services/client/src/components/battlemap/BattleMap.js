@@ -36,21 +36,6 @@ function clamp(d, l, u) {
     return d;
 }
 
-function Icons() {
-    let _icons = {};
-    let _filenames = ["position-marker"];
-    this.load = function() {
-        _filenames.forEach(name => {
-            _icons[name] = new Image();
-            _icons[name].src = `/static/images/icons/${name}.png`;
-        })
-    };
-
-    this.get = function(name) {
-        return _icons[name];
-    };
-}
-
 let Clipboard = function(c) {
     this.start = null;
     this.end = null;
@@ -189,10 +174,10 @@ function Map(c, room_id) {
 
     this.shareMap = function() {
         let data = this.canvas.toDataURL("image/png");
-        socket.emit("update", {
-            image: data,
-            campaign: CAMPAIGN_NAME
-        });
+        // socket.emit("update", {
+        //     image: data,
+        //     campaign: CAMPAIGN_NAME
+        // });
     };
 
     this.initialize = function() {
@@ -251,7 +236,6 @@ function Map(c, room_id) {
     };
 
     this.undo = function() {
-        console.log("Undoing wiht length", drawingHistory.length);
         if (drawingHistory.length === 0) return;
 
         // Remember current board state to go back to later.
@@ -326,7 +310,6 @@ function Map(c, room_id) {
         // Set action to resizing to move the stuff.
         setAction("resizing");
     };
-
 
     this.render = function() {
         // Take into account window resizes.

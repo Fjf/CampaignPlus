@@ -22,6 +22,7 @@ function registerUser(name, password, email) {
         body: JSON.stringify({name, password, email})
     };
 
+
     return fetch(`${apiUrl}/register`, requestOptions)
         .then(handleResponse)
         .then(data => {

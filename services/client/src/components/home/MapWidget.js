@@ -1,10 +1,12 @@
+import Button from "@material-ui/core/Button";
+
 let map;
 
 import React from "react";
 import {FileDrop} from 'react-file-drop';
 import {dataService} from "../services/dataService";
 import {IconButton, TextField, TextareaAutosize} from "@material-ui/core"
-import {BsTrash, BsUpload, FaArrowLeft, FaPlusCircle, MdCreate, MdSave} from "react-icons/all"
+import {BsTrash, BsUpload, FaArrowLeft, FaPlusCircle, AiFillInfoCircle, MdCreate, MdSave, MdOpenInNew} from "react-icons/all"
 import {campaignService} from "../services/campaignService";
 import ReactMarkdown from "react-markdown";
 import Paper from "@material-ui/core/Paper";
@@ -65,6 +67,9 @@ function Map(c) {
     let moveThreshold = 5;
     let isMoving = false;
 
+    let hoverMarker = null;
+    let hoverMarkerChild = null;
+
     function getMousePos(evt) {
         let rect = c.getBoundingClientRect();
         return {
@@ -112,11 +117,14 @@ function Map(c) {
         visibleMap = newMap;
 
         let parent = visibleMap.parent;
+        console.log(newMap, parent);
         for (let i = 0; i < parent.children.length; i++) {
             if (parent.children[i].id === visibleMap.id) {
                 parent.children[i] = visibleMap;
+                console.log("Updated child with idx", i);
             }
         }
+        console.log(parent)
     };
 
     function overwriteVisibleMap(newMap) {
@@ -146,14 +154,13 @@ function Map(c) {
     let maps = null;
     let visibleMap = null;
     this.setMap = function (new_map) {
-        console.log(new_map);
         maps = new_map;
         setVisibleMap(new_map);
     };
 
-    let hoverMarker = null;
-    this.setHoverMarker = (h) => {
-        hoverMarker = h
+    this.setHoverMarker = (h, c) => {
+        hoverMarker = h;
+        hoverMarkerChild = c;
     };
 
     this.render = function () {
@@ -184,6 +191,9 @@ function Map(c) {
 
         for (let i = 0; i < visibleMap.children.length; i++) {
             let child = visibleMap.children[i];
+
+            if (!child.visible) continue;
+
             let hover = child.hover || child.bhover;
             let w = hover ? 5 : 0;
             let h = hover ? 5 : 0;
@@ -219,12 +229,14 @@ function Map(c) {
     this.onMouseScroll = function (event) {
         if (visibleMap === null) return;
 
-        let diff = (event.deltaY * 0.02) * zoom;
+        let diff = (2*(event.deltaY/Math.abs(event.deltaY)) * 0.02) * zoom;
         let nextZoom = zoom + diff;
 
+        console.log(event.deltaY, nextZoom, visibleMap.zoom);
+
         if (nextZoom < 0.1 && nextZoom < zoom) return;
-        if (nextZoom * c.width > visibleMap.image.width * 1.2 &&
-            nextZoom * c.height > visibleMap.image.height * 1.2 && nextZoom > zoom) return;
+        if (nextZoom * c.width > visibleMap.image.width * 2 &&
+            nextZoom * c.height > visibleMap.image.height * 2 && nextZoom > zoom) return;
 
         zoom = nextZoom;
         visibleMap.zoom = zoom;
@@ -259,10 +271,32 @@ function Map(c) {
 
         if (hoverMarker !== null) {
             let loc = createMarkerPosition(pos);
-            dataService.createMap(visibleMap.campaign_id, visibleMap.id, loc.x, loc.y).then(child => {
-                visibleMap.children.push(child);
-                setVisibleMap(child);
-            });
+            if (hoverMarkerChild === null) {
+                // Create a new child map
+                dataService.createMap(visibleMap.campaign_id, visibleMap.id, loc.x, loc.y).then(child => {
+                    visibleMap.children.push(child);
+                    setVisibleMap(child);
+                });
+            } else {
+                // Update location of existing map
+                const mapUpdateData = {
+                    id: hoverMarkerChild.id,
+                    name: hoverMarkerChild.name,
+                    story: hoverMarkerChild.story,
+                    x: loc.x,
+                    y: loc.y,
+                };
+                console.log(hoverMarkerChild, mapUpdateData);
+                dataService.alterMap(mapUpdateData.id, mapUpdateData).then(new_data => {
+                    console.log(new_data);
+                });
+
+                // TODO: This is really garbage code
+                hoverMarkerChild.visible = true;
+                let d = visibleMap.children.find(child => child.id === hoverMarkerChild.id);
+                d.x = loc.x;
+                d.y = loc.y;
+            }
 
             hoverMarker = null;
             return;
@@ -318,6 +352,7 @@ function Map(c) {
             onMapChange(visibleMap);
         }
     };
+
     this.setHover = function (actualChild, b) {
         for (let i = 0; i < visibleMap.children.length; i++) {
             if (visibleMap.children[i].id === actualChild.id) {
@@ -343,6 +378,8 @@ export default function MapWidget(props) {
         map_url: "",
         children: []
     });
+    const [selectedChild, setSelectedChild] = React.useState(null);
+    const [infoVisible, setInfoVisible] = React.useState(true);
 
     React.useEffect(() => {
         const canvas = document.getElementById("canvas");
@@ -351,7 +388,7 @@ export default function MapWidget(props) {
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
 
-        map = new props.widget(canvas);
+        map = new Map(canvas);
         map.setOnMapChange((m) => {
             setSelectedMap(m);
         });
@@ -385,6 +422,9 @@ export default function MapWidget(props) {
     }, [campaign]);
 
     function uploadFile(files, event) {
+        /*
+         * Upload the map, and overwrite the current map image with this overridden map.
+         */
         let file = files[0];
         if (!(file.name.endsWith(".png") || file.name.endsWith(".jpg") || file.name.endsWith(".jpeg"))) {
             alert("Only png or jpg files are supported.");
@@ -392,23 +432,25 @@ export default function MapWidget(props) {
         }
 
         const reader = new FileReader();
-        reader.addEventListener("load", function () {
+        reader.addEventListener("load", () => {
+            selectedMap.map_url = reader.result;
             selectedMap.image.src = reader.result;
-            map.forceUpdate(selectedMap);
         }, false);
 
         dataService.setMapImage(selectedMap, file).then(r => {
-            console.log("Uploaded image successfully.")
+            console.log("Uploaded image successfully.");
         });
-
         reader.readAsDataURL(file);
+
+
     }
 
     function alterMap() {
-        dataService.alterMap(selectedMap.id, {
+        const mapUpdateData = {
             name: selectedMap.name,
             story: selectedMap.story
-        }).then(r => {
+        };
+        dataService.alterMap(selectedMap.id, mapUpdateData).then(r => {
                 setMessage(<Alert severity="success">Saved Map Information!</Alert>)
             },
             e => {
@@ -442,13 +484,18 @@ export default function MapWidget(props) {
                         <FaArrowLeft/>
                     </IconButton>
                     <IconButton variant={"outlined"} color={"secondary"} aria-label="add" onClick={() => {
-                        map.setHoverMarker({x: 0, y: 0});
+                        map.setHoverMarker({x: 0, y: 0}, null);
                     }}>
                         <FaPlusCircle/>
                     </IconButton>
+                    <IconButton variant={"outlined"} color={"secondary"} aria-label="hide" onClick={() => {
+                        setInfoVisible(!infoVisible);
+                    }}>
+                        <AiFillInfoCircle/>
+                    </IconButton>
                 </div> : null}
         </div>
-        <div className={"right-content-bar"}>
+        {!infoVisible ? null : <div id={"map-info-bar"} className={"right-content-bar"}>
             <div className={"basic-list-entry"}>
                 <h3>Map Info</h3>
                 <div className={"icon-bar"}>
@@ -495,10 +542,11 @@ export default function MapWidget(props) {
             <b>Children</b>
             {
                 selectedMap.children.map((child, i) => {
+                    if (!child.visible) return;
                     return <div
                         className={"campaign-list-entry"}
                         key={i}
-                        onClick={() => map.onSetVisibleMap(child)}
+                        onClick={() => setSelectedChild(child)}
                         onMouseOver={(e) => map.setHover(child, true)}
                         onMouseOut={(e) => map.setHover(child, false)}
                     >
@@ -506,15 +554,41 @@ export default function MapWidget(props) {
                     </div>
                 })
             }
-            <div>
+            <div style={{border: "2px dash black"}}>
                 <FileDrop
                     onDrop={uploadFile}
                 >
                     Drop an image here to overwrite the current map.
                 </FileDrop>
             </div>
-        </div>
-
+            {selectedChild === null ? null :<>
+                <div className={"basic-list-entry"}>
+                    <h3>{selectedChild.name}</h3>
+                    <div>
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            map.onSetVisibleMap(selectedChild);
+                            setSelectedChild(null)}
+                        }>
+                    Open
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            selectedChild.visible = false;
+                            map.setHoverMarker({x: 0, y: 0}, selectedChild);
+                        }}>
+                    Move
+                    </Button>
+                    </div>
+                </div>
+                <div>
+                    <h4>Info</h4>
+                    {selectedChild.story}
+                </div>
+            </>}
+        </div>}
         <div>
             <Snackbar open={message !== null} autoHideDuration={100000} onClose={() => setMessage(null)} message={message} style={{padding: 0, margin: 0}}/>
         </div>

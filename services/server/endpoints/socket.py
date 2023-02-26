@@ -51,7 +51,7 @@ def handle_message(message):
 
 @socketio.on('update')
 @require_login()
-def on_join(data):
+def on_update(data):
     room = data['campaign']
     user = session_user()
 

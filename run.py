@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
     create_documentation()
 
-    http_server = WebSocketServer(('0.0.0.0', args.port), server.app, debug=True)
+    http_server = WebSocketServer(('0.0.0.0', args.port), server.app, debug=False)
     http_server.serve_forever()
 
     # server.app.run(threaded=True, host="0.0.0.0", port=args.port)

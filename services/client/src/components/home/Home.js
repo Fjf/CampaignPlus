@@ -54,9 +54,8 @@ export default function Home(props) {
                         <div>{user.name}</div>
                     </Link>
                         <div onClick={() => {
-                            userService.logout().then(
-                                setUser(userService.getUser())
-                            );
+                            setUser(null);
+                            userService.logout().then(r => { console.log("Logout successful.")});
                             history.push('/login')
                         }}
                         >Logout
@@ -85,7 +84,6 @@ export default function Home(props) {
                 </Route>
             </div>
         </div>
-        {/*<DiceRoller/>*/}
         <AudioPlayer/>
     </>
 }

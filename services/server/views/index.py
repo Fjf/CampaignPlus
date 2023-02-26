@@ -9,7 +9,6 @@ from lib.service import campaign_service
 @app.route('/', defaults={"text": ""})
 @app.route('/<path:text>')
 def index(text):
-    print(text)
     return render_template('index.html')
 
 
@@ -29,6 +28,7 @@ def join_playthrough(code):
     try:
         user = session_user()
     except ValueError:
+        from lib.service.user_service import login
         return login(refer="join/" + code)
 
     playthrough = campaign_service.find_playthrough_with_code(code)
@@ -36,27 +36,6 @@ def join_playthrough(code):
 
     return render_template('create_pc.html', id=playthrough.id, code=code, username=user.name)
 
-
-@app.route('/map/<code>', methods=["GET"])
-def show_map(code):
-    try:
-        user = session_user()
-    except ValueError:
-        return login(refer="map/" + code)
-
-    playthrough = campaign_service.find_playthrough_with_code(code)
-    return render_template('map.html', pid=playthrough.id, mid=1)
-
-
-@app.route('/battlemap/<code>', methods=["GET"])
-def battlemap(code):
-    try:
-        session_user()
-    except ValueError:
-        return login(refer="battlemap/" + code)
-
-    playthrough = campaign_service.find_playthrough_with_code(code)
-    return render_template('battlemap.html', pid=playthrough.id)
 
 
 @app.route('/reset/<code>', methods=["GET"])

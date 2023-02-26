@@ -54,16 +54,19 @@ def api_login():
     if "redirect" in data:
         refer += data["redirect"]
 
-    return {
+    result = {
         "user": user.to_json() if user is not None else None,
         "refer": refer
     }
+    print(result)
+    return result
 
 
 @api.route('/logout', methods=["POST"])
 @json_api()
 @require_login()
 def logout():
+    print("Logged out %s" % session_user().name)
     session_user_set(None)
 
     return {

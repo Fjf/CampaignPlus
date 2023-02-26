@@ -312,6 +312,7 @@ class MapModel(OrmModelBase):
             "x": self.x,
             "y": self.y,
             "name": self.name,
+            "visible": self.visible,
             "story": self.story,
             "children": children
         }

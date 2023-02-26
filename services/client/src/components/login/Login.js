@@ -10,24 +10,26 @@ export default function Login(props) {
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
     const history = useHistory();
-    const [errors, setErrors] = React.useState({username: null, password: null})
+    const [errors, setErrors] = React.useState({username: null, password: null});
 
-    function handleLogin() {
+    function handleLogin(event) {
+        event.preventDefault();
+
         let e = {...errors};
         if (username === "") {
-            e.username = "Please fill in a username."
+            e.username = "Please fill in a username.";
         }
-
         if (password === "") {
             e.password = "Please fill in a password.";
         }
-        console.log(username, password)
-        setErrors(e);
-        if (!Object.values(e).every(i => i === null)) return;
 
+        if (!Object.values(e).every(i => i === null)) {
+            setErrors(e);
+            return;
+        }
 
         userService.login(username, password).then(r => {
-            history.push(r.refer)
+            history.push(r.refer);
         }, error => {
             console.log("Error:", error);
             if (error.toLowerCase().includes("password")) {
@@ -43,13 +45,14 @@ export default function Login(props) {
                 })
             }
         });
+
+        return false;
     }
 
 
 
     return <form className={"authenticationInput"} onSubmit={handleLogin} action='#'>
         <h3>Login</h3>
-
         <TextField
             type={"text"}
             value={username}
@@ -80,9 +83,7 @@ export default function Login(props) {
             error={errors.password !== null}
             helperText={errors.password}
         />
-        <Button type="submit"
-            onClick={handleLogin}
-        >Submit</Button>
+        <Button type="submit">Submit</Button>
     </form>
 }
 
