@@ -30,7 +30,7 @@ function getCharacterSpells(cid) {
         headers: {'Content-Type': 'text/html'},
     };
 
-    return fetch(`${apiUrl}/player/${cid}/spell`, requestOptions)
+    return fetch(`${apiUrl}/player/${cid}/spells`, requestOptions)
         .then(handleResponse);
 }
 

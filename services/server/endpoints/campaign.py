@@ -62,6 +62,7 @@ def get_campaigns():
         if campaign not in campaigns:
             campaigns.append(campaign)
 
+    print(campaigns)
     return [campaign.to_json(user) for campaign in campaigns]
 
 

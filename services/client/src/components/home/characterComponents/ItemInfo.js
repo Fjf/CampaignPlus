@@ -55,29 +55,29 @@ function ItemInfo(props) {
             <div>{info.value}</div>
             <div className={"item-prop-title"}>Weight</div>
             <div>{info.weight} lb.</div>
-            {info.weapon === null ? null :
+            {info.gear_category !== "Weapon" ? null :
                 <>
                     <h3>Weapon Properties</h3>
                     <div className={"item-prop-title"}>Weapon Category</div>
-                    <div>{info.weapon.category_range}</div>
+                    <div>{info.item_info.category_range}</div>
                     <div className={"item-prop-title"}>Damage</div>
-                    <div>{info.weapon.damage.dice} {info.weapon.damage.type}</div>
-                    {info.weapon.two_damage === null ? null :
+                    <div>{info.item_info.damage.dice} {info.weapon.damage.type}</div>
+                    {info.item_info.two_damage === null ? null :
                         <>
                             <div className={"item-prop-title"}>2h Damage</div>
                             <div>{info.weapon.two_damage.dice} {info.weapon.two_damage.type}</div>
                         </>
                     }
                     <div className={"item-prop-title"}>Range</div>
-                    <div>{info.weapon.range.normal}{info.weapon.range.long === null ? null : "-" + info.weapon.range.long}</div>
-                    {info.weapon.throw_range === null ? null :
+                    <div>{info.item_info.range.normal}{info.item_info.range.long === null ? null : "-" + info.item_info.range.long}</div>
+                    {info.item_info.throw_range === null ? null :
                         <>
                             <div className={"item-prop-title"}>Throw Range</div>
-                            <div>{info.weapon.throw_range.normal}-{info.weapon.throw_range.long}</div>
+                            <div>{info.item_info.throw_range.normal}-{info.item_info.throw_range.long}</div>
                         </>
                     }
                     <div className={"item-prop-title"}>Properties</div>
-                    <div>{info.weapon.properties}</div>
+                    <div>{info.item_info.properties}</div>
                 </>}
         </div>
     </div>
