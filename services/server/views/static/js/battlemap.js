@@ -14,7 +14,7 @@ function store_map(obj, button) {
     }
 
     let data = {
-        playthrough_id: PLAYTHROUGH_ID,
+        campaign_id: CAMPAIGN_ID,
         battlemap: JSON.stringify(obj),
         name: prompt("Name the map;")
     }
@@ -33,7 +33,7 @@ function get_battlemaps() {
     }
 
     let data = {
-        playthrough_id: PLAYTHROUGH_ID
+        campaign_id: CAMPAIGN_ID
     }
 
     requestApiJsonData("/api/getbattlemaps", "POST", data, func)

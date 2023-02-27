@@ -24,17 +24,17 @@ def logout():
 
 
 @app.route('/join/<code>', methods=["GET"])
-def join_playthrough(code):
+def join_campaign(code):
     try:
         user = session_user()
     except ValueError:
         from lib.service.user_service import login
         return login(refer="join/" + code)
 
-    playthrough = campaign_service.find_playthrough_with_code(code)
-    campaign_service.join_playthrough(user, playthrough)
+    campaign = campaign_service.find_campaign_with_code(code)
+    campaign_service.join_campaign(user, campaign)
 
-    return render_template('create_pc.html', id=playthrough.id, code=code, username=user.name)
+    return render_template('create_pc.html', id=campaign.id, code=code, username=user.name)
 
 
 

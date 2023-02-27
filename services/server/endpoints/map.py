@@ -50,12 +50,12 @@ def set_map_data():
 def get_all_maps():
     data = request.get_json()
 
-    required_fields = ["playthrough_id"]
+    required_fields = ["campaign_id"]
 
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
-    maps = map_service.get_all_maps(data["playthrough_id"])
+    maps = map_service.get_all_maps(data["campaign_id"])
 
     maps_list = []
     for map in maps:
@@ -79,14 +79,14 @@ def get_all_maps():
 def create_battlemap():
     data = request.get_json()
 
-    required_fields = ["playthrough_id", "battlemap", "name"]
+    required_fields = ["campaign_id", "battlemap", "name"]
 
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
     user = session_user()
 
-    error = map_service.create_battlemap(user, data["playthrough_id"], data["name"], data["battlemap"])
+    error = map_service.create_battlemap(user, data["campaign_id"], data["name"], data["battlemap"])
     success = error == ""
     return {
         "success": success,
@@ -100,12 +100,12 @@ def create_battlemap():
 def get_all_battlemaps():
     data = request.get_json()
 
-    required_fields = ["playthrough_id"]
+    required_fields = ["campaign_id"]
 
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
-    maps = map_service.get_all_battlemaps(data["playthrough_id"])
+    maps = map_service.get_all_battlemaps(data["campaign_id"])
 
     maps_list = []
     for map in maps:

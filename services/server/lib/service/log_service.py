@@ -5,28 +5,28 @@ from lib.repository import log_repository
 from lib.service import player_service, campaign_service
 
 
-def get_logs(playthrough_code: str, user: UserModel) -> (str, List[LogModel]):
+def get_logs(campaign_code: str, user: UserModel) -> (str, List[LogModel]):
     """
-    Returns all logs for a specific playthrough ID.
+    Returns all logs for a specific campaign ID.
 
-    :param playthrough_code:
+    :param campaign_code:
     :param user:
     :return: A tuple (Error message, List with messages)
     """
-    playthrough = campaign_service.find_playthrough_with_code(playthrough_code)
-    if playthrough is None:
-        return "This playthrough does not exist.", []
+    campaign = campaign_service.find_campaign_with_code(campaign_code)
+    if campaign is None:
+        return "This campaign does not exist.", []
 
-    return "", log_repository.get_logs(playthrough.id)
+    return "", log_repository.get_logs(campaign.id)
 
 
-def create_log(user: UserModel, playthrough_code: str, title: str, text: str) -> str:
-    playthrough = campaign_service.find_playthrough_with_code(playthrough_code)
-    if playthrough is None:
-        return "This playthrough does not exist."
+def create_log(user: UserModel, campaign_code: str, title: str, text: str) -> str:
+    campaign = campaign_service.find_campaign_with_code(campaign_code)
+    if campaign is None:
+        return "This campaign does not exist."
 
-    player = player_service.get_user_players_by_id(user, playthrough.id)[0]
-    message_model = LogModel.from_playthrough_creator_content(playthrough, player, title, text)
+    player = player_service.get_user_players_by_id(user, campaign.id)[0]
+    message_model = LogModel.from_campaign_creator_content(campaign, player, title, text)
 
     log_repository.create_log(message_model)
     return ""
@@ -36,9 +36,9 @@ def get_log(log_id: int) -> Optional[LogModel]:
     return log_repository.get_log(log_id)
 
 
-def delete_log(user: UserModel, playthrough_code: str, log_id: int):
+def delete_log(user: UserModel, campaign_code: str, log_id: int):
     log = get_log(int(log_id))
-    playthrough = campaign_service.find_playthrough_with_code(playthrough_code)
+    campaign = campaign_service.find_campaign_with_code(campaign_code)
 
     if log is None:
         return "This log does not exist."
@@ -46,8 +46,8 @@ def delete_log(user: UserModel, playthrough_code: str, log_id: int):
     if log.creator.user != user:
         return "This is not your log to delete."
 
-    if log.playthrough_id != playthrough.id:
-        return "This log does not belong to this playthrough."
+    if log.campaign_id != campaign.id:
+        return "This log does not belong to this campaign."
 
     log_repository.delete_log(log)
     return ""

@@ -4,11 +4,11 @@ from lib.database import request_session
 from lib.model.models import MessageModel
 
 
-def get_messages(playthrough_id: int) -> List[MessageModel]:
+def get_messages(campaign_id: int) -> List[MessageModel]:
     db = request_session()
 
     return db.query(MessageModel) \
-        .filter(MessageModel.playthrough_id == playthrough_id) \
+        .filter(MessageModel.campaign_id == campaign_id) \
         .all()
 
 

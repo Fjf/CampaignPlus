@@ -1,6 +1,6 @@
 import json
 
-from sqlalchemy import Integer, Column, String, ForeignKey
+from sqlalchemy import Integer, Column, String, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 
 from lib.database import OrmModelBase
@@ -23,7 +23,7 @@ class ClassModel(OrmModelBase):
     owner = relationship("UserModel")
 
     name = Column(String())
-    data = Column(String())
+    data = Column(JSON())
 
     def __init__(self, owner: UserModel = None):
         if owner:

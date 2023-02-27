@@ -13,14 +13,14 @@ from endpoints import api, json_api, require_login
 def create_log():
     data = request.get_json()
 
-    required_fields = ["playthrough_code", "title", "text"]
+    required_fields = ["campaign_code", "title", "text"]
 
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
     user = session_user()
 
-    error = log_service.create_log(user, data["playthrough_code"], data["title"], data["text"])
+    error = log_service.create_log(user, data["campaign_code"], data["title"], data["text"])
 
     success = error == ""
 
@@ -36,14 +36,14 @@ def create_log():
 def get_logs():
     data = request.get_json()
 
-    required_fields = ["playthrough_code"]
+    required_fields = ["campaign_code"]
 
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
     user = session_user()
 
-    (error, logs) = log_service.get_logs(data["playthrough_code"], user)
+    (error, logs) = log_service.get_logs(data["campaign_code"], user)
     success = error == ""
 
     if not success:
@@ -76,14 +76,14 @@ def get_logs():
 def delete_log():
     data = request.get_json()
 
-    required_fields = ["playthrough_code", "log_id"]
+    required_fields = ["campaign_code", "log_id"]
 
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
     user = session_user()
 
-    error = log_service.delete_log(user, data["playthrough_code"], data["log_id"])
+    error = log_service.delete_log(user, data["campaign_code"], data["log_id"])
     success = error == ""
 
     return {

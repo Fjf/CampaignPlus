@@ -27,7 +27,7 @@
             </p>
         </div>
         <div id="content_right">
-            <div id="playthrough_name"></div><br>
+            <div id="campaign_name"></div><br>
             <div id="character_chat_wrapper">
                 <div id="content_right_char">
                     <div class="datadiv" id="update" style="display:none;">
@@ -92,8 +92,8 @@
 
 {% block javascripts %}
     <script>
-        var PLAYTHROUGH_ID = "{{ id }}"
-        var PLAYTHROUGH_CODE = "{{ code }}"
+        var CAMPAIGN_ID = "{{ id }}"
+        var CAMPAIGN_CODE = "{{ code }}"
         var USERNAME = "{{ username }}"
     </script>
     <script src="{{ url_for('static', filename='js/create_pc.js') }}"></script>

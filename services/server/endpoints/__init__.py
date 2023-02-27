@@ -13,6 +13,8 @@ def json_api():
         @wraps(f)
         def decorated_function(*args, **kwargs):
             res = f(*args, **kwargs)
+            if type(res) == tuple:
+                return jsonify(res[0]), res[1]
             return jsonify(res)
 
         return decorated_function

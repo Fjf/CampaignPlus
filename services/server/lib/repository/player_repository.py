@@ -5,15 +5,15 @@ from sqlalchemy import or_, and_
 from lib.database import request_session
 from lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel, PlayerClassModel
 from lib.model.models import PlayerModel, CampaignModel, PlayerInfoModel, PlayerEquipmentModel, ItemModel, \
-    PlayerSpellModel, SpellModel, UserModel, WeaponModel, PlayerProficiencyModel
+    PlayerSpellModel, SpellModel, UserModel,  PlayerProficiencyModel
 
 
-def get_players(playthrough_id: int):
+def get_players(campaign_id: int):
     db = request_session()
 
     return db.query(PlayerModel) \
         .join(CampaignModel) \
-        .filter(CampaignModel.id == playthrough_id) \
+        .filter(CampaignModel.id == campaign_id) \
         .all()
 
 
@@ -79,7 +79,7 @@ def get_spell(player: PlayerModel, spell_id: int) -> Optional[SpellModel]:
     db = request_session()
 
     return db.query(SpellModel) \
-        .filter(or_(player.playthrough_id == SpellModel.playthrough_id, SpellModel.playthrough_id == -1)) \
+        .filter(or_(player.campaign_id == SpellModel.campaign_id, SpellModel.campaign_id == -1)) \
         .filter(SpellModel.id == spell_id) \
         .one_or_none()
 
@@ -117,17 +117,17 @@ def player_get_item(player, item_id):
     db = request_session()
 
     return db.query(ItemModel) \
-        .filter((player.playthrough_id == ItemModel.campaign_id) or (ItemModel.campaign_id == -1)) \
-        .filter((player.playthrough_id == ItemModel.campaign_id) or (ItemModel.campaign_id == -1)) \
+        .filter((player.campaign_id == ItemModel.campaign_id) or (ItemModel.campaign_id == -1)) \
+        .filter((player.campaign_id == ItemModel.campaign_id) or (ItemModel.campaign_id == -1)) \
         .filter(ItemModel.id == item_id) \
         .one_or_none()
 
 
-def delete_item(player: PlayerModel, item: ItemModel):
+def delete_item(player: PlayerModel, item_id: int):
     db = request_session()
 
     pim_list = db.query(PlayerEquipmentModel) \
-        .filter(PlayerEquipmentModel.item_id == item.id and PlayerEquipmentModel.player_id == player.id) \
+        .filter(PlayerEquipmentModel.id == item_id and PlayerEquipmentModel.player_id == player.id) \
         .all()
 
     for pim in pim_list:

@@ -35,26 +35,26 @@ def create_campaign(user: UserModel):
 
 
 def get_campaigns(user: UserModel) -> List[CampaignModel]:
-    return campaign_repository.get_playthroughs(user)
+    return campaign_repository.get_campaigns(user)
 
 
 def get_joined_campaigns(user) -> List[CampaignModel]:
-    return campaign_repository.get_joined_playthroughs(user)
+    return campaign_repository.get_joined_campaigns(user)
 
 
-def join_playthrough(user: UserModel, playthrough: CampaignModel):
-    players = player_service.get_user_players_by_id(user, playthrough.id)
+def join_campaign(user: UserModel, campaign: CampaignModel):
+    players = player_service.get_user_players_by_id(user, campaign.id)
 
-    # Only create a new player if no players are yet created for this playthrough.
+    # Only create a new player if no players are yet created for this campaign.
     if len(players) == 0:
         # Create an empty player character for the user and refer them to a new page
-        player_service.create_player(user, user.name + "'s character", playthrough=playthrough)
+        player_service.create_player(user, user.name + "'s character", campaign=campaign)
 
     return ""
 
 
-def find_playthrough_with_code(code: str) -> Optional[CampaignModel]:
-    return campaign_repository.find_playthrough_with_code(code)
+def find_campaign_with_code(code: str) -> Optional[CampaignModel]:
+    return campaign_repository.get_campaign(code=code)
 
 
 def get_campaign(campaign_id: int = None, campaign_code: str = None) -> Optional[CampaignModel]:
@@ -80,17 +80,17 @@ def get_campaign(campaign_id: int = None, campaign_code: str = None) -> Optional
     return sub.one_or_none()
 
 
-def user_in_campaign(user: UserModel, playthrough: CampaignModel):
+def user_in_campaign(user: UserModel, campaign: CampaignModel):
     """
-    Checks if the user has any players in the given playthrough.
+    Checks if the user has any players in the given campaign.
 
     :param user: The user which is logged in
-    :param playthrough: The playthrough model
-    :return: A boolean. True if the user has 1 or more players in the given playthrough, False if not.
+    :param campaign: The campaign model
+    :return: A boolean. True if the user has 1 or more players in the given campaign, False if not.
     """
     players = player_service.get_user_players(user)
     for player in players:
-        if player.playthrough == playthrough:
+        if player.campaign == campaign:
             return True
 
     return False
@@ -98,15 +98,15 @@ def user_in_campaign(user: UserModel, playthrough: CampaignModel):
 
 def is_user_dm(user: UserModel, player: PlayerModel):
     """
-        Checks if the user owns a playthrough the player is in.
+        Checks if the user owns a campaign the player is in.
 
         :param user: The user which is logged in
-        :param playthrough: The playthrough model
-        :return: A boolean. True if the user has 1 or more players in the given playthrough, False if not.
+        :param campaign: The campaign model
+        :return: A boolean. True if the user has 1 or more players in the given campaign, False if not.
         """
-    playthroughs = get_campaigns(user)
-    for playthrough in playthroughs:
-        if player.playthrough == playthrough:
+    campaigns = get_campaigns(user)
+    for campaign in campaigns:
+        if player.campaign == campaign:
             return True
 
     return False

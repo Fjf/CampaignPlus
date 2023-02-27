@@ -279,7 +279,7 @@ function setMapData(map_id) {
     }
 
     let data = {
-        playthrough_id: PLAYTHROUGH_ID,
+        campaign_id: CAMPAIGN_ID,
         map_id: map_id,
         name: name,
         story: story
@@ -362,7 +362,7 @@ function loadMap(map_id) {
     }
 
     data = {
-        playthrough_id: PLAYTHROUGH_ID,
+        campaign_id: CAMPAIGN_ID,
         map_id: map_id
     }
 
@@ -429,7 +429,7 @@ function createMap() {
 
     var formdata = new FormData();
     formdata.append('file', file);
-    formdata.append('playthrough_id', PLAYTHROUGH_ID)
+    formdata.append('campaign_id', CAMPAIGN_ID)
     formdata.append('name', name);
 
 
@@ -468,7 +468,7 @@ function getAllMaps() {
     }
 
     data = {
-        playthrough_id: PLAYTHROUGH_ID
+        campaign_id: CAMPAIGN_ID
     }
 
 

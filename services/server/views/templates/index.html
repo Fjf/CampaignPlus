@@ -6,15 +6,15 @@
         <div class="headerelem" id="currentuser"></div>
         <div class="headerelem" id="logout"><div class="header_button" onclick="window.location.href='/logout'">Log out</div></div>
         <div class="headerelem" id="settings"><div class="header_button" onclick="window.location.href='/settings'">Settings</div></div>
-        <div class="headerelem" id="toggleviews"><div class="header_button" onclick="toggleViews()">Toggle Encounter/Playthrough</div></div>
+        <div class="headerelem" id="toggleviews"><div class="header_button" onclick="toggleViews()">Toggle Encounter/Campaign</div></div>
     </div>
     <div id="content">
         <div id="content_left">
             <div id="content_options">
-                <div class="playthrough" id="playthrough_options">
+                <div class="campaign" id="campaign_options">
                     <ul>
-                        <li class="custom_button" onclick="buttonExpandPlaythrough()">Playthroughs.</li>
-                        <li class="custom_button" onclick="buttonExpandJoinedPlaythrough()">Joined Playthroughs.</li>
+                        <li class="custom_button" onclick="buttonExpandCampaign()">Campaigns.</li>
+                        <li class="custom_button" onclick="buttonExpandJoinedCampaign()">Joined Campaigns.</li>
                     </ul>
                 </div>
                 <div class="encounter" id="encounter_options">
@@ -60,23 +60,23 @@
                         <input type="submit" value="Add" onclick="addNewPlayer()">
                     </div>
                 </div>
-                <div class="playthrough" id="playthrough_expanded" style="display:none">
-                    <div id="playthrough_host">
-                        Select the playthrough you want to continue with and click 'Load'.<br>
-                        <select id='content_selected_playthrough'></select><br>
+                <div class="campaign" id="campaign_expanded" style="display:none">
+                    <div id="campaign_host">
+                        Select the campaign you want to continue with and click 'Load'.<br>
+                        <select id='content_selected_campaign'></select><br>
 
-                        <button onclick='loadPlaythrough()'>Load</button><br>
+                        <button onclick='loadCampaign()'>Load</button><br>
 
-                        Creating a playthrough? Fill in a name and click 'Create'.<br>
+                        Creating a campaign? Fill in a name and click 'Create'.<br>
 
-                        <input id="new_playthrough_name" type="text" placeholder="Naam">
-                        <input type="submit" value="Create" onclick="createPlaythrough()">
+                        <input id="new_campaign_name" type="text" placeholder="Naam">
+                        <input type="submit" value="Create" onclick="createCampaign()">
                     </div>
-                    <div id="playthrough_player">
-                        Select the playthrough for which you want to see the overview.<br>
-                        <select id='open_selected_playthrough_overview'></select><br>
+                    <div id="campaign_player">
+                        Select the campaign for which you want to see the overview.<br>
+                        <select id='open_selected_campaign_overview'></select><br>
 
-                        <button onclick='loadPlaythroughOverview()'>Open</button><br>
+                        <button onclick='loadCampaignOverview()'>Open</button><br>
                     </div>
 
                 </div>
@@ -87,29 +87,29 @@
                 <table id="encounter_list">
                 </table>
             </div>
-            <div class="playthrough" id="playthrough_content" style="display:none">
+            <div class="campaign" id="campaign_content" style="display:none">
                 <div class="flex_row">
-                    <div><img id="playthrough_qr_image" src=""></div>
+                    <div><img id="campaign_qr_image" src=""></div>
                 </div>
                 <div class="flex_row">
-                    <div id="playthrough_name" style="flex: 3;"></div><div class="custom_button" onclick="deletePlaythrough()" style="flex: 1;">Delete</div><br>
+                    <div id="campaign_name" style="flex: 3;"></div><div class="custom_button" onclick="deleteCampaign()" style="flex: 1;">Delete</div><br>
                 </div>
 
                 <div class="flex_row">
-                    <input id="playthrough_link_url" type="text" disabled style="flex: 3;">
-                    <div class="custom_button" onclick="copyUrl('playthrough_link_url')" style="flex: 1;">Copy URL</div>
+                    <input id="campaign_link_url" type="text" disabled style="flex: 3;">
+                    <div class="custom_button" onclick="copyUrl('campaign_link_url')" style="flex: 1;">Copy URL</div>
                 </div>
                 <div class="flex_row">
-                    <input id="playthrough_map_url" type="text" disabled style="flex: 3;">
-                    <div class="custom_button" onclick="copyUrl('playthrough_map_url')" style="flex: 1;">Copy URL</div>
+                    <input id="campaign_map_url" type="text" disabled style="flex: 3;">
+                    <div class="custom_button" onclick="copyUrl('campaign_map_url')" style="flex: 1;">Copy URL</div>
                 </div><br>
-                <div id="playthrough_content_wrapper">
-                    <div id="playthrough_content_left">
+                <div id="campaign_content_wrapper">
+                    <div id="campaign_content_left">
                         Joined players:<br>
                         <div id="players">
                         </div>
                     </div>
-                    <div id="playthrough_content_right">
+                    <div id="campaign_content_right">
                         <div class="pc_table_row">
                             <div class="pc_table_left">Owner of PC</div>
                             <div class="pc_table_right" id="pc_owner"></div>
@@ -181,6 +181,6 @@
     </script>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/playthrough.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/campaign.js') }}"></script>
     <script src="{{ url_for('static', filename='js/encounter.js') }}"></script>
 {% endblock %}

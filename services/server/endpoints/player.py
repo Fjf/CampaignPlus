@@ -1,7 +1,7 @@
 from flask import request
 from werkzeug.exceptions import BadRequest, Unauthorized, NotFound
 
-from lib.model.models import PlayerEquipmentModel, SpellModel, WeaponModel, PlayerProficiencyModel, PlayerModel
+from lib.model.models import PlayerEquipmentModel, SpellModel, PlayerProficiencyModel, PlayerModel
 from lib.service import player_service, campaign_service
 from lib.user_session import session_user, session_user_set
 from endpoints import api, json_api, require_login
@@ -42,25 +42,25 @@ def delete_player(player_id):
     }
 
 
-@api.route('/player/<int:player_id>/playthrough', methods=["PUT"])
+@api.route('/player/<int:player_id>/campaign', methods=["PUT"])
 @json_api()
 @require_login()
-def set_player_playthrough(player_id):
+def set_player_campaign(player_id):
     player = player_service.find_player(player_id)
     check_player(player)
 
     data = request.get_json()
 
-    required_fields = ["playthrough_code"]
+    required_fields = ["campaign_code"]
 
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
-    playthrough = campaign_service.find_playthrough_with_code(data.get("playthrough_code"))
-    if playthrough is None:
-        raise NotFound("This playthrough does not exist.")
+    campaign = campaign_service.find_campaign_with_code(data.get("campaign_code"))
+    if campaign is None:
+        raise NotFound("This campaign does not exist.")
 
-    player_service.update_player_playthrough(player, playthrough.id)
+    player_service.update_player_campaign(player, campaign.id)
 
     return {
         "success": True
@@ -165,7 +165,7 @@ def update_player_item(player_id, item_id):
     return player_item.to_json()
 
 
-@api.route('/player/<int:player_id>/spell', methods=["POST"])
+@api.route('/player/<int:player_id>/spells', methods=["POST"])
 @json_api()
 @require_login()
 def add_player_spell(player_id):
@@ -191,7 +191,7 @@ def get_player_items(player_id):
     return [player_item.to_json() for player_item in player_items]
 
 
-@api.route('/player/<int:player_id>/spell/<int:spell_id>', methods=["DELETE"])
+@api.route('/player/<int:player_id>/spells/<int:spell_id>', methods=["DELETE"])
 @json_api()
 @require_login()
 def delete_player_spell(player_id, spell_id):
@@ -221,7 +221,7 @@ def delete_player_item(player_id, item_id):
     }
 
 
-@api.route('/player/<int:player_id>/spell', methods=["GET"])
+@api.route('/player/<int:player_id>/spells', methods=["GET"])
 @json_api()
 @require_login()
 def get_player_spells(player_id):

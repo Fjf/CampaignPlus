@@ -156,8 +156,8 @@ def get_children(map: MapModel) -> Optional[List[MapModel]]:
     return map_repository.get_children(map.id)
 
 
-def get_all_maps(playthrough_id: str) -> List[MapModel]:
-    return map_repository.get_all_maps(playthrough_id)
+def get_all_maps(campaign_id: str) -> List[MapModel]:
+    return map_repository.get_all_maps(campaign_id)
 
 
 def update_map(map_id: int, x=None, y=None, parent_id=None, name=None, story=None, image_id=None):
@@ -183,19 +183,19 @@ def update_map(map_id: int, x=None, y=None, parent_id=None, name=None, story=Non
     return ""
 
 
-def create_battlemap(user: UserModel, playthrough_id: int, name: str, data: str):
-    playthrough = campaign_service.get_campaign(playthrough_id)
-    if playthrough is None:
-        return "This playthrough does not exist."
+def create_battlemap(user: UserModel, campaign_id: int, name: str, data: str):
+    campaign = campaign_service.get_campaign(campaign_id)
+    if campaign is None:
+        return "This campaign does not exist."
 
-    battlemap = BattlemapModel.from_name_data(playthrough, user, name, data)
+    battlemap = BattlemapModel.from_name_data(campaign, user, name, data)
 
     map_repository.create_map(battlemap)
     return ""
 
 
-def get_all_battlemaps(playthrough_id: int):
-    return map_repository.get_all_battlemaps(playthrough_id)
+def get_all_battlemaps(campaign_id: int):
+    return map_repository.get_all_battlemaps(campaign_id)
 
 
 def create_editor_map(user: UserModel, campaign_id: int, map_base64: str, name: str, grid_size=1, grid_type="none") -> \

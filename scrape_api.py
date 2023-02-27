@@ -5,7 +5,7 @@ import requests
 
 from lib.database import request_session
 from lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel
-from lib.model.models import ItemModel, WeaponModel, SpellModel, ArmorModel, RaceModel, BackgroundModel
+from lib.model.models import ItemModel, SpellModel, RaceModel, BackgroundModel
 from lib.repository import player_repository, repository
 from services.server import app
 
@@ -42,54 +42,7 @@ def get_equipment():
         db.add(item_model)
         db.commit()
 
-        # Add armor properties
-        if item_model.category == "Armor":
-            armor_model = ArmorModel(item_model)
-            armor_model.armor_category = item["armor_category"]
-            armor_model.stealth_disadvantage = item["stealth_disadvantage"]
 
-            ac = item.get("armor_class")
-            if ac is not None:
-                armor_model.armor_class = ac["base"]
-                armor_model.dex_bonus = ac["dex_bonus"]
-                armor_model.max_bonus = ac["max_bonus"]
-            armor_model.min_strength = item["str_minimum"]
-
-            db.add(armor_model)
-            db.commit()
-            item_model.armor_id = armor_model.id
-
-        # Add extra weapon properties
-        elif item_model.category == "Weapon":
-            weapon_model = WeaponModel(item_model)
-
-            weapon_model.properties = ", ".join(prop["name"] for prop in list(item.get("properties", [])))
-
-            # Not all items have all sub-JSON objects, so continue with the next item if that is the case.
-            dmg = item.get("damage")
-            if dmg is not None:
-                weapon_model.dice = dmg["damage_dice"]
-                weapon_model.damage_type = dmg["damage_type"]["name"]
-
-            dmg = item.get("2h_damage")
-            if dmg is not None:
-                weapon_model.two_dice = dmg["damage_dice"]
-                weapon_model.two_damage_type = dmg["damage_type"]["name"]
-
-            item_range = item.get("range")
-            if item_range is not None:
-                weapon_model.range_normal = item_range["normal"]
-                weapon_model.range_long = item_range["long"]
-
-            throw_range = item.get("throw_range", None)
-            if throw_range is not None:
-                weapon_model.throw_range_normal = throw_range["normal"]
-                weapon_model.throw_range_long = throw_range["long"]
-
-            db.add(weapon_model)
-            db.commit()
-
-            item_model.weapon_id = weapon_model.id
         db.commit()
 
 
@@ -102,7 +55,7 @@ def get_spells():
 
         spell_model = SpellModel.from_name(spell["name"])
 
-        spell_model.playthrough_id = -1
+        spell_model.campaign_id = -1
 
         description = ""
         # TODO: Maybe make a better database structure to support multi line descriptions.

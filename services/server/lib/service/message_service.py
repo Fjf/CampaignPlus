@@ -5,30 +5,30 @@ from lib.repository import message_repository
 from lib.service import campaign_service
 
 
-def get_messages(playthrough_id: int, user: UserModel) -> (str, List[MessageModel]):
+def get_messages(campaign_id: int, user: UserModel) -> (str, List[MessageModel]):
     """
-    Returns all messages for a specific playthrough ID.
+    Returns all messages for a specific campaign ID.
 
-    :param playthrough_id:
+    :param campaign_id:
     :param user:
     :return: A tuple (Error message, List with messages)
     """
-    playthrough = campaign_service.get_campaign(playthrough_id)
-    if playthrough is None:
-        return "This playthrough does not exist.", []
+    campaign = campaign_service.get_campaign(campaign_id)
+    if campaign is None:
+        return "This campaign does not exist.", []
 
-    if playthrough.user_id != user.id:
-        return "This is not your playthrough.", []
+    if campaign.user_id != user.id:
+        return "This is not your campaign.", []
 
-    return "", message_repository.get_messages(playthrough_id)
+    return "", message_repository.get_messages(campaign_id)
 
 
-def create_message(playthrough_code: str, user: UserModel, message: str):
-    playthrough = campaign_service.find_playthrough_with_code(playthrough_code)
-    if playthrough is None:
-        return "This playthrough does not exist."
+def create_message(campaign_code: str, user: UserModel, message: str):
+    campaign = campaign_service.find_campaign_with_code(campaign_code)
+    if campaign is None:
+        return "This campaign does not exist."
 
-    message_model = MessageModel.from_playthrough_sender_msg(playthrough, user, message)
+    message_model = MessageModel.from_campaign_sender_msg(campaign, user, message)
 
     message_repository.create_message(message_model)
     return ""

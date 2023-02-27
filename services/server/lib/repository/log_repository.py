@@ -4,11 +4,11 @@ from lib.database import request_session
 from lib.model.models import LogModel
 
 
-def get_logs(playthrough_id: int) -> List[LogModel]:
+def get_logs(campaign_id: int) -> List[LogModel]:
     db = request_session()
 
     return db.query(LogModel) \
-        .filter(LogModel.playthrough_id == playthrough_id) \
+        .filter(LogModel.campaign_id == campaign_id) \
         .all()
 
 

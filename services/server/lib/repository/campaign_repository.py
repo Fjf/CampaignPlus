@@ -1,16 +1,10 @@
-import string
-from datetime import datetime
-from random import randint
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
-from sqlalchemy.exc import IntegrityError
-
-from services.server import app
 from lib.database import request_session
 from lib.model.models import CampaignModel, UserModel, PlayerModel
 
 
-def create_playthrough(model: CampaignModel):
+def create_campaign(model: CampaignModel):
     db = request_session()
 
     db.add(model)
@@ -18,7 +12,7 @@ def create_playthrough(model: CampaignModel):
     return 0
 
 
-def get_playthroughs(user: UserModel) -> List[CampaignModel]:
+def get_campaigns(user: UserModel) -> List[CampaignModel]:
     db = request_session()
 
     return db.query(CampaignModel) \
@@ -26,7 +20,7 @@ def get_playthroughs(user: UserModel) -> List[CampaignModel]:
         .all()
 
 
-def get_joined_playthroughs(user: UserModel):
+def get_joined_campaigns(user: UserModel):
     db = request_session()
 
     return db.query(CampaignModel) \
@@ -35,25 +29,19 @@ def get_joined_playthroughs(user: UserModel):
         .all()
 
 
-def get_playthrough_by_id(pid: int) -> Optional[CampaignModel]:
+def get_campaign(pid: int = None, code: str = None) -> Optional[CampaignModel]:
     db = request_session()
+    if pid is not None:
+        return (
+            db.query(CampaignModel)
+            .filter(CampaignModel.id == pid)
+            .one_or_none()
+        )
+    if code is not None:
+        return (
+            db.query(CampaignModel)
+            .filter(CampaignModel.code == code)
+            .one_or_none()
+        )
 
-    return db.query(CampaignModel) \
-        .filter(CampaignModel.id == pid) \
-        .one_or_none()
 
-
-def find_playthrough_with_id(pid: int) -> Optional[CampaignModel]:
-    db = request_session()
-
-    return db.query(CampaignModel) \
-        .filter(CampaignModel.id == pid) \
-        .one_or_none()
-
-
-def find_playthrough_with_code(code: str) -> Optional[CampaignModel]:
-    db = request_session()
-
-    return db.query(CampaignModel) \
-        .filter(CampaignModel.code == code) \
-        .one_or_none()

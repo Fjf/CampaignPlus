@@ -25,19 +25,19 @@ def get_children(map_id: int) -> Optional[List[MapModel]]:
         .all()
 
 
-def get_all_maps(playthrough_id: str) -> List[MapModel]:
+def get_all_maps(campaign_id: str) -> List[MapModel]:
     db = request_session()
 
     return db.query(MapModel) \
-        .filter(MapModel.campaign_id == playthrough_id) \
+        .filter(MapModel.campaign_id == campaign_id) \
         .all()
 
 
-def get_all_battlemaps(playthrough_id: int):
+def get_all_battlemaps(campaign_id: int):
     db = request_session()
 
     return db.query(BattlemapModel) \
-        .filter(BattlemapModel.playthrough_id == playthrough_id) \
+        .filter(BattlemapModel.campaign_id == campaign_id) \
         .all()
 
 

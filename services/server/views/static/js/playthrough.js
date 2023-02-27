@@ -1,96 +1,96 @@
-function buttonExpandPlaythrough() {
-    document.getElementById("playthrough_expanded").style.display = "block";
+function buttonExpandCampaign() {
+    document.getElementById("campaign_expanded").style.display = "block";
 
-    document.getElementById("playthrough_host").style.display = "block";
-    document.getElementById("playthrough_player").style.display = "none"
-    loadPlaythroughList()
+    document.getElementById("campaign_host").style.display = "block";
+    document.getElementById("campaign_player").style.display = "none"
+    loadCampaignList()
 }
 
-function buttonExpandJoinedPlaythrough() {
-    document.getElementById("playthrough_expanded").style.display = "block";
+function buttonExpandJoinedCampaign() {
+    document.getElementById("campaign_expanded").style.display = "block";
 
-    document.getElementById("playthrough_player").style.display = "block"
-    document.getElementById("playthrough_host").style.display = "none";
-    loadJoinedPlaythroughList()
+    document.getElementById("campaign_player").style.display = "block"
+    document.getElementById("campaign_host").style.display = "none";
+    loadJoinedCampaignList()
 }
 
 
-function loadJoinedPlaythroughList() {
+function loadJoinedCampaignList() {
     let func = function(data) {
         str = "";
         for (obj of data){
             str += "<option value='" + obj.code + "'>" + obj.name + "</option>"
         }
 
-        document.getElementById("open_selected_playthrough_overview").innerHTML = str
+        document.getElementById("open_selected_campaign_overview").innerHTML = str
     }
 
-    requestApiJsonData("api/getjoinedplaythroughs", "GET", {}, func)
+    requestApiJsonData("api/getjoinedcampaigns", "GET", {}, func)
 }
 
-function loadPlaythroughList() {
+function loadCampaignList() {
     let func = function(data) {
         str = "";
         for (obj of data){
             str += "<option value='" + obj.id + "'>" + obj.name + "</option>"
         }
 
-        document.getElementById("content_selected_playthrough").innerHTML = str;
+        document.getElementById("content_selected_campaign").innerHTML = str;
     }
 
-    response = requestApiJsonData("api/getplaythroughs", "GET", {}, func)
+    response = requestApiJsonData("api/getcampaigns", "GET", {}, func)
 }
 
-function buttonCreatePlaythrough() {
+function buttonCreateCampaign() {
 
 }
 
-function createPlaythrough() {
-    name = document.getElementById("new_playthrough_name").value
+function createCampaign() {
+    name = document.getElementById("new_campaign_name").value
     if (name == null || name == "")
         return 0
 
     let func = function(data) {
 
         // TODO: Error checking, for now assuming the creation went correctly.
-        loadPlaythroughList()
-        document.getElementById("new_playthrough_name").value = "";
+        loadCampaignList()
+        document.getElementById("new_campaign_name").value = "";
     }
 
-    response = requestApiJsonData("api/createplaythrough", "POST", {name: name}, func)
+    response = requestApiJsonData("api/createcampaign", "POST", {name: name}, func)
 }
 
-function loadPlaythrough() {
+function loadCampaign() {
     let func = function(data) {
         if (data.url == null) {
             console.log("Something went wrong retrieving the url.")
             return
         }
-        document.getElementById("playthrough_link_url").value = data.url
-        document.getElementById("playthrough_map_url").value = data.url.replace("join", "map")
-        document.getElementById("playthrough_qr_image").src = data.image_src
+        document.getElementById("campaign_link_url").value = data.url
+        document.getElementById("campaign_map_url").value = data.url.replace("join", "map")
+        document.getElementById("campaign_qr_image").src = data.image_src
 
-        div = document.getElementById("content_selected_playthrough");
+        div = document.getElementById("content_selected_campaign");
 
-        if (PLAYTHROUGH_ID == null)
+        if (CAMPAIGN_ID == null)
             setInterval(getMessages, 5000);
 
-        PLAYTHROUGH_ID = div.value
+        CAMPAIGN_ID = div.value
         getMessages()
     }
 
-    let div = document.getElementById("content_selected_playthrough");
+    let div = document.getElementById("content_selected_campaign");
 
     if (div.selectedIndex == -1)
         return null;
 
     name = div.options[div.selectedIndex].text;
 
-    document.getElementById("playthrough_name").innerHTML = "Playthrough: " + name
+    document.getElementById("campaign_name").innerHTML = "Campaign: " + name
 
-    response = requestApiJsonData("api/getplaythroughurl", "POST", {id: div.value}, func)
-    updatePlaythroughPlayers(div.value)
-    document.getElementById("playthrough_content").style.display = "block";
+    response = requestApiJsonData("api/getcampaignurl", "POST", {id: div.value}, func)
+    updateCampaignPlayers(div.value)
+    document.getElementById("campaign_content").style.display = "block";
 }
 
 function copyUrl(name) {
@@ -99,7 +99,7 @@ function copyUrl(name) {
     div.style.borderColor = "green";
 }
 
-function updatePlaythroughPlayers(pid) {
+function updateCampaignPlayers(pid) {
     let func = function(data) {
         let src = ""
         let div;
@@ -112,7 +112,7 @@ function updatePlaythroughPlayers(pid) {
         document.getElementById("players").innerHTML = src;
     }
 
-    response = requestApiJsonData("/api/playthrough/" + pid + "/players", "GET", null, func)
+    response = requestApiJsonData("/api/campaign/" + pid + "/players", "GET", null, func)
 }
 
 function retrievePlayerData(pid) {

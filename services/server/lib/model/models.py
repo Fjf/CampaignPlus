@@ -3,7 +3,7 @@ import os
 import time
 
 import qrcode
-from sqlalchemy import Column, Integer, String, ForeignKey, LargeBinary, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, ForeignKey, LargeBinary, DateTime, Boolean, JSON
 from sqlalchemy.orm import relationship, deferred
 
 from lib.database import OrmModelBase, request_session
@@ -64,7 +64,7 @@ class EmailResetModel(OrmModelBase):
 
 class EnemyModel(OrmModelBase):
     """
-    An enemy for a playthrough, which may be used in a game.
+    An enemy for a campaign, which may be used in a game.
     """
 
     __tablename__ = 'enemy'
@@ -115,7 +115,7 @@ class EnemyModel(OrmModelBase):
 
 class EnemyAbilityModel(OrmModelBase):
     """
-    An enemy for a playthrough, which may be used in a game.
+    An enemy for a campaign, which may be used in a game.
     """
 
     __tablename__ = 'enemy_ability'
@@ -151,10 +151,10 @@ class EnemyAbilityModel(OrmModelBase):
 
 class CampaignModel(OrmModelBase):
     """
-    A playthrough which contains data about a game.
+    A campaign which contains data about a game.
     """
 
-    __tablename__ = 'playthrough'
+    __tablename__ = 'campaign'
 
     id = Column(Integer(), primary_key=True)
 
@@ -219,8 +219,8 @@ class PlayerModel(OrmModelBase):
     The user to whom this player character belongs.
     """
 
-    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"), default=-1)
-    playthrough = relationship("CampaignModel")
+    campaign_id = Column(Integer(), ForeignKey("campaign.id"), default=-1)
+    campaign = relationship("CampaignModel")
 
     user_id = Column(Integer(), ForeignKey("user.id"))
     user = relationship("UserModel")
@@ -237,13 +237,13 @@ class PlayerModel(OrmModelBase):
     platinum = Column(Integer(), nullable=False, default=0)
 
     @classmethod
-    def from_name_playthrough_user(cls, name: str, playthrough: CampaignModel, user: UserModel):
+    def from_name_campaign_user(cls, name: str, campaign: CampaignModel, user: UserModel):
         c = cls()
         c.name = name
         c.user_id = user.id
 
-        if playthrough is not None:
-            c.playthrough_id = playthrough.id
+        if campaign is not None:
+            c.campaign_id = campaign.id
         return c
 
     def to_json(self):
@@ -278,7 +278,7 @@ class MapModel(OrmModelBase):
 
     id = Column(Integer(), primary_key=True)
 
-    campaign_id = Column(Integer(), ForeignKey("playthrough.id"), nullable=False)
+    campaign_id = Column(Integer(), ForeignKey("campaign.id"), nullable=False)
     campaign = relationship("CampaignModel")
 
     parent_map_id = Column(Integer(), ForeignKey("map.id"), nullable=True)
@@ -332,7 +332,7 @@ class CreatorMapModel(OrmModelBase):
 
     id = Column(Integer(), primary_key=True)
 
-    campaign_id = Column(Integer(), ForeignKey("playthrough.id"), nullable=False)
+    campaign_id = Column(Integer(), ForeignKey("campaign.id"), nullable=False)
     campaign = relationship("CampaignModel")
 
     map_base64 = Column(String(), nullable=False)
@@ -372,8 +372,8 @@ class MessageModel(OrmModelBase):
 
     id = Column(Integer(), primary_key=True)
 
-    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"), nullable=False)
-    playthrough = relationship("CampaignModel")
+    campaign_id = Column(Integer(), ForeignKey("campaign.id"), nullable=False)
+    campaign = relationship("CampaignModel")
 
     sender_id = Column(Integer(), ForeignKey("player.id"), nullable=True)
     sender = relationship("PlayerModel")
@@ -382,9 +382,9 @@ class MessageModel(OrmModelBase):
     time = Column(DateTime(), nullable=False)
 
     @classmethod
-    def from_playthrough_sender_msg(cls, playthrough: CampaignModel, sender: PlayerModel, msg: str):
+    def from_campaign_sender_msg(cls, campaign: CampaignModel, sender: PlayerModel, msg: str):
         c = cls()
-        c.playthrough_id = playthrough.id
+        c.campaign_id = campaign.id
         c.sender_id = sender.id
         c.message = msg
         c.time = datetime.datetime.now()
@@ -400,8 +400,8 @@ class LogModel(OrmModelBase):
 
     id = Column(Integer(), primary_key=True)
 
-    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"), nullable=False)
-    playthrough = relationship("CampaignModel")
+    campaign_id = Column(Integer(), ForeignKey("campaign.id"), nullable=False)
+    campaign = relationship("CampaignModel")
 
     creator_id = Column(Integer(), ForeignKey("player.id"), nullable=True)
     creator = relationship("PlayerModel")
@@ -412,10 +412,10 @@ class LogModel(OrmModelBase):
     time = Column(DateTime(), nullable=False)
 
     @classmethod
-    def from_playthrough_creator_content(cls, playthrough: CampaignModel, creator: PlayerModel, title: str,
-                                         text: str):
+    def from_campaign_creator_content(cls, campaign: CampaignModel, creator: PlayerModel, title: str,
+                                      text: str):
         c = cls()
-        c.playthrough_id = playthrough.id
+        c.campaign_id = campaign.id
         c.creator_id = creator.id
         c.title = title
         c.text = text
@@ -432,8 +432,8 @@ class BattlemapModel(OrmModelBase):
 
     id = Column(Integer(), primary_key=True)
 
-    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"), nullable=False)
-    playthrough = relationship("CampaignModel")
+    campaign_id = Column(Integer(), ForeignKey("campaign.id"), nullable=False)
+    campaign = relationship("CampaignModel")
 
     creator_id = Column(Integer(), ForeignKey("player.id"), nullable=True)
     creator = relationship("PlayerModel")
@@ -442,9 +442,9 @@ class BattlemapModel(OrmModelBase):
     data = Column(String(), nullable=False)
 
     @classmethod
-    def from_name_data(cls, playthrough: CampaignModel, creator: PlayerModel, name: str, data: str):
+    def from_name_data(cls, campaign: CampaignModel, creator: PlayerModel, name: str, data: str):
         c = cls()
-        c.playthrough_id = playthrough.id
+        c.campaign_id = campaign.id
         c.creator_id = creator.id
         c.name = name
         c.data = data
@@ -523,16 +523,10 @@ class ItemModel(OrmModelBase):
 
     id = Column(Integer(), primary_key=True)
 
+    owner_id = Column(Integer(), ForeignKey("user.id"), primary_key=False)
+    owner = relationship("UserModel", foreign_keys=[owner_id])
+
     name = Column(String(), nullable=False)
-
-    campaign_id = Column(Integer(), ForeignKey("playthrough.id"), nullable=True)
-    campaign = relationship("CampaignModel", foreign_keys=[campaign_id])
-
-    weapon_id = Column(Integer, ForeignKey("weapon.id"), nullable=True)
-    weapon = relationship("WeaponModel", foreign_keys=[weapon_id])
-
-    armor_id = Column(Integer, ForeignKey("armor.id"), nullable=True)
-    armor = relationship("ArmorModel", foreign_keys=[armor_id])
 
     # Weapon or item
     category = Column(String(), nullable=False)
@@ -548,9 +542,8 @@ class ItemModel(OrmModelBase):
 
     # Additional information about the item.
     description = Column(String(), nullable=True)
-
-    def __init__(self, name):
-        self.name = name
+    # Add variable fields on the item (e.g., weapon/armor specific stats)
+    item_info = Column(JSON(), nullable=True)
 
     def to_json(self):
         def to_gp_sp_cp(value):
@@ -563,100 +556,14 @@ class ItemModel(OrmModelBase):
         from ast import literal_eval
         return {
             "id": self.id,
-            "campaign_id": self.campaign_id,
             "name": self.name,
             "category": self.category,
             "gear_category": self.gear_category,
             "weight": self.weight,
+            "raw_value": self.cost,
             "value": to_gp_sp_cp(self.cost),
-            "description": literal_eval(self.description),
-            "armor": self.armor.to_json() if self.armor is not None else None,
-            "weapon": self.weapon.to_json() if self.weapon is not None else None,
-        }
-
-
-class ArmorModel(OrmModelBase):
-    """
-    Armor information.
-    """
-
-    __tablename__ = "armor"
-
-    id = Column(Integer(), primary_key=True)
-
-    item_id = Column(Integer(), ForeignKey("item.id"), nullable=False)
-    item = relationship("ItemModel", foreign_keys=[item_id])
-
-    armor_category = Column(String(), nullable=False)
-
-    armor_class = Column(Integer(), default=1)
-    dex_bonus = Column(Boolean(), default=False)
-    max_bonus = Column(Integer(), nullable=True)
-    min_strength = Column(Integer(), default=0)
-    stealth_disadvantage = Column(Boolean(), default=False)
-
-    def __init__(self, item: ItemModel):
-        self.item_id = item.id
-
-    def to_json(self):
-        return {
-            "armor_category": self.armor_category,
-            "armor_class": self.armor_class,
-            "dex_bonus": self.dex_bonus,
-            "max_bonus": self.max_bonus,
-            "min_strength": self.min_strength,
-            "stealth_disadvantage": self.stealth_disadvantage
-        }
-
-
-class WeaponModel(OrmModelBase):
-    """
-        The player data model contains information about weapons and items,
-        and is linked via a player_id.
-
-        """
-
-    __tablename__ = 'weapon'
-
-    id = Column(Integer(), primary_key=True)
-
-    item_id = Column(Integer(), ForeignKey("item.id"), nullable=False)
-    item = relationship("ItemModel", foreign_keys=[item_id])
-
-    dice = Column(Integer(), nullable=True)
-    damage_type = Column(String(), nullable=True)
-
-    # Two handed information
-    two_dice = Column(Integer(), nullable=True)
-    two_damage_type = Column(String(), nullable=True)
-
-    range_normal = Column(Integer(), nullable=True)
-    range_long = Column(Integer(), nullable=True)
-
-    throw_range_normal = Column(Integer(), nullable=True)
-    throw_range_long = Column(Integer(), nullable=True)
-
-    properties = Column(String(), nullable=True)
-
-    def __init__(self, item):
-        self.item_id = item.id
-
-    def to_json(self):
-        two_damage = None if self.two_dice is None else {"dice": self.two_dice, "type": self.two_damage_type}
-        throw_range = None if self.throw_range_normal is None else {"normal": self.throw_range_normal,
-                                                                    "long": self.throw_range_long}
-        return {
-            "damage": {
-                "dice": self.dice,
-                "type": self.damage_type,
-            },
-            "two_damage": two_damage,
-            "range": {
-                "normal": self.range_normal,
-                "long": self.range_long
-            },
-            "throw_range": throw_range,
-            "properties": self.properties,
+            "description": self.description,
+            "item_info": self.item_info,
         }
 
 
@@ -686,6 +593,7 @@ class PlayerEquipmentModel(OrmModelBase):
 
     def to_json(self):
         return {
+            "id": self.id,
             "amount": self.amount,
             "extra_info": self.extra_info,
             "info": self.item.to_json()
@@ -695,15 +603,15 @@ class PlayerEquipmentModel(OrmModelBase):
 class SpellModel(OrmModelBase):
     """
     Contains all information about a spell.
-    All spells with playthrough id of -1 are from the base game.
+    All spells with campaign id of -1 are from the base game.
     """
 
     __tablename__ = 'spell'
 
     id = Column(Integer(), primary_key=True)
 
-    playthrough_id = Column(Integer(), ForeignKey("playthrough.id"), nullable=True)
-    playthrough = relationship("CampaignModel")
+    campaign_id = Column(Integer(), ForeignKey("campaign.id"), nullable=True)
+    campaign = relationship("CampaignModel")
 
     name = Column(String(), nullable=True)
     phb_page = Column(Integer(), nullable=True)
@@ -790,24 +698,24 @@ class PlayerProficiencyModel(OrmModelBase):
     player_id = Column(Integer(), ForeignKey("player.id"))
     player = relationship("PlayerModel")
 
-    acrobatics = Column(Integer(), default=0)
-    animal_handling = Column(Integer(), default=0)
-    arcana = Column(Integer(), default=0)
-    athletics = Column(Integer(), default=0)
-    deception = Column(Integer(), default=0)
-    history = Column(Integer(), default=0)
-    insight = Column(Integer(), default=0)
-    intimidation = Column(Integer(), default=0)
-    investigation = Column(Integer(), default=0)
-    medicine = Column(Integer(), default=0)
-    nature = Column(Integer(), default=0)
-    perception = Column(Integer(), default=0)
-    performance = Column(Integer(), default=0)
-    persuasion = Column(Integer(), default=0)
-    religion = Column(Integer(), default=0)
-    sleight_of_hand = Column(Integer(), default=0)
-    stealth = Column(Integer(), default=0)
-    survival = Column(Integer(), default=0)
+    acrobatics = Column(Boolean(), default=False)
+    animal_handling = Column(Boolean(), default=False)
+    arcana = Column(Boolean(), default=False)
+    athletics = Column(Boolean(), default=False)
+    deception = Column(Boolean(), default=False)
+    history = Column(Boolean(), default=False)
+    insight = Column(Boolean(), default=False)
+    intimidation = Column(Boolean(), default=False)
+    investigation = Column(Boolean(), default=False)
+    medicine = Column(Boolean(), default=False)
+    nature = Column(Boolean(), default=False)
+    perception = Column(Boolean(), default=False)
+    performance = Column(Boolean(), default=False)
+    persuasion = Column(Boolean(), default=False)
+    religion = Column(Boolean(), default=False)
+    sleight_of_hand = Column(Boolean(), default=False)
+    stealth = Column(Boolean(), default=False)
+    survival = Column(Boolean(), default=False)
 
     def to_json(self):
         return {

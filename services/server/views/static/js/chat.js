@@ -55,7 +55,7 @@ function getMessages() {
     }
 
     let data = {
-        playthrough_id: PLAYTHROUGH_ID
+        campaign_id: CAMPAIGN_ID
     }
 
     requestApiJsonData("api/getmessages", "POST", data, func)

@@ -152,13 +152,13 @@ body {
     background-color: #A3A3D3;
 }
 
-#playthrough_content_left {
+#campaign_content_left {
     width: 40%;
     float: left;
     box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.2);
 }
 
-#playthrough_content_right {
+#campaign_content_right {
     width: 59%;
     float: right;
     box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.2);
@@ -385,7 +385,7 @@ div[contenteditable] {
 }
 
 button, input[type=submit], input[type=button] {
-    box-sizing:border-box
+    box-sizing:border-box;
     border-radius: 3px;
     border-width: 1px;
     background-color: #bfbfbf;
@@ -433,35 +433,6 @@ input {
     display: flex;
     flex-direction: row;
     height: 95%;
-}
-
-#content_log_entries {
-    flex: 10;
-
-    font-family: 'Dancing Script', cursive;
-
-    box-sizing:border-box;
-    padding: 30px 30px 0 30px;
-
-    overflow-y: auto;
-
-    background-image: url('images/base/perkament.jpg');
-    background-position: 0px 0px;
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-}
-
-.log_delete_button {
-    width: 18px;
-    height: 18px;
-    float: right;
-
-    box-sizing:border-box;
-
-    background-image: url('images/base/trash_bin.svg');
-    background-position: 0px 0px;
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
 }
 
 #content_log_create {

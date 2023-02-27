@@ -30,7 +30,7 @@ function uploadCharacter() {
         class: class_name,
         backstory: backstory
     }
-    requestApiJsonData("/api/playthrough/" + PLAYTHROUGH_ID + "/players", "POST", data, func)
+    requestApiJsonData("/api/campaign/" + CAMPAIGN_ID + "/players", "POST", data, func)
 }
 
 function cleanFields() {
@@ -66,7 +66,7 @@ function getGameCharacters() {
         }
     }
 
-    response = requestApiJsonData("/api/playthrough/" + PLAYTHROUGH_ID + "/players", "GET", null, func)
+    response = requestApiJsonData("/api/campaign/" + CAMPAIGN_ID + "/players", "GET", null, func)
 }
 
 function show(id) {
@@ -153,14 +153,14 @@ function deleteCharacter(id) {
     response = requestApiJsonData("/api/player/" + id, "DELETE", null, func)
 }
 
-function getPlaythroughName(code) {
+function getCampaignName(code) {
     let func = function(data) {
         if (data.success)
-            document.getElementById("playthrough_name").innerHTML = "Add your player to game: " + data.name
+            document.getElementById("campaign_name").innerHTML = "Add your player to game: " + data.name
         else
-            console.log("Something went wrong retrieving the name of this playthrough.")
+            console.log("Something went wrong retrieving the name of this campaign.")
     }
-    response = requestApiJsonData("/api/getplaythroughname", "POST", {code: code}, func)
+    response = requestApiJsonData("/api/getcampaignname", "POST", {code: code}, func)
 }
 
 function sendMessage() {
@@ -177,7 +177,7 @@ function sendMessage() {
         return;
 
     let data = {
-        playthrough_code: PLAYTHROUGH_CODE,
+        campaign_code: CAMPAIGN_CODE,
         message: message
     }
 
@@ -206,7 +206,7 @@ function createLog() {
     }
 
     let data = {
-        playthrough_code: PLAYTHROUGH_CODE,
+        campaign_code: CAMPAIGN_CODE,
         title: title,
         text: text
     }
@@ -235,7 +235,7 @@ function LogBook() {
         }
 
         let data = {
-            playthrough_code: PLAYTHROUGH_CODE
+            campaign_code: CAMPAIGN_CODE
         }
 
         requestApiJsonData("/api/getlogs", "POST", data, func);
@@ -323,7 +323,7 @@ function LogBook() {
         }
 
         let data = {
-            playthrough_code: PLAYTHROUGH_CODE,
+            campaign_code: CAMPAIGN_CODE,
             log_id: i
         }
 
@@ -351,5 +351,5 @@ logBook = new LogBook();
 logBook.getLogs(true);
 
 getGameCharacters()
-getPlaythroughName(PLAYTHROUGH_ID)
+getCampaignName(CAMPAIGN_ID)
 setUserData()

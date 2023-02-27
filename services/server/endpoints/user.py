@@ -1,8 +1,8 @@
-from flask import request
+from flask import request, Response
 from werkzeug.exceptions import BadRequest
 
 from endpoints import api, json_api, require_login
-from lib.service import player_service, user_service
+from lib.service import player_service, user_service, item_service
 from lib.user_session import session_user, session_user_set
 
 
@@ -160,16 +160,28 @@ def get_user_classes():
         classes.append({
             "id": class_model.id,
             "name": class_model.name,
-            "info": class_model.info,
-            "table": class_model.table,
+            "info": class_model.name,  # TODO: Put informative blurb here
             "abilities": [ability.to_json() for ability in abilities]
         })
 
-    return {
-        "success": True,
-        "classes": classes,
-        "error": ""
-    }
+    return classes
+
+
+@api.route('/user/item', methods=["POST"])
+@json_api()
+@require_login()
+def create_user_item():
+    """
+    Creates a new item for this user
+
+    """
+    user = session_user()
+    try:
+        item = item_service.create_item(user, request.get_json())
+    except KeyError as e:
+        return "Missing JSON key values.", 400
+
+    return item, 201
 
 
 @api.route('/user/player', methods=["POST"])

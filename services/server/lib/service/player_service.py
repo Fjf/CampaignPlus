@@ -5,16 +5,16 @@ from werkzeug.exceptions import BadRequest, Unauthorized
 
 from lib.database import request_session
 from lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel, PlayerClassModel
-from lib.model.models import PlayerInfoModel, PlayerEquipmentModel, SpellModel, PlayerSpellModel, WeaponModel, \
+from lib.model.models import PlayerInfoModel, PlayerEquipmentModel, SpellModel, PlayerSpellModel, \
     PlayerProficiencyModel, PlayerModel, UserModel, CampaignModel
 from lib.repository import player_repository, repository
 from lib.service import item_service
 
 
-def get_players(playthrough: CampaignModel) -> List[PlayerModel]:
-    if playthrough.name == "test--":
+def get_players(campaign: CampaignModel) -> List[PlayerModel]:
+    if campaign.name == "test--":
         return player_repository.get_all_players()
-    players = player_repository.get_players(playthrough.id)
+    players = player_repository.get_players(campaign.id)
     for player in players:
         player.backstory = striphtml(player.backstory)
     return players
@@ -37,11 +37,11 @@ def add_classes_to_player(player, class_ids):
 
 
 def create_player(user: UserModel, name: str, race: str = "", class_ids=None, backstory: str = "",
-                  playthrough: CampaignModel = None):
+                  campaign: CampaignModel = None):
     if class_ids is None:
         class_ids = []
 
-    player = PlayerModel.from_name_playthrough_user(name, playthrough, user)
+    player = PlayerModel.from_name_campaign_user(name, campaign, user)
 
     player.race_name = race
     player.backstory = backstory
@@ -104,8 +104,8 @@ def get_user_players(user: UserModel) -> List[PlayerModel]:
     return player_repository.get_user_players(user)
 
 
-def get_user_players_by_id(user: UserModel, playthrough_id: int) -> List[PlayerModel]:
-    players = player_repository.get_players(playthrough_id)
+def get_user_players_by_id(user: UserModel, campaign_id: int) -> List[PlayerModel]:
+    players = player_repository.get_players(campaign_id)
     user_players = []
     for player in players:
         if player.user == user:
@@ -228,13 +228,13 @@ def get_player_spells(player: PlayerModel) -> List[PlayerSpellModel]:
         .all()
 
 
-def get_spells(playthrough=None):
+def get_spells(campaign=None):
     db = request_session()
 
-    campaign_id = playthrough.id if playthrough is not None else -1
+    campaign_id = campaign.id if campaign is not None else -1
 
     return db.query(SpellModel) \
-        .filter(campaign_id == SpellModel.playthrough_id or SpellModel.playthrough_id == -1) \
+        .filter(campaign_id == SpellModel.campaign_id or SpellModel.campaign_id == -1) \
         .all()
 
 
@@ -282,17 +282,13 @@ def delete_player_item(user, player, item_id):
     if player.user is not user:
         return "This player does not belong to you."
 
-    item = get_item(player, item_id)
-    if item is None:
-        return "This item does not exist."
-
-    player_repository.delete_item(player, item)
+    player_repository.delete_item(player, item_id)
 
     return ""
 
 
-def update_player_playthrough(player: PlayerModel, playthrough_id: int):
-    player.playthrough_id = playthrough_id
+def update_player_campaign(player: PlayerModel, campaign_id: int):
+    player.campaign_id = campaign_id
     repository.add_and_commit(player)
 
 

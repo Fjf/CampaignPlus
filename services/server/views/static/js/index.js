@@ -9,14 +9,14 @@ function toggleViews() {
         divs[i].style.display = opts[index];
     }
 
-    divs = document.getElementsByClassName("playthrough")
+    divs = document.getElementsByClassName("campaign")
     for (let i = 0; i < divs.length; i++) {
         divs[i].style.display = opts[(!index) + 0];
     }
 }
 
-function loadPlaythroughOverview() {
-    let selected_code = document.getElementById("open_selected_playthrough_overview").value
+function loadCampaignOverview() {
+    let selected_code = document.getElementById("open_selected_campaign_overview").value
 
     if (selected_code == null)
         return;
@@ -24,6 +24,6 @@ function loadPlaythroughOverview() {
     location.href = "http://" + HOST_ADDRESS + "/join/" + selected_code
 }
 
-var PLAYTHROUGH_ID = null
+var CAMPAIGN_ID = null
 setUserData()
 

@@ -67,14 +67,14 @@ def get_campaigns():
 
 @api.route('/campaigns/join/<campaign_code>', methods=["POST"])
 @require_login()
-def join_playthrough(campaign_code):
+def join_campaign(campaign_code):
     user = session_user()
 
-    playthrough = campaign_service.find_playthrough_with_code(campaign_code.upper())
-    if playthrough is None:
+    campaign = campaign_service.find_campaign_with_code(campaign_code.upper())
+    if campaign is None:
         raise NotFound("This campaign code is not linked to any existing campaign.")
 
-    error = campaign_service.join_playthrough(user, playthrough)
+    error = campaign_service.join_campaign(user, campaign)
     success = error == ""
     return {
         "success": success,
@@ -82,10 +82,10 @@ def join_playthrough(campaign_code):
     }
 
 
-@api.route('/campaigns/<int:playthrough_id>/players', methods=["POST"])
+@api.route('/campaigns/<int:campaign_id>/players', methods=["POST"])
 @json_api()
 @require_login()
-def create_player_playthrough(playthrough_id):
+def create_player_campaign(campaign_id):
     data = request.get_json()
     required_fields = ["name", "class", "backstory", "race"]
 
@@ -93,12 +93,12 @@ def create_player_playthrough(playthrough_id):
         raise BadRequest()
 
     user = session_user()
-    playthrough = campaign_service.get_campaign(playthrough_id)
-    if playthrough is None:
+    campaign = campaign_service.get_campaign(campaign_id)
+    if campaign is None:
         raise NotFound("This campaign does not exist.")
 
     player, error = player_service.create_player(user, data["name"], data["race"], data["class_ids"], data["backstory"],
-                                                 playthrough)
+                                                 campaign)
 
     return {
         "success": True,
@@ -107,12 +107,12 @@ def create_player_playthrough(playthrough_id):
     }
 
 
-@api.route('/campaigns/<int:playthrough_id>/players', methods=["GET"])
+@api.route('/campaigns/<int:campaign_id>/players', methods=["GET"])
 @json_api()
 @require_login()
-def get_players(playthrough_id):
+def get_players(campaign_id):
     user = session_user()
-    campaign = campaign_service.get_campaign(playthrough_id)
+    campaign = campaign_service.get_campaign(campaign_id)
 
     if not campaign_service.user_in_campaign(user, campaign) and campaign.user != user:
         raise Unauthorized("You do not have any players in this campaign.")
@@ -141,22 +141,22 @@ def get_players(playthrough_id):
     return data
 
 
-@api.route('/campaigns/<int:playthrough_id>/players/<int:player_id>', methods=["DELETE"])
+@api.route('/campaigns/<int:campaign_id>/players/<int:player_id>', methods=["DELETE"])
 @json_api()
 @require_login()
-def delete_player_playthrough(playthrough_id: int, player_id: int):
+def delete_player_campaign(campaign_id: int, player_id: int):
     user = session_user()
-    playthrough = campaign_service.get_campaign(playthrough_id)
-    if playthrough is None:
+    campaign = campaign_service.get_campaign(campaign_id)
+    if campaign is None:
         raise NotFound("This campaign does not exist.")
 
     player = player_service.find_player(player_id)
     check_player(player)
 
-    if player.playthrough is not playthrough:
+    if player.campaign is not campaign:
         raise BadRequest("This player is not in this campaign")
 
-    player_service.update_player_playthrough(player, -1)
+    player_service.update_player_campaign(player, -1)
 
     return {
         "success": True,
@@ -164,17 +164,17 @@ def delete_player_playthrough(playthrough_id: int, player_id: int):
     }
 
 
-@api.route('/campaigns/<int:playthrough_id>/spells', methods=["GET"])
+@api.route('/campaigns/<int:campaign_id>/spells', methods=["GET"])
 @json_api()
 @require_login()
-def get_spells(playthrough_id):
-    playthrough = campaign_service.get_campaign(playthrough_id)
+def get_spells(campaign_id):
+    campaign = campaign_service.get_campaign(campaign_id)
 
-    if playthrough is None:
+    if campaign is None:
         raise NotFound("This campaign does not exist.")
 
     spells = []
-    spells_list = player_service.get_spells(playthrough)
+    spells_list = player_service.get_spells(campaign)
 
     for spell in spells_list:
         spells.append({

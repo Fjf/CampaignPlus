@@ -34,7 +34,7 @@ function refreshPlayers(){
         document.getElementById("content_selected_player").innerHTML = str;
     }
 
-    response = requestApiJsonData("api/playthrough/" + PLAYTHROUGH_ID + "/players", "GET", null, func)
+    response = requestApiJsonData("api/campaign/" + CAMPAIGN_ID + "/players", "GET", null, func)
 }
 
 let localPlayers = []

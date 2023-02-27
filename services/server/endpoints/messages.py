@@ -12,14 +12,14 @@ from endpoints import api, json_api, require_login
 def create_message():
     data = request.get_json()
 
-    required_fields = ["playthrough_code", "message"]
+    required_fields = ["campaign_code", "message"]
 
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
     user = session_user()
 
-    error = message_service.create_message(data["playthrough_code"], user, data["message"])
+    error = message_service.create_message(data["campaign_code"], user, data["message"])
     success = error == ""
 
     return {
@@ -34,14 +34,14 @@ def create_message():
 def get_messages():
     data = request.get_json()
 
-    required_fields = ["playthrough_id"]
+    required_fields = ["campaign_id"]
 
     if not data or (False in [x in data for x in required_fields]):
         raise BadRequest()
 
     user = session_user()
 
-    (error, messages) = message_service.get_messages(data["playthrough_id"], user)
+    (error, messages) = message_service.get_messages(data["campaign_id"], user)
     success = error == ""
 
     if not success:
