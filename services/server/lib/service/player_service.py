@@ -142,8 +142,8 @@ def check_backstory(backstory: str) -> bool:
     return True
 
 
-def player_set_item(player, item_id, amount: int, extra_info: str = None):
-    item = item_service.get_item(item_id)
+def player_set_item(user, player, item_id, amount: int, extra_info: str = None):
+    item = item_service.get_item(user, item_id)
 
     if item is None:
         raise BadRequest("This item does not exist.")

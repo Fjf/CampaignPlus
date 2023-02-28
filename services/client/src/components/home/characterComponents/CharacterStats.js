@@ -45,13 +45,13 @@ function CharacterStats(props) {
             />
             <Checkbox
                 disabled={notEditing}
-                value={info.saving_throws_str}
+                checked={info.saving_throws_str}
                 size={"small"}
                 icon={<BsDiamond/>}
                 checkedIcon={<BsDiamondFill/>}
                 onChange={(e) => setInfo({
                     ...info,
-                    saving_throws_str: e.target.value
+                    saving_throws_str: e.target.checked
 
                 })}
             />
@@ -69,15 +69,17 @@ function CharacterStats(props) {
             />
             <Checkbox
                 disabled={notEditing}
-                value={info.saving_throws_dex}
+                checked={info.saving_throws_dex}
                 size={"small"}
                 icon={<BsDiamond/>}
                 checkedIcon={<BsDiamondFill/>}
-                onChange={(e) => setInfo({
-                    ...info,
-                    saving_throws_dex: e.target.value
+                onChange={(e) => {
+                    setInfo({
+                        ...info,
+                        saving_throws_dex: e.target.checked
 
-                })}
+                    })
+                }}
             />
         </div>
         <div>Constitution</div>
@@ -93,13 +95,13 @@ function CharacterStats(props) {
             />
             <Checkbox
                 disabled={notEditing}
-                value={info.saving_throws_con}
+                checked={info.saving_throws_con}
                 size={"small"}
                 icon={<BsDiamond/>}
                 checkedIcon={<BsDiamondFill/>}
                 onChange={(e) => setInfo({
                     ...info,
-                    saving_throws_con: e.target.value
+                    saving_throws_con: e.target.checked
 
                 })}
             />
@@ -117,13 +119,13 @@ function CharacterStats(props) {
             />
             <Checkbox
                 disabled={notEditing}
-                value={info.saving_throws_int}
+                checked={info.saving_throws_int}
                 size={"small"}
                 icon={<BsDiamond/>}
                 checkedIcon={<BsDiamondFill/>}
                 onChange={(e) => setInfo({
                     ...info,
-                    saving_throws_int: e.target.value
+                    saving_throws_int: e.target.checked
 
                 })}
             />
@@ -141,13 +143,13 @@ function CharacterStats(props) {
             />
             <Checkbox
                 disabled={notEditing}
-                value={info.saving_throws_wis}
+                checked={info.saving_throws_wis}
                 size={"small"}
                 icon={<BsDiamond/>}
                 checkedIcon={<BsDiamondFill/>}
                 onChange={(e) => setInfo({
                     ...info,
-                    saving_throws_wis: e.target.value
+                    saving_throws_wis: e.target.checked
 
                 })}
             />
@@ -165,13 +167,13 @@ function CharacterStats(props) {
             />
             <Checkbox
                 disabled={notEditing}
-                value={info.saving_throws_cha}
+                checked={info.saving_throws_cha}
                 size={"small"}
                 icon={<BsDiamond/>}
                 checkedIcon={<BsDiamondFill/>}
                 onChange={(e) => setInfo({
                     ...info,
-                    saving_throws_cha: e.target.value
+                    saving_throws_cha: e.target.checked
                 })}
             />
         </div>

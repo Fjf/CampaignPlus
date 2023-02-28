@@ -165,13 +165,12 @@ def get_user_classes():
     return classes
 
 
-@api.route('/user/item', methods=["POST"])
+@api.route('/user/items', methods=["POST"])
 @json_api()
 @require_login()
 def create_user_item():
     """
     Creates a new item for this user
-
     """
     user = session_user()
     try:
@@ -179,7 +178,17 @@ def create_user_item():
     except KeyError as e:
         return "Missing JSON key values.", 400
 
-    return item, 201
+    return item.to_json(), 201
+
+
+@api.route('/user/items', methods=["GET"])
+@json_api()
+@require_login()
+def get_items():
+    user = session_user()
+    item_objects = item_service.get_items(user)
+    return [item.to_json() for item in item_objects]
+
 
 
 @api.route('/user/player', methods=["POST"])

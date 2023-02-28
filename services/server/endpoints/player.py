@@ -116,10 +116,11 @@ def add_player_item(player_id):
     if item_id is None:
         raise BadRequest("No item_id specified.")
 
+    user = session_user()
     player = player_service.get_player(player_id)
     check_player_ownership(player)
 
-    player_item = player_service.player_set_item(player, item_id, data.get("amount", 1))
+    player_item = player_service.player_set_item(user, player, item_id, data.get("amount", 1))
 
     return player_item.to_json()
 
@@ -130,10 +131,11 @@ def add_player_item(player_id):
 def update_player_item(player_id, item_id):
     data = request.get_json()
 
+    user = session_user()
     player = player_service.get_player(player_id)
     check_player_ownership(player)
 
-    player_item = player_service.player_set_item(player, item_id, data.get("amount"), data.get("extra_info"))
+    player_item = player_service.player_set_item(user, player, item_id, data.get("amount"), data.get("extra_info"))
 
     return player_item.to_json()
 

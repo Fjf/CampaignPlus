@@ -529,7 +529,7 @@ class ItemModel(OrmModelBase):
     # Additional information about the item.
     description = Column(String(), nullable=True)
     # Add variable fields on the item (e.g., weapon/armor specific stats)
-    item_info = Column(JSON(), nullable=True)
+    item_info = Column(JSON(), nullable=True, default=dict)
 
     def to_json(self):
         def to_gp_sp_cp(value):

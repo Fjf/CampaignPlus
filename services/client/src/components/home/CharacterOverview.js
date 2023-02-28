@@ -14,7 +14,7 @@ export default function CharacterOverview(props) {
     // Have a separate money state as to reduce the amount of re-renders required when updating the money.
     const [character, setCharacter] = React.useState(null);
     const [money, setMoney] = React.useState(null);
-    const [characterInfo, setCharacterInfo] = React.useState(null);
+    const [characterStats, setCharacterStats] = React.useState(null);
     const [characterProficiencies, setCharacterProficiencies] = React.useState(null);
 
     const [notEditing, setNotEditing] = React.useState(false);
@@ -22,8 +22,8 @@ export default function CharacterOverview(props) {
     React.useEffect(() => {
         characterService.getCharacterInfo(basicCharacter.id).then(r => {
             setMoney(r.money);
-            setCharacterInfo(r.info);
-            setCharacterProficiencies(r.proficiencies);
+            setCharacterStats(r.info.stats);
+            setCharacterProficiencies(r.info.proficiencies);
             setCharacter(r);
         });
     }, [basicCharacter]);
@@ -38,7 +38,9 @@ export default function CharacterOverview(props) {
 
     function saveChanges() {
         character.money = money;
-        character.info = characterInfo;
+        character.info.stats = characterStats;
+        character.info.proficiencies = characterProficiencies;
+        console.log(character);
         characterService.save(character).then(r => {
             console.log(r);
         })
@@ -59,8 +61,8 @@ export default function CharacterOverview(props) {
         </div>
         {character === null ? null :
             <>
-                <CharacterStats info={characterInfo} setInfo={setCharacterInfo} notEditing={notEditing}/>
-                <CharacterProficiencies info={characterInfo} proficiencies={characterProficiencies} setProficiencies={setCharacterProficiencies}/>
+                <CharacterStats info={characterStats} setInfo={setCharacterStats} notEditing={notEditing}/>
+                <CharacterProficiencies info={characterStats} proficiencies={characterProficiencies} setProficiencies={setCharacterProficiencies}/>
                 <CharacterSpells basicCharacter={basicCharacter}/>
                 <CharacterInventory character={character} money={money} setMoney={setMoney}/>
             </>

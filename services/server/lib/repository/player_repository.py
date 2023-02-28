@@ -51,12 +51,6 @@ def get_all_players():
         .all()
 
 
-def get_item(item_id: int) -> Optional[ItemModel]:
-    db = request_session()
-
-    return db.query(ItemModel) \
-        .filter(ItemModel.id == item_id) \
-        .one_or_none()
 
 
 def get_spell(player: PlayerModel, spell_id: int) -> Optional[SpellModel]:

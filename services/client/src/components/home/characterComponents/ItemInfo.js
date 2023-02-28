@@ -41,9 +41,10 @@ function ItemInfo(props) {
             fullWidth={true}
             multiline={true}
             rows={4}
-            value={item.extra_info}
+            rowsMax={15}
+            value={info.description}
             onChange={(e) => {
-                setItem({...item, extra_info: e.target.value})
+                setItem({...item, info: {...info, description: e.target.value}})
             }}
         /></div>
         <div className={"basic-list"}>

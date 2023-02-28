@@ -50,7 +50,7 @@ function ItemsList(props) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
         />
-        <div className={"items-list"}>
+        <div className={ "items-list"}>
             {filteredItems.map((item, i) => {
                 return <div key={i} onClick={() => {
                     props.onSelect(item);

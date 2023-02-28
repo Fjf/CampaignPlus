@@ -192,24 +192,20 @@ def get_backgrounds():
     db.commit()
 
 
-def convert_class_abilities():
+def fix_description():
     db = request_session()
+    items = db.query(ItemModel).all()
+    for item in items:
+        item: ItemModel
+        if item.description.startswith("["):
+            item.description = item.description[1:-1]
 
-    for filename in os.listdir("storage/dnd_classes/"):
-        fname = os.path.join("storage/dnd_classes/", filename)
-        # checking if it is a file
-        if not os.path.isfile(fname):
-            continue
+        if item.description.startswith("\"") or item.description.startswith("\'"):
+            item.description = item.description[1:-1]
 
-        with open(fname, "r") as f:
-            class_dict = json.load(f)
-
-        print("Loading", class_dict.get("name"))
-
-        main_class = db.query(ClassModel).filter(ClassModel.name == class_dict.get("name")).one_or_none()
-        main_class.data = class_dict
-        db.commit()
-
+        if item.item_info is None:
+            item.item_info = dict()
+    db.commit()
 
 def main():
     # get_equipment()
@@ -219,7 +215,7 @@ def main():
     # get_races()
     # get_backgrounds()
 
-    convert_class_abilities()
+    fix_description()
     pass
 
 

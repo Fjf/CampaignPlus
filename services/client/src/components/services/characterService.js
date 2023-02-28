@@ -22,7 +22,7 @@ function getCharacterInfo(cid) {
         headers: {'Content-Type': 'text/html'},
     };
 
-    return fetch(`${apiUrl}/player/${cid}/data`, requestOptions)
+    return fetch(`${apiUrl}/player/${cid}`, requestOptions)
         .then(handleResponse);
 }
 
