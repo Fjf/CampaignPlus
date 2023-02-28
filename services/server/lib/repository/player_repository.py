@@ -1,11 +1,11 @@
-from typing import Optional, List, Tuple
+from typing import Optional, List
 
 from sqlalchemy import or_, and_
 
 from lib.database import request_session
 from lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel, PlayerClassModel
-from lib.model.models import PlayerModel, CampaignModel, PlayerInfoModel, PlayerEquipmentModel, ItemModel, \
-    PlayerSpellModel, SpellModel, UserModel,  PlayerProficiencyModel
+from lib.model.models import PlayerModel, CampaignModel, PlayerEquipmentModel, ItemModel, \
+    PlayerSpellModel, SpellModel, UserModel
 
 
 def get_players(campaign_id: int):
@@ -22,22 +22,6 @@ def add_and_commit(player):
 
     db.add(player)
     db.commit()
-
-
-def find_player(pid: int) -> Optional[PlayerModel]:
-    db = request_session()
-
-    return db.query(PlayerModel) \
-        .filter(PlayerModel.id == pid) \
-        .one_or_none()
-
-
-def get_player_info(player: PlayerModel) -> Optional[PlayerInfoModel]:
-    db = request_session()
-
-    return db.query(PlayerInfoModel) \
-        .filter(PlayerInfoModel.player_id == player.id) \
-        .one_or_none()
 
 
 def get_player_item(item: ItemModel, player: Optional[PlayerModel]) -> Optional[ItemModel]:
@@ -134,14 +118,6 @@ def delete_item(player: PlayerModel, item_id: int):
         db.delete(pim)
 
     db.commit()
-
-
-def get_player_proficiencies(player: PlayerModel) -> Optional[PlayerProficiencyModel]:
-    db = request_session()
-
-    return db.query(PlayerProficiencyModel) \
-        .filter(PlayerProficiencyModel.player_id == player.id) \
-        .one_or_none()
 
 
 def get_classes(player: PlayerModel) -> List[ClassModel]:

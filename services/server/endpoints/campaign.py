@@ -151,7 +151,7 @@ def delete_player_campaign(campaign_id: int, player_id: int):
     if campaign is None:
         raise NotFound("This campaign does not exist.")
 
-    player = player_service.find_player(player_id)
+    player = player_service.get_player(player_id)
     check_player(player)
 
     if player.campaign is not campaign:

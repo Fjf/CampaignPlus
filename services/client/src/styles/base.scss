@@ -59,6 +59,18 @@ a {
   }
 }
 
+.right-content-bar-fixed {
+  background-color: lighten($primary, 30%);
+  flex: 1;
+  top: 0;
+  right: 0;
+  text-align: end;
+  align-content: end;
+  z-index: 1;
+
+  @extend .left-content-bar;
+}
+
 .right-content-bar {
   background-color: lighten($primary, 30%);
   width: 33%;

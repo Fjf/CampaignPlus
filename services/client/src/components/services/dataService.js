@@ -12,6 +12,8 @@ export const dataService = {
     deleteMap,
     setMapImage,
     saveEnemy,
+    getClasses,
+    addClasses,
 };
 
 
@@ -140,3 +142,27 @@ function deleteMap(cid, map_id) {
         .then(handleResponse);
 }
 
+
+
+function getClasses() {
+    const requestOptions = {
+        method: 'GET',
+        headers: {'Content-Type': 'text/html'},
+    };
+
+    return fetch(`${apiUrl}/classes`, requestOptions)
+        .then(handleResponse);
+}
+
+function addClasses(archive) {
+    let formData = new FormData();
+    formData.append("archive", archive);
+
+    const requestOptions = {
+        method: 'POST',
+        body: formData
+    };
+
+    return fetch(`${apiUrl}/classes`, requestOptions)
+        .then(handleResponse);
+}

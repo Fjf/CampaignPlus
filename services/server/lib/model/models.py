@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import datetime
 import os
 import time
+from typing import Any
 
 import qrcode
 from sqlalchemy import Column, Integer, String, ForeignKey, LargeBinary, DateTime, Boolean, JSON
@@ -170,7 +173,8 @@ class CampaignModel(OrmModelBase):
     date = Column(DateTime(), nullable=False, default=datetime.datetime.now())
     code = Column(String(), nullable=True, unique=True)
 
-    def __init__(self, user: UserModel):
+    def __init__(self, user: UserModel, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
         self.user_id = user.id
 
     def code_url(self):
@@ -206,69 +210,6 @@ class CampaignModel(OrmModelBase):
         }
 
 
-class PlayerModel(OrmModelBase):
-    """
-    A player character for a user, which may be used in a game.
-    """
-
-    __tablename__ = 'player'
-
-    id = Column(Integer(), primary_key=True)
-
-    """
-    The user to whom this player character belongs.
-    """
-
-    campaign_id = Column(Integer(), ForeignKey("campaign.id"), default=-1)
-    campaign = relationship("CampaignModel")
-
-    user_id = Column(Integer(), ForeignKey("user.id"))
-    user = relationship("UserModel")
-
-    name = Column(String(), nullable=False)
-    race_name = Column(String(), nullable=False)
-    class_name = Column(String(), nullable=False)
-    backstory = Column(String(), nullable=True)
-
-    copper = Column(Integer(), nullable=False, default=0)
-    silver = Column(Integer(), nullable=False, default=0)
-    electron = Column(Integer(), nullable=False, default=0)
-    gold = Column(Integer(), nullable=False, default=0)
-    platinum = Column(Integer(), nullable=False, default=0)
-
-    @classmethod
-    def from_name_campaign_user(cls, name: str, campaign: CampaignModel, user: UserModel):
-        c = cls()
-        c.name = name
-        c.user_id = user.id
-
-        if campaign is not None:
-            c.campaign_id = campaign.id
-        return c
-
-    def to_json(self):
-        from lib.service import player_service
-        class_ids = [cls.id for cls in player_service.get_classes(self)]
-
-        return {
-            "name": self.name,
-            "owner": self.user.name,
-            "owner_id": self.user.id,
-            "id": self.id,
-            "race": self.race_name,
-            "class_name": self.class_name,
-            "backstory": self.backstory,
-            "class_ids": class_ids,
-            "money": {
-                "gold": self.gold,
-                "silver": self.silver,
-                "electron": self.electron,
-                "platinum": self.platinum,
-                "copper": self.copper
-            }
-        }
-
-
 class MapModel(OrmModelBase):
     """
     The mapmodel contanis data about maps regarding their location on their parent maps.
@@ -293,7 +234,8 @@ class MapModel(OrmModelBase):
 
     visible = Column(Boolean(), nullable=False, default=True)
 
-    def __init__(self, campaign_id: int, x: int, y: int):
+    def __init__(self, campaign_id: int, x: int, y: int, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
         self.campaign_id = campaign_id
         self.x = x
         self.y = y
@@ -365,7 +307,7 @@ class CreatorMapModel(OrmModelBase):
 
 class MessageModel(OrmModelBase):
     """
-    The mapmodel contanis data about maps regarding their location on their parent maps.
+    The map-model contanis data about maps regarding their location on their parent maps.
     """
 
     __tablename__ = 'message'
@@ -393,7 +335,7 @@ class MessageModel(OrmModelBase):
 
 class LogModel(OrmModelBase):
     """
-    The mapmodel contanis data about maps regarding their location on their parent maps.
+    The map-model contanis data about maps regarding their location on their parent maps.
     """
 
     __tablename__ = 'log'
@@ -451,64 +393,108 @@ class BattlemapModel(OrmModelBase):
         return c
 
 
-class PlayerInfoModel(OrmModelBase):
+class PlayerModel(OrmModelBase):
     """
-    The player info model contains all additional data about a player.
-    This only refers to static information like HP/Speed etc.
-
-    Player spells, items and weapons are linked by playerID in a different table.
+    A player character for a user, which may be used in a game.
     """
 
-    __tablename__ = 'player_info'
+    __tablename__ = 'player'
 
     id = Column(Integer(), primary_key=True)
 
-    player_id = Column(Integer(), ForeignKey("player.id"), nullable=False)
-    player = relationship("PlayerModel")
+    """
+    The user to whom this player character belongs.
+    """
 
-    strength = Column(Integer(), nullable=True)
-    dexterity = Column(Integer(), nullable=True)
-    constitution = Column(Integer(), nullable=True)
-    intelligence = Column(Integer(), nullable=True)
-    wisdom = Column(Integer(), nullable=True)
-    charisma = Column(Integer(), nullable=True)
+    campaign_id = Column(Integer(), ForeignKey("campaign.id"), default=-1)
+    campaign = relationship("CampaignModel")
 
-    saving_throws_str = Column(Boolean(), nullable=True)
-    saving_throws_dex = Column(Boolean(), nullable=True)
-    saving_throws_con = Column(Boolean(), nullable=True)
-    saving_throws_int = Column(Boolean(), nullable=True)
-    saving_throws_wis = Column(Boolean(), nullable=True)
-    saving_throws_cha = Column(Boolean(), nullable=True)
+    user_id = Column(Integer(), ForeignKey("user.id"))
+    user = relationship("UserModel")
 
-    max_hp = Column(Integer(), nullable=True)
-    armor_class = Column(Integer(), nullable=True)
-    speed = Column(Integer(), nullable=True)
-    level = Column(Integer(), nullable=True)
+    name = Column(String(), nullable=False)
+    race_name = Column(String(), nullable=False)
+    class_name = Column(String(), nullable=False)
+    backstory = Column(String(), nullable=True)
 
-    @classmethod
-    def from_player(cls, player: PlayerModel):
-        c = cls()
-        c.player_id = player.id
-        return c
+    copper = Column(Integer(), nullable=False, default=0)
+    silver = Column(Integer(), nullable=False, default=0)
+    electron = Column(Integer(), nullable=False, default=0)
+    gold = Column(Integer(), nullable=False, default=0)
+    platinum = Column(Integer(), nullable=False, default=0)
+
+    info = Column(JSON(), nullable=True)
+
+    def __init__(self, name: str, campaign: CampaignModel, user: UserModel, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
+        self.info = self.get_default_info()
+        self.name = name
+        self.user_id = user.id
+        self.campaign_id = campaign.id if campaign is not None else -1
+
+    @staticmethod
+    def get_default_info():
+        player_stats = {
+            "strength": 0,
+            "dexterity": 0,
+            "constitution": 0,
+            "intelligence": 0,
+            "wisdom": 0,
+            "charisma": 0,
+            "saving_throws_str": False,
+            "saving_throws_dex": False,
+            "saving_throws_con": False,
+            "saving_throws_int": False,
+            "saving_throws_wis": False,
+            "saving_throws_cha": False,
+            "max_hp": 1,
+            "armor_class": 0,
+            "speed": 30,
+            "level": 1,
+        }
+        player_proficiencies = {
+            "acrobatics": 0,
+            "animal_handling": 0,
+            "arcana": 0,
+            "athletics": 0,
+            "deception": 0,
+            "history": 0,
+            "insight": 0,
+            "intimidation": 0,
+            "investigation": 0,
+            "medicine": 0,
+            "nature": 0,
+            "perception": 0,
+            "performance": 0,
+            "persuasion": 0,
+            "religion": 0,
+            "sleight_of_hand": 0,
+            "stealth": 0,
+            "survival": 0
+        }
+        return {
+            "stats": player_stats,
+            "proficiencies": player_proficiencies,
+            "class_ids": [],
+        }
 
     def to_json(self):
         return {
-            "strength": self.strength,
-            "dexterity": self.dexterity,
-            "constitution": self.constitution,
-            "intelligence": self.intelligence,
-            "wisdom": self.wisdom,
-            "charisma": self.charisma,
-            "saving_throws_str": self.saving_throws_str,
-            "saving_throws_dex": self.saving_throws_dex,
-            "saving_throws_con": self.saving_throws_con,
-            "saving_throws_int": self.saving_throws_int,
-            "saving_throws_wis": self.saving_throws_wis,
-            "saving_throws_cha": self.saving_throws_cha,
-            "max_hp": self.max_hp,
-            "armor_class": self.armor_class,
-            "speed": self.speed,
-            "level": self.level,
+            "name": self.name,
+            "owner": self.user.name,
+            "owner_id": self.user.id,
+            "id": self.id,
+            "race": self.race_name,
+            "class_name": self.class_name,
+            "backstory": self.backstory,
+            "money": {
+                "gold": self.gold,
+                "silver": self.silver,
+                "electron": self.electron,
+                "platinum": self.platinum,
+                "copper": self.copper
+            },
+            "info": self.info
         }
 
 
@@ -553,7 +539,6 @@ class ItemModel(OrmModelBase):
                 return "%ssp" % (value // 100)
             return "%scp" % value
 
-        from ast import literal_eval
         return {
             "id": self.id,
             "name": self.name,
@@ -587,7 +572,8 @@ class PlayerEquipmentModel(OrmModelBase):
     amount = Column(Integer(), nullable=False, default=0)
     extra_info = Column(String(), nullable=True, default="")
 
-    def __init__(self, player: PlayerModel, item: ItemModel):
+    def __init__(self, player: PlayerModel, item: ItemModel, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
         self.player_id = player.id
         self.item_id = item.id
 
@@ -682,70 +668,6 @@ class PlayerSpellModel(OrmModelBase):
         return c
 
 
-class PlayerProficiencyModel(OrmModelBase):
-    """
-    A data container for player proficiencies
-    """
-
-    __tablename__ = 'proficiencies'
-
-    id = Column(Integer(), primary_key=True)
-
-    """
-    The user to whom this player character belongs.
-    """
-
-    player_id = Column(Integer(), ForeignKey("player.id"))
-    player = relationship("PlayerModel")
-
-    acrobatics = Column(Integer(), default=False)
-    animal_handling = Column(Integer(), default=False)
-    arcana = Column(Integer(), default=False)
-    athletics = Column(Integer(), default=False)
-    deception = Column(Integer(), default=False)
-    history = Column(Integer(), default=False)
-    insight = Column(Integer(), default=False)
-    intimidation = Column(Integer(), default=False)
-    investigation = Column(Integer(), default=False)
-    medicine = Column(Integer(), default=False)
-    nature = Column(Integer(), default=False)
-    perception = Column(Integer(), default=False)
-    performance = Column(Integer(), default=False)
-    persuasion = Column(Integer(), default=False)
-    religion = Column(Integer(), default=False)
-    sleight_of_hand = Column(Integer(), default=False)
-    stealth = Column(Integer(), default=False)
-    survival = Column(Integer(), default=False)
-
-    def to_json(self):
-        return {
-            "acrobatics": self.acrobatics,
-            "animal_handling": self.animal_handling,
-            "arcana": self.arcana,
-            "athletics": self.athletics,
-            "deception": self.deception,
-            "history": self.history,
-            "insight": self.insight,
-            "intimidation": self.intimidation,
-            "investigation": self.investigation,
-            "medicine": self.medicine,
-            "nature": self.nature,
-            "perception": self.perception,
-            "performance": self.performance,
-            "persuasion": self.persuasion,
-            "religion": self.religion,
-            "sleight_of_hand": self.sleight_of_hand,
-            "stealth": self.stealth,
-            "survival": self.survival
-        }
-
-    @classmethod
-    def from_player(cls, player: PlayerModel):
-        c = cls()
-        c.player_id = player.id
-        return c
-
-
 class RaceModel(OrmModelBase):
     __tablename__ = 'race'
     id = Column(Integer(), primary_key=True)
@@ -814,7 +736,8 @@ class BackgroundModel(OrmModelBase):
     feature_desc = Column(String())
     extra = Column(String())
 
-    def __init__(self, name) -> None:
+    def __init__(self, name, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
         self.name = name
 
     def to_json(self):

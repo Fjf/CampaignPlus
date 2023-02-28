@@ -58,7 +58,6 @@ def api_login():
         "user": user.to_json() if user is not None else None,
         "refer": refer
     }
-    print(result)
     return result
 
 
@@ -66,7 +65,6 @@ def api_login():
 @json_api()
 @require_login()
 def logout():
-    print("Logged out %s" % session_user().name)
     session_user_set(None)
 
     return {
@@ -200,7 +198,6 @@ def create_player():
     """
     user = session_user()
     data = request.get_json()
-    print(request)
 
     name = data.get("name", user.name)
     race = data.get("race", "Human")

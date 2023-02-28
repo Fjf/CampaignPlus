@@ -14,6 +14,8 @@ export const characterService = {
     saveItem,
 };
 
+
+
 function getCharacterInfo(cid) {
     const requestOptions = {
         method: 'GET',

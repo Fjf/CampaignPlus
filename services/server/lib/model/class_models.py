@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 from sqlalchemy import Integer, Column, String, ForeignKey, JSON
 from sqlalchemy.orm import relationship
@@ -25,17 +26,23 @@ class ClassModel(OrmModelBase):
     name = Column(String())
     data = Column(JSON())
 
-    def __init__(self, owner: UserModel = None):
+    def __init__(self, owner: UserModel = None, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
         if owner:
             self.owner_id = owner.id
         else:
             self.owner_id = None
 
     def to_json(self):
-        data = json.loads(self.data)
+        if type(self.data) == dict:
+            data = self.data
+        else:
+            data = json.loads(self.data)
+
         data["name"] = self.name
         data["id"] = self.id
         data["owner_id"] = self.owner_id
+        data["owner_name"] = self.owner.name if self.owner is not None else ""
         return data
 
 
@@ -166,6 +173,9 @@ class ClassAbilityModel(OrmModelBase):
             "name": self.name,
             "info": self.info
         }
+
+    def __repr__(self):
+        return f"{self.id}: {self.name}"
 
 
 class ClassShareModel(OrmModelBase):

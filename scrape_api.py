@@ -1,5 +1,8 @@
 import json
+import os
+import pprint
 import re
+from typing import List
 
 import requests
 
@@ -41,7 +44,6 @@ def get_equipment():
 
         db.add(item_model)
         db.commit()
-
 
         db.commit()
 
@@ -190,13 +192,34 @@ def get_backgrounds():
     db.commit()
 
 
+def convert_class_abilities():
+    db = request_session()
+
+    for filename in os.listdir("storage/dnd_classes/"):
+        fname = os.path.join("storage/dnd_classes/", filename)
+        # checking if it is a file
+        if not os.path.isfile(fname):
+            continue
+
+        with open(fname, "r") as f:
+            class_dict = json.load(f)
+
+        print("Loading", class_dict.get("name"))
+
+        main_class = db.query(ClassModel).filter(ClassModel.name == class_dict.get("name")).one_or_none()
+        main_class.data = class_dict
+        db.commit()
+
+
 def main():
     # get_equipment()
     # get_spells()
-    get_classes()
+    # get_classes()
     # get_table()
     # get_races()
     # get_backgrounds()
+
+    convert_class_abilities()
     pass
 
 

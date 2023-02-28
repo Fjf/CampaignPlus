@@ -1,4 +1,4 @@
-import {BrowserRouter, Link, Route} from "react-router-dom";
+import {Link, Route} from "react-router-dom";
 import React from "react";
 import "../../styles/main.scss"
 import {campaignService} from "../services/campaignService";
@@ -9,9 +9,8 @@ import {userService} from "../services/userService";
 import {useHistory} from "react-router-dom"
 import Profile from "./Profile";
 import MapWidget from "./MapWidget";
-import {dataService} from "../services/dataService";
-import DiceRoller from "../DiceRoller";
 import Encounter from "./Encounter";
+import Classes from "./creationComponents/Classes";
 import BattleMap from "../battlemap/BattleMap";
 
 export default function Home(props) {
@@ -37,8 +36,8 @@ export default function Home(props) {
                 <Link to="/maps">
                     <div>Maps</div>
                 </Link>
-                <Link to="/battle_map">
-                    <div>Battle Map</div>
+                <Link to="/classes">
+                    <div>Classes</div>
                 </Link>
                 <Link to="/enemies">
                     <div>Enemies</div>
@@ -75,6 +74,9 @@ export default function Home(props) {
                 </Route>
                 <Route exact path={"/battle_map"}>
                     <BattleMap/>
+                </Route>
+                <Route exact path={"/classes"}>
+                    <Classes/>
                 </Route>
                 <Route exact path={"/profile"}>
                     <Profile user={user}/>
