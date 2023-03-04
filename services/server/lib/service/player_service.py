@@ -5,7 +5,7 @@ from typing import List, Optional, Tuple
 from werkzeug.exceptions import BadRequest, Unauthorized
 
 from lib.database import request_session
-from lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel, PlayerClassModel
+from lib.model.class_models import ClassModel, SubClassModel
 from lib.model.models import PlayerEquipmentModel, SpellModel, PlayerSpellModel, \
     PlayerModel, UserModel, CampaignModel
 from lib.repository import player_repository, repository
@@ -27,30 +27,16 @@ def striphtml(data):
 
 
 def add_classes_to_player(player, class_ids):
-    # Add classes to player
-    for class_id in class_ids:
-        playable_class = player_repository.get_class_by_id(class_id)
-        if playable_class is None:
-            raise BadRequest("Undefined player class id '%d'" % class_id)
-
-        pcm = PlayerClassModel.from_player_class(player, playable_class)
-        player_repository.add_and_commit(pcm)
+    player.info["class_ids"] = list(set(player.info["class_ids"] + class_ids))
 
 
-def create_player(user: UserModel, name: str, race: str = "", class_ids=None, backstory: str = "",
-                  campaign: CampaignModel = None):
-    if class_ids is None:
-        class_ids = []
-
+def create_player(user: UserModel, name: str, race: str = "", campaign: CampaignModel = None):
     player = PlayerModel(name, campaign, user)
-
     player.race_name = race
-    player.backstory = backstory
-    player.class_name = "dummy"
-    player_repository.add_and_commit(player)
 
-    error = add_classes_to_player(player, class_ids)
-
+    db = request_session()
+    db.add(player)
+    db.commit()
     return player
 
 
@@ -68,7 +54,6 @@ def get_player(pid: int) -> Optional[PlayerModel]:
     return model
 
 
-
 def delete_player(player: PlayerModel):
     player_repository.delete_player(player)
 
@@ -79,7 +64,6 @@ def update_player(player: PlayerModel, data: dict):
     :return:
     """
     db = request_session()
-
 
     name, race, backstory, money, info = (
         data.get("name"), data.get("race"), data.get("backstory"), data.get("money"), data.get("info"))
@@ -99,7 +83,8 @@ def update_player(player: PlayerModel, data: dict):
     if info is not None:
         if len(set(info.keys()) - set(player.info.keys())) > 0:
             return {"error:": "Invalid JSON format passed."}, 403
-
+        
+        print(info)
         # Create deepcopy so that sqlalchemy commits the changes
         stats = copy.deepcopy(player.info)
 
@@ -108,7 +93,7 @@ def update_player(player: PlayerModel, data: dict):
             if type(stats.get(key)) == dict:
                 stats.get(key).update(info.get(key))
             else:
-                stats["key"] = info.get(key)
+                stats[key] = info.get(key)
 
         player.info = stats
 
@@ -243,16 +228,32 @@ def update_player_campaign(player: PlayerModel, campaign_id: int):
 
 
 def get_classes(player: PlayerModel) -> List[ClassModel]:
-    return player_repository.get_classes(player)
+    """
+    Returns all main classes which are linked to a player.
 
+    :param player: The player for which to show what classes linked.
+    :return: A list of classes which the player has linked.
+    """
+    db = request_session()
 
-def get_class_abilities(class_model: ClassModel) -> List[ClassAbilityModel]:
-    return player_repository.get_class_abilities(class_model=class_model)
-
-
-def get_subclass_abilities(sub_class_model: SubClassModel) -> List[ClassAbilityModel]:
-    return player_repository.get_class_abilities(subclass_model=sub_class_model)
+    return (db.query(ClassModel)
+            .filter(ClassModel.id.in_(player.info["class_ids"]))
+            .all())
 
 
 def get_visible_classes(user: UserModel) -> List[ClassModel]:
-    return player_repository.get_visible_classes(user)
+    """
+        Returns all classes which can be seen by a user.
+        A class is visible when it is the owner of a class, or if the class has no owner (default class)
+
+        :param user: The user for which to get the visible classes.
+        :return: A list of classes which the user can see.
+        """
+    db = request_session()
+
+    # Make sure it does not crash for not logged in users.
+    user_id = user.id if user is not None else -1
+
+    return (db.query(ClassModel)
+            .filter(ClassModel.owner_id == user_id or ClassModel.owner_id.is_(None))
+            .all())

@@ -3,7 +3,7 @@ from typing import Optional, List
 from sqlalchemy import or_, and_
 
 from lib.database import request_session
-from lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel, PlayerClassModel
+from lib.model.class_models import ClassModel, SubClassModel
 from lib.model.models import PlayerModel, CampaignModel, PlayerEquipmentModel, ItemModel, \
     PlayerSpellModel, SpellModel, UserModel
 
@@ -16,12 +16,6 @@ def get_players(campaign_id: int):
         .filter(CampaignModel.id == campaign_id) \
         .all()
 
-
-def add_and_commit(player):
-    db = request_session()
-
-    db.add(player)
-    db.commit()
 
 
 def get_player_item(item: ItemModel, player: Optional[PlayerModel]) -> Optional[ItemModel]:
@@ -114,52 +108,6 @@ def delete_item(player: PlayerModel, item_id: int):
     db.commit()
 
 
-def get_classes(player: PlayerModel) -> List[ClassModel]:
-    """
-    Returns all main classes which are linked to a player.
-
-    :param player: The player for which to show what classes linked.
-    :return: A list of classes which the player has linked.
-    """
-    db = request_session()
-
-    return db.query(ClassModel) \
-        .join(PlayerClassModel, PlayerClassModel.main_class_id == ClassModel.id) \
-        .filter(PlayerClassModel.player_id == player.id) \
-        .all()
-
-
-def get_visible_classes(user: UserModel) -> List[ClassModel]:
-    """
-    Returns all classes which can be seen by a user.
-    A class is visible when it is the owner of a class, or if the class has no owner (default class)
-
-    :param user: The user for which to get the visible classes.
-    :return: A list of classes which the user can see.
-    """
-    db = request_session()
-
-    # Make sure it does not crash for not logged in users.
-    user_id = user.id if user is not None else -1
-
-    return db.query(ClassModel) \
-        .filter(ClassModel.owner_id == user_id or ClassModel.owner_id.is_(None)) \
-        .all()
-
-
-def get_class_abilities(class_model: ClassModel = None, subclass_model: SubClassModel = None) -> List[
-    ClassAbilityModel]:
-    db = request_session()
-
-    intermediate = db.query(ClassAbilityModel)
-
-    if class_model is not None:
-        return intermediate.filter(ClassAbilityModel.main_class_id == class_model.id) \
-            .all()
-    else:
-        return intermediate.filter(ClassAbilityModel.sub_class_id == subclass_model.id) \
-            .all()
-
 
 def get_class_by_id(class_id: int) -> Optional[ClassModel]:
     db = request_session()
@@ -169,5 +117,7 @@ def get_class_by_id(class_id: int) -> Optional[ClassModel]:
 
 def remove_classes_from_player(player: PlayerModel):
     db = request_session()
-
-    db.query(PlayerClassModel).filter(PlayerClassModel.player_id == player.id).delete()
+    new_info = player.info
+    new_info["class_ids"].clear()
+    player.info = new_info
+    db.commit()

@@ -76,32 +76,6 @@ class SubClassModel(OrmModelBase):
         return c
 
 
-class PlayerClassModel(OrmModelBase):
-    """
-    This class data model which contains all information about a playable dnd class.
-
-    A class may have an owner, if it has no owner it is visible by default for everybody.
-    If a class does have an owner, only they may edit the custom class.
-    """
-
-    __tablename__ = 'player_class'
-
-    id = Column(Integer(), primary_key=True)
-
-    player_id = Column(Integer(), ForeignKey(PlayerModel.id), nullable=False)
-    player = relationship("PlayerModel")
-
-    main_class_id = Column(Integer(), ForeignKey(ClassModel.id), nullable=False)
-    main_class = relationship("ClassModel")
-
-    @classmethod
-    def from_player_class(cls, player: PlayerModel, main_class: ClassModel):
-        c = cls()
-        c.player_id = player.id
-        c.main_class_id = main_class.id
-        return c
-
-
 class PlayerSubClassModel(OrmModelBase):
     """
     This subclass data model which contains all information about a playable dnd subclass .
@@ -126,56 +100,6 @@ class PlayerSubClassModel(OrmModelBase):
         c.player_id = player.id
         c.subclass_id = sub_class.id
         return c
-
-
-class ClassAbilityModel(OrmModelBase):
-    """
-    A class ability model stores all information about class abilities.
-    Class abilities contain a level, and information about the ability itself.
-
-    A class ability model may be linked to either a main class, or a subclass.
-    """
-
-    __tablename__ = 'class_abilities'
-
-    id = Column(Integer(), primary_key=True)
-
-    main_class_id = Column(Integer(), ForeignKey(ClassModel.id), nullable=True)
-    main_class = relationship("ClassModel")
-
-    sub_class_id = Column(Integer(), ForeignKey(SubClassModel.id), nullable=True)
-    sub_class = relationship("SubClassModel")
-
-    name = Column(String(), nullable=False)
-
-    level = Column(Integer(), nullable=False)
-
-    info = Column(String(), nullable=True)
-
-    @classmethod
-    def from_main_class(cls, main_class: ClassModel):
-        c = cls()
-        c.main_class_id = main_class.id
-        return c
-
-    @classmethod
-    def from_sub_class(cls, sub_class: SubClassModel):
-        c = cls()
-        c.sub_class_id = sub_class.id
-        return c
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "main_class_id": self.main_class_id,
-            "sub_class_id": self.sub_class_id,
-            "level": self.level,
-            "name": self.name,
-            "info": self.info
-        }
-
-    def __repr__(self):
-        return f"{self.id}: {self.name}"
 
 
 class ClassShareModel(OrmModelBase):

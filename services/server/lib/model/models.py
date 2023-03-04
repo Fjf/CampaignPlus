@@ -26,7 +26,7 @@ class UserModel(OrmModelBase):
     email = Column(String(), unique=True, nullable=True)
 
     @classmethod
-    def from_name_password(cls, name: str, password: str, email: str = None):
+    def from_name_password(cls, name: str, password: bytes, email: str = None):
         c = cls()
         c.name = name
         c.password = password
@@ -402,10 +402,6 @@ class PlayerModel(OrmModelBase):
 
     id = Column(Integer(), primary_key=True)
 
-    """
-    The user to whom this player character belongs.
-    """
-
     campaign_id = Column(Integer(), ForeignKey("campaign.id"), default=-1)
     campaign = relationship("CampaignModel")
 
@@ -413,9 +409,9 @@ class PlayerModel(OrmModelBase):
     user = relationship("UserModel")
 
     name = Column(String(), nullable=False)
-    race_name = Column(String(), nullable=False)
-    class_name = Column(String(), nullable=False)
-    backstory = Column(String(), nullable=True)
+    race_name = Column(String(), nullable=False, default="Human")
+
+    backstory = Column(String(), nullable=True, default="")
 
     copper = Column(Integer(), nullable=False, default=0)
     silver = Column(Integer(), nullable=False, default=0)
@@ -485,7 +481,6 @@ class PlayerModel(OrmModelBase):
             "owner_id": self.user.id,
             "id": self.id,
             "race": self.race_name,
-            "class_name": self.class_name,
             "backstory": self.backstory,
             "money": {
                 "gold": self.gold,

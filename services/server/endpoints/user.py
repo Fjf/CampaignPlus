@@ -154,12 +154,11 @@ def get_user_classes():
 
     classes = []
     for class_model in class_models:
-        abilities = player_service.get_class_abilities(class_model)
         classes.append({
             "id": class_model.id,
             "name": class_model.name,
             "info": class_model.name,  # TODO: Put informative blurb here
-            "abilities": [ability.to_json() for ability in abilities]
+            "abilities": class_model.data["abilities"]
         })
 
     return classes
@@ -190,7 +189,6 @@ def get_items():
     return [item.to_json() for item in item_objects]
 
 
-
 @api.route('/user/player', methods=["POST"])
 @json_api()
 @require_login()
@@ -210,10 +208,8 @@ def create_player():
 
     name = data.get("name", user.name)
     race = data.get("race", "Human")
-    class_ids = data.get("class_ids", [])
-    backstory = data.get("backstory", "")
 
-    player = player_service.create_player(user, name, race, class_ids, backstory)
+    player = player_service.create_player(user, name, race)
 
     return player.to_json()
 

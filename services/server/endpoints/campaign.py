@@ -129,13 +129,15 @@ def get_players(campaign_id):
         else:
             backstory = ""
 
+        player_classes = player_service.get_classes(player)
+
         data.append({
             "id": player.id,
             "user_name": player.user.name,
             "name": player.name,
             "race": player.race_name,
             "backstory": backstory,
-            "class": player.class_name
+            "class": player_classes[0].name if len(player_classes) > 0 else "Classless"
         })
 
     return data
