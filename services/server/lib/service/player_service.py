@@ -83,7 +83,7 @@ def update_player(player: PlayerModel, data: dict):
     if info is not None:
         if len(set(info.keys()) - set(player.info.keys())) > 0:
             return {"error:": "Invalid JSON format passed."}, 403
-        
+
         print(info)
         # Create deepcopy so that sqlalchemy commits the changes
         stats = copy.deepcopy(player.info)
@@ -127,7 +127,7 @@ def check_backstory(backstory: str) -> bool:
     return True
 
 
-def player_set_item(user, player, item_id, amount: int, extra_info: str = None):
+def add_equipment(user, player, item_id, amount: int, extra_info: str = None):
     item = item_service.get_item(user, item_id)
 
     if item is None:
@@ -153,6 +153,27 @@ def player_set_item(user, player, item_id, amount: int, extra_info: str = None):
 
     db.commit()
     return player_item
+
+
+def set_equipment(player, equipment_id, amount, description=None):
+    db = request_session()
+
+    equipment: PlayerEquipmentModel = (
+        db.query(PlayerEquipmentModel)
+        .filter(PlayerEquipmentModel.id == equipment_id and PlayerEquipmentModel.player_id == player.id)
+        .one_or_none())
+
+    equipment.amount = amount
+    if description is not None:
+        equipment.description = description
+
+    if equipment.amount == 0:
+        db.delete(equipment)
+        db.commit()
+        return {}
+    else:
+        db.commit()
+        return equipment.to_json()
 
 
 def get_player_spells(player: PlayerModel) -> List[PlayerSpellModel]:
@@ -217,7 +238,7 @@ def delete_player_item(user, player, item_id):
     if player.user is not user:
         return "This player does not belong to you."
 
-    player_repository.delete_item(player, item_id)
+    player_repository.delete_equipment(player, item_id)
 
     return ""
 

@@ -496,8 +496,6 @@ class PlayerModel(OrmModelBase):
 class ItemModel(OrmModelBase):
     """
     The datamodel which stores items.
-
-    Left join with WeaponModel to add possible weapon attributes to the items.
     """
 
     __tablename__ = 'item'
@@ -565,7 +563,7 @@ class PlayerEquipmentModel(OrmModelBase):
     item: ItemModel = relationship("ItemModel")
 
     amount = Column(Integer(), nullable=False, default=0)
-    extra_info = Column(String(), nullable=True, default="")
+    description = Column(String(), nullable=True, default="")
 
     def __init__(self, player: PlayerModel, item: ItemModel, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
@@ -576,7 +574,7 @@ class PlayerEquipmentModel(OrmModelBase):
         return {
             "id": self.id,
             "amount": self.amount,
-            "extra_info": self.extra_info,
+            "description": self.description,
             "info": self.item.to_json()
         }
 

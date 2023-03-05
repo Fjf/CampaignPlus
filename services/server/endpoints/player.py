@@ -120,7 +120,7 @@ def add_player_item(player_id):
     player = player_service.get_player(player_id)
     check_player_ownership(player)
 
-    player_item = player_service.player_set_item(user, player, item_id, data.get("amount", 1))
+    player_item = player_service.add_equipment(user, player, item_id, data.get("amount", 1))
 
     return player_item.to_json()
 
@@ -135,9 +135,9 @@ def update_player_item(player_id, item_id):
     player = player_service.get_player(player_id)
     check_player_ownership(player)
 
-    player_item = player_service.player_set_item(user, player, item_id, data.get("amount"), data.get("extra_info"))
+    player_item = player_service.set_equipment(player, item_id, data.get("amount"), data.get("description"))
 
-    return player_item.to_json()
+    return player_item
 
 
 @api.route('/player/<int:player_id>/spells', methods=["POST"])

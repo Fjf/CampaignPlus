@@ -90,12 +90,11 @@ def player_get_item(player, item_id):
 
     return db.query(ItemModel) \
         .filter((player.campaign_id == ItemModel.campaign_id) or (ItemModel.campaign_id == -1)) \
-        .filter((player.campaign_id == ItemModel.campaign_id) or (ItemModel.campaign_id == -1)) \
         .filter(ItemModel.id == item_id) \
         .one_or_none()
 
 
-def delete_item(player: PlayerModel, item_id: int):
+def delete_equipment(player: PlayerModel, item_id: int):
     db = request_session()
 
     pim_list = db.query(PlayerEquipmentModel) \
@@ -106,7 +105,6 @@ def delete_item(player: PlayerModel, item_id: int):
         db.delete(pim)
 
     db.commit()
-
 
 
 def get_class_by_id(class_id: int) -> Optional[ClassModel]:
