@@ -472,6 +472,7 @@ class PlayerModel(OrmModelBase):
             "stats": player_stats,
             "proficiencies": player_proficiencies,
             "class_ids": [],
+            "subclass_ids": [],
         }
 
     def to_json(self):

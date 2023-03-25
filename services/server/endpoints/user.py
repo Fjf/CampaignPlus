@@ -149,19 +149,17 @@ def get_user_players():
 @require_login()
 def get_user_classes():
     user = session_user()
-
     class_models = player_service.get_visible_classes(user)
+    return [cls.to_json() for cls in class_models]
 
-    classes = []
-    for class_model in class_models:
-        classes.append({
-            "id": class_model.id,
-            "name": class_model.name,
-            "info": class_model.name,  # TODO: Put informative blurb here
-            "abilities": class_model.data["abilities"]
-        })
 
-    return classes
+@api.route('/user/subclasses', methods=["GET"])
+@json_api()
+@require_login()
+def get_user_subclasses():
+    user = session_user()
+    class_models = player_service.get_visible_subclasses(user)
+    return [cls.to_json() for cls in class_models]
 
 
 @api.route('/user/items', methods=["POST"])
@@ -209,9 +207,11 @@ def create_player():
     name = data.get("name", user.name)
     race = data.get("race", "Human")
 
+    print(data)
+
     player = player_service.create_player(user, name, race)
+    player = player_service.update_player(player, data)
 
-    return player.to_json()
-
+    return player
 
 print("Registered user api endpoints.")

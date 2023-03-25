@@ -5,7 +5,7 @@ from sqlalchemy import Integer, Column, String, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 
 from lib.database import OrmModelBase
-from lib.model.models import UserModel, PlayerModel
+from lib.model.models import UserModel
 
 
 class ClassModel(OrmModelBase):
@@ -38,7 +38,6 @@ class ClassModel(OrmModelBase):
             data = self.data
         else:
             data = json.loads(self.data)
-
         data["name"] = self.name
         data["id"] = self.id
         data["owner_id"] = self.owner_id
@@ -61,45 +60,24 @@ class SubClassModel(OrmModelBase):
     owner_id = Column(Integer(), ForeignKey(UserModel.id), nullable=True)
     owner = relationship("UserModel")
 
-    main_class_id = Column(Integer(), ForeignKey(ClassModel.id), nullable=False)
+    main_class_name = Column(String(), ForeignKey(ClassModel.name), nullable=False)
     main_class = relationship("ClassModel")
 
     name = Column(String(), nullable=False)
 
     info = Column(String(), nullable=True)
 
-    @classmethod
-    def from_class_user(cls, main_class: ClassModel, owner: UserModel = None):
-        c = cls()
-        c.main_class_id = main_class.id
-        c.owner_id = owner.id if owner else None
-        return c
-
-
-class PlayerSubClassModel(OrmModelBase):
-    """
-    This subclass data model which contains all information about a playable dnd subclass .
-
-    A subclass may have an owner, if it has no owner it is visible by default for everybody.
-    If a subclass does have an owner, only they may edit the custom subclass.
-    """
-
-    __tablename__ = 'player_subclass'
-
-    id = Column(Integer(), primary_key=True)
-
-    player_id = Column(Integer(), ForeignKey(PlayerModel.id), nullable=False)
-    player = relationship("PlayerModel")
-
-    subclass_id = Column(Integer(), ForeignKey(SubClassModel.id), nullable=False)
-    subclass = relationship("SubClassModel")
-
-    @classmethod
-    def from_subclass_player(cls, player: PlayerModel, sub_class: SubClassModel):
-        c = cls()
-        c.player_id = player.id
-        c.subclass_id = sub_class.id
-        return c
+    def to_json(self):
+        if type(self.info) == dict:
+            data = self.info
+        else:
+            data = json.loads(self.info)
+        data["id"] = self.id
+        data["owner_id"] = self.owner_id
+        data["main_class_name"] = self.main_class_name
+        data["main_class_id"] = self.main_class.id
+        data["owner_name"] = self.owner.name if self.owner is not None else ""
+        return data
 
 
 class ClassShareModel(OrmModelBase):

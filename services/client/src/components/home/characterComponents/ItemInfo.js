@@ -36,15 +36,17 @@ function ItemInfo(props) {
                 setItem({...item, amount: e.target.value})
             }}
         /></div>
+        <h4>Description</h4>
+        <div>{info.description}</div>
         <div><TextField
             label={"Flavor"}
             fullWidth={true}
             multiline={true}
             rows={4}
             rowsMax={15}
-            value={info.description}
+            value={item.description}
             onChange={(e) => {
-                setItem({...item, info: {...info, description: e.target.value}})
+                setItem({...item, description: e.target.value})
             }}
         /></div>
         <div className={"basic-list"}>
