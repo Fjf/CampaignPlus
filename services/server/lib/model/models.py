@@ -629,9 +629,9 @@ class SpellModel(OrmModelBase):
             "casting_time": self.casting_time,
             "concentration": self.concentration,
             "ritual": self.ritual,
-            "material": self.material,
+            "material": self.material if self.material is not None else "None",
             "components": self.components,
-            "self_range": self.spell_range,
+            "spell_range": self.spell_range,
             "description": self.description,
             "school": self.school,
             "phb_page": self.phb_page

@@ -26,32 +26,32 @@ def rotate_file(filename: str) -> None:
     """
 
     f = open(filename, "rb")
-    tags = exifread.process_file(f, details=False, stop_tag='Image Orientation')
+    # tags = exifread.process_file(f, details=False, stop_tag='Image Orientation')
     f.close()
 
-    tag = tags.get("Image Orientation", None)
-    if tag is None:
-        return
-
-    rot = str(tag)
-    if not rot.startswith("Rotated "):
-        return
-
-    data = rot.split(" ")
+    # tag = tags.get("Image Orientation", None)
+    # if tag is None:
+    #     return
+    #
+    # rot = str(tag)
+    # if not rot.startswith("Rotated "):
+    #     return
+    #
+    # data = rot.split(" ")
 
     image = Image.open(filename)
 
-    r = 0
-    if data[1] == "90":
-        r = Image.ROTATE_270
-    elif data[1] == "180":
-        r = Image.ROTATE_180
-    elif data[1] == "270":
-        r = Image.ROTATE_90
-    else:
-        raise ValueError("Something went wrong reading EXIF data.")
+    # r = 0
+    # if data[1] == "90":
+    #     r = Image.ROTATE_270
+    # elif data[1] == "180":
+    #     r = Image.ROTATE_180
+    # elif data[1] == "270":
+    #     r = Image.ROTATE_90
+    # else:
+    #     raise ValueError("Something went wrong reading EXIF data.")
 
-    image = image.transpose(r)
+    # image = image.transpose(r)
 
     image.save(filename)
 
