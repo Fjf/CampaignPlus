@@ -244,8 +244,10 @@ def delete_player_item(user, player, item_id):
 
 
 def update_player_campaign(player: PlayerModel, campaign_id: int):
+    session = request_session()
     player.campaign_id = campaign_id
-    repository.add_and_commit(player)
+    session.commit()
+
 
 
 def get_classes(player: PlayerModel) -> List[ClassModel]:

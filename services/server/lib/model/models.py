@@ -483,6 +483,7 @@ class PlayerModel(OrmModelBase):
             "id": self.id,
             "race": self.race_name,
             "backstory": self.backstory,
+            "campaign_id": self.campaign_id,
             "money": {
                 "gold": self.gold,
                 "silver": self.silver,

@@ -81,7 +81,7 @@ def set_player_info(player_id):
     return player_service.update_player(player, data)
 
 
-@api.route('/player/<int:player_id>/campaign', methods=["PUT"])
+@api.route("/player/<int:player_id>/campaign", methods=["PUT"])
 @json_api()
 @require_login()
 def set_player_campaign(player_id):
@@ -90,10 +90,11 @@ def set_player_campaign(player_id):
 
     data = request.get_json()
 
+    print(data)
     required_fields = ["campaign_code"]
 
     if not data or (False in [x in data for x in required_fields]):
-        raise BadRequest()
+        raise BadRequest("Not all required fields are provided.")
 
     campaign = campaign_service.find_campaign_with_code(data.get("campaign_code"))
     if campaign is None:
@@ -101,12 +102,10 @@ def set_player_campaign(player_id):
 
     player_service.update_player_campaign(player, campaign.id)
 
-    return {
-        "success": True
-    }
+    return player.to_json()
 
 
-@api.route('/player/<int:player_id>/item', methods=["POST"])
+@api.route("/player/<int:player_id>/item", methods=["POST"])
 @json_api()
 @require_login()
 def add_player_item(player_id):
@@ -125,7 +124,7 @@ def add_player_item(player_id):
     return player_item.to_json()
 
 
-@api.route('/player/<int:player_id>/item/<int:item_id>', methods=["PUT"])
+@api.route("/player/<int:player_id>/item/<int:item_id>", methods=["PUT"])
 @json_api()
 @require_login()
 def update_player_item(player_id, item_id):
