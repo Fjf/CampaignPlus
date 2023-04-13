@@ -1,7 +1,7 @@
 import json
 from typing import Any
 
-from sqlalchemy import Integer, Column, String, ForeignKey, JSON
+from sqlalchemy import Integer, Column, String, ForeignKey, JSON, PickleType
 from sqlalchemy.orm import relationship
 
 from lib.database import OrmModelBase
@@ -45,7 +45,7 @@ class ClassModel(OrmModelBase):
         return data
 
 
-class SubClassModel(OrmModelBase):
+class SubclassModel(OrmModelBase):
     """
     This subclass data model which contains all information about a playable dnd subclass .
 
@@ -65,7 +65,7 @@ class SubClassModel(OrmModelBase):
 
     name = Column(String(), nullable=False)
 
-    info = Column(String(), nullable=True)
+    info = Column(JSON(), nullable=True)
 
     def to_json(self):
         if type(self.info) == dict:
@@ -114,14 +114,14 @@ class SubClassShareModel(OrmModelBase):
 
     id = Column(Integer(), primary_key=True)
 
-    sub_class_id = Column(Integer(), ForeignKey(SubClassModel.id), nullable=False)
-    sub_class = relationship("SubClassModel")
+    sub_class_id = Column(Integer(), ForeignKey(SubclassModel.id), nullable=False)
+    sub_class = relationship("SubclassModel")
 
     user_id = Column(Integer(), ForeignKey(UserModel.id), nullable=False)
     user = relationship("UserModel")
 
     @classmethod
-    def from_subclass_user(cls, sub_class: SubClassModel, user: UserModel):
+    def from_subclass_user(cls, sub_class: SubclassModel, user: UserModel):
         c = cls()
         c.sub_class_id = sub_class.id
         c.user_id = user.id

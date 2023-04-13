@@ -18,7 +18,7 @@ def get_classes():
     return [cls.to_json() for cls in classes]
 
 
-@api.route('classes', methods=["POST"])
+@api.route('/classes', methods=["POST"])
 @json_api()
 @require_login()
 def update_classes():

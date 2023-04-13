@@ -3,7 +3,7 @@ from typing import Optional, List
 from sqlalchemy import or_, and_
 
 from lib.database import request_session
-from lib.model.class_models import ClassModel, SubClassModel
+from lib.model.class_models import ClassModel, SubclassModel
 from lib.model.models import PlayerModel, CampaignModel, PlayerEquipmentModel, ItemModel, \
     PlayerSpellModel, SpellModel, UserModel
 

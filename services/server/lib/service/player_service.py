@@ -5,7 +5,7 @@ from typing import List, Optional, Tuple
 from werkzeug.exceptions import BadRequest, Unauthorized
 
 from lib.database import request_session
-from lib.model.class_models import ClassModel, SubClassModel
+from lib.model.class_models import ClassModel, SubclassModel
 from lib.model.models import PlayerEquipmentModel, SpellModel, PlayerSpellModel, \
     PlayerModel, UserModel, CampaignModel
 from lib.repository import player_repository, repository
@@ -282,7 +282,7 @@ def get_visible_classes(user: UserModel) -> List[ClassModel]:
             .all())
 
 
-def get_visible_subclasses(user: UserModel) -> List[ClassModel]:
+def get_visible_subclasses(user: UserModel) -> List[SubclassModel]:
     """
         Returns all classes which can be seen by a user.
         A class is visible when it is the owner of a class, or if the class has no owner (default class)
@@ -295,6 +295,6 @@ def get_visible_subclasses(user: UserModel) -> List[ClassModel]:
     # Make sure it does not crash for not logged in users.
     user_id = user.id if user is not None else -1
 
-    return (db.query(SubClassModel)
-            .filter(SubClassModel.owner_id == user_id or SubClassModel.owner_id.is_(None))
+    return (db.query(SubclassModel)
+            .filter(SubclassModel.owner_id == user_id or SubclassModel.owner_id.is_(None))
             .all())

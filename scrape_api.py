@@ -7,7 +7,7 @@ from typing import List
 import requests
 
 from lib.database import request_session
-from lib.model.class_models import ClassModel, ClassAbilityModel, SubClassModel
+from lib.model.class_models import ClassModel, ClassAbilityModel, SubclassModel
 from lib.model.models import ItemModel, SpellModel, RaceModel, BackgroundModel
 from lib.repository import player_repository, repository
 from services.server import app
