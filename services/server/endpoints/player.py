@@ -90,7 +90,6 @@ def set_player_campaign(player_id):
 
     data = request.get_json()
 
-    print(data)
     required_fields = ["campaign_code"]
 
     if not data or (False in [x in data for x in required_fields]):

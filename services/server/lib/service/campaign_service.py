@@ -44,13 +44,11 @@ def get_joined_campaigns(user) -> List[CampaignModel]:
 
 def join_campaign(user: UserModel, campaign: CampaignModel):
     players = player_service.get_user_players_by_id(user, campaign.id)
-
+    print("Joining with code " + campaign.id)
     # Only create a new player if no players are yet created for this campaign.
     if len(players) == 0:
         # Create an empty player character for the user and refer them to a new page
-        player_service.create_player(user, user.name + "'s character", campaign=campaign)
-
-    return ""
+        player = player_service.create_player(user, user.name + "'s character")
 
 
 def find_campaign_with_code(code: str) -> Optional[CampaignModel]:

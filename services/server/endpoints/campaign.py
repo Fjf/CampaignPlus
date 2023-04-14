@@ -66,6 +66,7 @@ def get_campaigns():
 
 
 @api.route('/campaigns/join/<campaign_code>', methods=["POST"])
+@json_api()
 @require_login()
 def join_campaign(campaign_code):
     user = session_user()
@@ -74,12 +75,8 @@ def join_campaign(campaign_code):
     if campaign is None:
         raise NotFound("This campaign code is not linked to any existing campaign.")
 
-    error = campaign_service.join_campaign(user, campaign)
-    success = error == ""
-    return {
-        "success": success,
-        "error": error
-    }
+    print("Joining campaign with user")
+    campaign_service.join_campaign(user, campaign)
 
 
 @api.route('/campaigns/<int:campaign_id>/players', methods=["POST"])

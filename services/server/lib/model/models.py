@@ -212,7 +212,7 @@ class CampaignModel(OrmModelBase):
 
 class MapModel(OrmModelBase):
     """
-    The mapmodel contanis data about maps regarding their location on their parent maps.
+    The mapmodel contains data about maps regarding their location on their parent maps.
     """
 
     __tablename__ = 'map'

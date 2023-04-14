@@ -1,10 +1,12 @@
 import os
+
 import string
 from random import randint
 from typing import Optional, List, Tuple
 
 from werkzeug.exceptions import BadRequest, Unauthorized
 
+from lib.utils import image_utils
 from services.server import app
 from lib.database import request_session
 from lib.model.models import MapModel, UserModel, BattlemapModel, CreatorMapModel
@@ -12,48 +14,6 @@ from lib.repository import map_repository
 from lib.service import campaign_service
 
 ALLOWED_CHARS = string.digits + string.ascii_letters
-
-import exifread
-from PIL import Image
-
-
-def rotate_file(filename: str) -> None:
-    """
-    Rotates a file to match its image orientation as specified by the camera.
-
-    :param filename:
-    :return:
-    """
-
-    f = open(filename, "rb")
-    # tags = exifread.process_file(f, details=False, stop_tag='Image Orientation')
-    f.close()
-
-    # tag = tags.get("Image Orientation", None)
-    # if tag is None:
-    #     return
-    #
-    # rot = str(tag)
-    # if not rot.startswith("Rotated "):
-    #     return
-    #
-    # data = rot.split(" ")
-
-    image = Image.open(filename)
-
-    # r = 0
-    # if data[1] == "90":
-    #     r = Image.ROTATE_270
-    # elif data[1] == "180":
-    #     r = Image.ROTATE_180
-    # elif data[1] == "270":
-    #     r = Image.ROTATE_90
-    # else:
-    #     raise ValueError("Something went wrong reading EXIF data.")
-
-    # image = image.transpose(r)
-
-    image.save(filename)
 
 
 def create_map(user: UserModel, campaign_id: int, x: int, y: int, parent_map_id: int = None):
@@ -106,13 +66,11 @@ def alter_map(user: UserModel, map_id: int, map_img=None, name: str = None, stor
     """
     map_model = get_map(map_id)
 
-    # TODO: Decide if we want this
-    # if map_model.campaign.user_id != user.id:
-    #     raise Unauthorized("You cannot alter maps of which you are not the campaign owner.")
+    if map_model.campaign.user_id != user.id:
+        raise Unauthorized("You cannot alter maps of which you are not the campaign owner.")
 
     if map_img is not None:
         # Generate random file names until you get a unique one in the uploads.
-        print(os.getcwd())
         while True:
             extension = os.path.splitext(map_img.filename)[1]
             filename = _create_random_string(15) + extension  # 15 seems like a large enough number for files.
@@ -122,7 +80,7 @@ def alter_map(user: UserModel, map_id: int, map_img=None, name: str = None, stor
                 break
 
         map_img.save(path)
-        rotate_file(path)
+        image_utils.resize_image(path)
         map_model.filename = filename
     if x is not None:
         map_model.x = x

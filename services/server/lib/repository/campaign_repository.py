@@ -40,7 +40,7 @@ def get_campaign(pid: int = None, code: str = None) -> Optional[CampaignModel]:
     if code is not None:
         return (
             db.query(CampaignModel)
-            .filter(CampaignModel.code == code)
+            .filter(CampaignModel.code == code.upper())
             .one_or_none()
         )
 
