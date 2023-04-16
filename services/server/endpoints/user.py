@@ -187,6 +187,28 @@ def get_items():
     return [item.to_json() for item in item_objects]
 
 
+@api.route('/user/spells', methods=["GET"])
+@json_api()
+@require_login()
+def get_available_spells():
+    user = session_user()
+    spells_list = player_service.get_spells(user)
+    return [spell.to_json() for spell in spells_list]
+
+
+@api.route('/user/spells', methods=["POST"])
+@json_api()
+@require_login()
+def create_new_spell():
+    """
+    Creates a new spell for this user
+    """
+    user = session_user()
+    spell = user_service.create_spell(user, request.get_json())
+
+    return spell.to_json(), 201
+
+
 @api.route('/user/player', methods=["POST"])
 @json_api()
 @require_login()
@@ -207,11 +229,10 @@ def create_player():
     name = data.get("name", user.name)
     race = data.get("race", "Human")
 
-    print(data)
-
     player = player_service.create_player(user, name, race)
     player = player_service.update_player(player, data)
 
     return player
+
 
 print("Registered user api endpoints.")

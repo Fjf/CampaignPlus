@@ -2,6 +2,7 @@ import copy
 import re
 from typing import List, Optional, Tuple
 
+from sqlalchemy import or_
 from werkzeug.exceptions import BadRequest, Unauthorized
 
 from lib.database import request_session
@@ -189,13 +190,10 @@ def get_player_spells(player: PlayerModel) -> List[PlayerSpellModel]:
         .all()
 
 
-def get_spells(campaign=None):
+def get_spells(user=None):
     db = request_session()
-
-    campaign_id = campaign.id if campaign is not None else -1
-
     return db.query(SpellModel) \
-        .filter(campaign_id == SpellModel.campaign_id or SpellModel.campaign_id == -1) \
+        .filter(or_(user.id == SpellModel.owner_id, SpellModel.owner_id == -1)) \
         .all()
 
 

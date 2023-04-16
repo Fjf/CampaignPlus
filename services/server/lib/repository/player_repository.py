@@ -51,7 +51,7 @@ def get_spell(player: PlayerModel, spell_id: int) -> Optional[SpellModel]:
     db = request_session()
 
     return db.query(SpellModel) \
-        .filter(or_(player.campaign_id == SpellModel.campaign_id, SpellModel.campaign_id == -1)) \
+        .filter(or_(player.owner_id == SpellModel.owner_id, SpellModel.owner_id == -1)) \
         .filter(SpellModel.id == spell_id) \
         .one_or_none()
 
@@ -81,7 +81,7 @@ def player_get_item(player, item_id):
     db = request_session()
 
     return db.query(ItemModel) \
-        .filter((player.campaign_id == ItemModel.campaign_id) or (ItemModel.campaign_id == -1)) \
+        .filter((player.owner_id == ItemModel.campaign_id) or (ItemModel.campaign_id == -1)) \
         .filter(ItemModel.id == item_id) \
         .one_or_none()
 

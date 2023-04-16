@@ -161,29 +161,3 @@ def delete_player_campaign(campaign_id: int, player_id: int):
         "success": True,
         "player_id": player.id
     }
-
-
-@api.route('/campaigns/<int:campaign_id>/spells', methods=["GET"])
-@json_api()
-@require_login()
-def get_spells(campaign_id):
-    campaign = campaign_service.get_campaign(campaign_id)
-
-    if campaign is None:
-        raise NotFound("This campaign does not exist.")
-
-    spells = []
-    spells_list = player_service.get_spells(campaign)
-
-    for spell in spells_list:
-        spells.append({
-            "id": spell.id,
-            "name": spell.name,
-            "level": int(spell.level),
-            "phb_page": int(spell.phb_page)
-        })
-
-    return {
-        "success": True,
-        "spells": spells
-    }

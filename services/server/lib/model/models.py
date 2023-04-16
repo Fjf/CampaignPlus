@@ -414,8 +414,8 @@ class SpellModel(OrmModelBase, JSONAble):
 
     id = Column(Integer(), primary_key=True)
 
-    campaign_id = Column(Integer(), ForeignKey("campaign.id"), nullable=True)
-    campaign = relationship("CampaignModel")
+    owner_id = Column(Integer(), ForeignKey("user.id"), nullable=True)
+    owner = relationship("UserModel")
 
     name = Column(String(), nullable=True)
     phb_page = Column(Integer(), nullable=True)

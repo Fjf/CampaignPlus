@@ -206,12 +206,6 @@ def get_player_spells(player_id):
     return [player_spell.spell.to_json() for player_spell in player_spells]
 
 
-@api.route('/user/spells', methods=["GET"])
-@json_api()
-@require_login()
-def get_available_spells():
-    spells_list = player_service.get_spells()
-    return [spell.to_json() for spell in spells_list]
 
 
 @api.route('/player/<int:player_id>/proficiencies', methods=["GET"])

@@ -188,7 +188,7 @@ def delete_map(campaign_id, map_id):
     deleted_map = map_service.delete_map(user, map_id)
 
     # Return the updated root map
-    return map_service.get_root_map(user, deleted_map.campaign_id).to_json(recursive=True)
+    return map_service.get_root_map(user, deleted_map.owner_id).to_json(recursive=True)
 
 
 @api.route("/<int:campaign_id>/maps", methods=["POST"])

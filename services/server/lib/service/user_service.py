@@ -8,8 +8,9 @@ import bcrypt as bcrypt
 import flask
 from werkzeug.exceptions import BadRequest
 
+from lib.database import request_session
 from services.server import app
-from lib.model.models import UserModel, EmailResetModel
+from lib.model.models import UserModel, EmailResetModel, SpellModel
 from lib.repository import user_repository
 from lib.user_session import session_user_set
 
@@ -111,3 +112,37 @@ def set_password(user: UserModel, password: str) -> str:
 
     user_repository.add(user)
     return ""
+
+
+def create_spell(user, data):
+    """
+    Creates a new spell with the given data.
+    If a spell already exists by this user, it will update the existing spell data instead.
+    :param user:
+    :param data:
+    :return:
+    """
+    session = request_session()
+    name = data.get("name")
+
+    spell = session.query(SpellModel).filter(SpellModel.name == name and SpellModel.owner_id == user.id).one_or_none()
+    if spell is None:
+        spell = SpellModel()
+
+    spell.owner_id = user.id
+    spell.name = name
+    spell.description = data.get("description")
+    spell.higher_level = data.get("higher_level")
+    spell.level = data.get("level")
+    spell.spell_range = data.get("spell_range")
+    spell.components = data.get("components")
+    spell.material = data.get("material")
+    spell.ritual = data.get("ritual")
+    spell.concentration = data.get("concentration")
+    spell.duration = data.get("duration")
+    spell.casting_time = data.get("casting_time")
+    spell.school = data.get("school")
+
+    session.add(spell)
+    session.commit()
+    return spell
