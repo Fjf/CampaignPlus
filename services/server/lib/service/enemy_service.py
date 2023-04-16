@@ -18,7 +18,7 @@ def create_enemy(name, max_hp, armor_class, strength, dex, con, intelligence, wi
         if enemy.name == name:
             raise BadRequest("You have already used this enemy name.")
 
-    enemy = EnemyModel.from_name_hp_ac(name, max_hp, armor_class, user.id)
+    enemy = EnemyModel(name=name, max_hp=max_hp, armor_class=armor_class, user_id=user.id)
 
     enemy.strength = strength
     enemy.dexterity = dex
@@ -67,8 +67,7 @@ def add_ability(enemy_id: int, text: str, user: UserModel):
     if enemy.user != user:
         raise Unauthorized("This enemy does not belong to this user.")
 
-    ability = EnemyAbilityModel.from_id_text(enemy.id, text)
-    ability.owner_id = user.id
+    ability = EnemyAbilityModel(enemy_id=enemy.id, owner_id=user.id, text=text)
     db = request_session()
 
     db.add(ability)

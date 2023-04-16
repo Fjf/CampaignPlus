@@ -69,14 +69,6 @@ def delete_spell(player: PlayerModel, spell: SpellModel):
     db.commit()
 
 
-def get_user_players(user: UserModel) -> List[PlayerModel]:
-    db = request_session()
-
-    return db.query(PlayerModel) \
-        .filter(PlayerModel.user_id == user.id) \
-        .all()
-
-
 def get_player(player_id: int) -> PlayerModel:
     db = request_session()
 

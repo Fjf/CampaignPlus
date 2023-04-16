@@ -58,7 +58,7 @@ def get_messages():
         message_list.append({
             "time": message.time,
             "message": message.message,
-            "sender_name": message.sender.user.name,
+            "sender_name": message.sender.owner.name,
             "player_name": message.sender.name
         })
 

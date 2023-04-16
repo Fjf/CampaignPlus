@@ -18,7 +18,7 @@ def _create_random_string(length: int):
 
 
 def create_campaign(user: UserModel):
-    campaign = CampaignModel(user)
+    campaign = CampaignModel(user_id=user.id)
 
     db = request_session()
     while True:

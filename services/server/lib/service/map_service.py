@@ -32,7 +32,7 @@ def create_map(user: UserModel, campaign_id: int, x: int, y: int, parent_map_id:
     if campaign is None:
         raise BadRequest("This campaign does not exist.")
 
-    map_model = MapModel(campaign_id, x, y)
+    map_model = MapModel(campaign_id=campaign_id, x=x, y=y)
     if not (parent_map_id is None and get_root_map(user, campaign_id) is None):
         # This will become a child model
         parent_map = get_map(parent_map_id)
@@ -146,7 +146,7 @@ def create_battlemap(user: UserModel, campaign_id: int, name: str, data: str):
     if campaign is None:
         return "This campaign does not exist."
 
-    battlemap = BattlemapModel.from_name_data(campaign, user, name, data)
+    battlemap = BattlemapModel(campaign_id=campaign.id, creator_id=user.id, name=name, data=data)
 
     map_repository.create_map(battlemap)
     return ""
@@ -178,11 +178,13 @@ def create_editor_map(user: UserModel, campaign_id: int, map_base64: str, name: 
     if not campaign_service.user_in_campaign(user, campaign):
         return False, "This user is not currently in this campaign.", -1
 
-    cmm = CreatorMapModel.from_name_base64(campaign_id, map_base64, name)
-
-    cmm.grid_size = grid_size
-    cmm.grid_type = grid_type
-    cmm.creator_id = user.id
+    cmm = CreatorMapModel(
+        campaign_id=campaign_id,
+        map_base64=map_base64,
+        grid_size=grid_size,
+        grid_type=grid_type,
+        creator_id=user.id,
+        name=name)
 
     # There cannot be a problem with duplicate maps, because they contain an unique id.
     db = request_session()

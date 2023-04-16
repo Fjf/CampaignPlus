@@ -26,7 +26,7 @@ def create_log(user: UserModel, campaign_code: str, title: str, text: str) -> st
         return "This campaign does not exist."
 
     player = player_service.get_user_players_by_id(user, campaign.id)[0]
-    message_model = LogModel.from_campaign_creator_content(campaign, player, title, text)
+    message_model = LogModel(campaign_id=campaign.id, creator_id=player.id, title=title, text=text)
 
     log_repository.create_log(message_model)
     return ""
@@ -43,7 +43,7 @@ def delete_log(user: UserModel, campaign_code: str, log_id: int):
     if log is None:
         return "This log does not exist."
 
-    if log.creator.user != user:
+    if log.creator.owner != user:
         return "This is not your log to delete."
 
     if log.campaign_id != campaign.id:

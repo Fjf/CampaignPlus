@@ -60,7 +60,7 @@ def get_logs():
             "title": log.title,
             "time": log.time,
             "creator_name": log.creator.name,
-            "creator_user_name": log.creator.user.name
+            "creator_user_name": log.creator.owner.name
         })
 
     return {

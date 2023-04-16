@@ -1,5 +1,6 @@
 from typing import List
 
+from lib.database import request_session
 from lib.model.models import UserModel, MessageModel
 from lib.repository import message_repository
 from lib.service import campaign_service
@@ -28,7 +29,8 @@ def create_message(campaign_code: str, user: UserModel, message: str):
     if campaign is None:
         return "This campaign does not exist."
 
-    message_model = MessageModel.from_campaign_sender_msg(campaign, user, message)
-
-    message_repository.create_message(message_model)
-    return ""
+    message_model = MessageModel(campaign_id=campaign.id, sender_id=user.id, message=message)
+    db = request_session()
+    db.add(message_model)
+    db.commit()
+    return message_model

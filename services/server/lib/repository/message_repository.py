@@ -10,10 +10,3 @@ def get_messages(campaign_id: int) -> List[MessageModel]:
     return db.query(MessageModel) \
         .filter(MessageModel.campaign_id == campaign_id) \
         .all()
-
-
-def create_message(message_model: MessageModel):
-    db = request_session()
-
-    db.add(message_model)
-    db.commit()

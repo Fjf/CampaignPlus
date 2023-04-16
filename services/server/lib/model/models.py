@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import copy
 import datetime
 import os
-import time
 from typing import Any
 
 import qrcode
@@ -12,7 +12,25 @@ from sqlalchemy.orm import relationship, deferred
 from lib.database import OrmModelBase, request_session
 
 
-class UserModel(OrmModelBase):
+class JSONAble:
+    def to_json(self, default_response=None):
+        if default_response is None:
+            response = {}
+        else:
+            response = copy.deepcopy(default_response)
+
+        def _is_valid(k, v):
+            allowed_types = [str, int, bool, float, datetime, dict]
+            return (
+                    not k.startswith("_") and
+                    type(v) in allowed_types
+            )
+
+        response.update({k: v for k, v in self.__dict__.items() if _is_valid(k, v)})
+        return response
+
+
+class UserModel(OrmModelBase, JSONAble):
     """
     A user login model.
     """
@@ -25,23 +43,8 @@ class UserModel(OrmModelBase):
     password = deferred(Column(LargeBinary(), nullable=False))
     email = Column(String(), unique=True, nullable=True)
 
-    @classmethod
-    def from_name_password(cls, name: str, password: bytes, email: str = None):
-        c = cls()
-        c.name = name
-        c.password = password
-        c.email = email
-        return c
 
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "email": self.email
-        }
-
-
-class EmailResetModel(OrmModelBase):
+class EmailResetModel(OrmModelBase, JSONAble):
     """
     A model where codes for users are stored for the purpose of resetting the user's password.
     """
@@ -54,18 +57,10 @@ class EmailResetModel(OrmModelBase):
     user = relationship("UserModel")
 
     code = Column(String(), unique=True, nullable=False)
-    date = Column(DateTime(), nullable=False)
-
-    @classmethod
-    def from_user_code_date(cls, user: UserModel, code: str, date: datetime):
-        c = cls()
-        c.user_id = user.id
-        c.code = code
-        c.date = date
-        return c
+    date = Column(DateTime(), default=datetime.datetime.now())
 
 
-class EnemyModel(OrmModelBase):
+class EnemyModel(OrmModelBase, JSONAble):
     """
     An enemy for a campaign, which may be used in a game.
     """
@@ -73,10 +68,6 @@ class EnemyModel(OrmModelBase):
     __tablename__ = 'enemy'
 
     id = Column(Integer(), primary_key=True)
-
-    """
-    The user to whom this player character belongs.
-    """
 
     user_id = Column(Integer(), ForeignKey("user.id"))
     user = relationship("UserModel")
@@ -92,31 +83,8 @@ class EnemyModel(OrmModelBase):
     wisdom = Column(Integer, nullable=True)
     charisma = Column(Integer, nullable=True)
 
-    @classmethod
-    def from_name_hp_ac(cls, player: str, max_hp: int, ac: int, user_id: int):
-        c = cls()
-        c.name = player
-        c.max_hp = max_hp
-        c.armor_class = ac
-        c.user_id = user_id
-        return c
 
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "max_hp": self.max_hp,
-            "armor_class": self.armor_class,
-            "str": self.strength,
-            "dex": self.dexterity,
-            "con": self.constitution,
-            "int": self.intelligence,
-            "wis": self.wisdom,
-            "cha": self.charisma
-        }
-
-
-class EnemyAbilityModel(OrmModelBase):
+class EnemyAbilityModel(OrmModelBase, JSONAble):
     """
     An enemy for a campaign, which may be used in a game.
     """
@@ -124,10 +92,6 @@ class EnemyAbilityModel(OrmModelBase):
     __tablename__ = 'enemy_ability'
 
     id = Column(Integer(), primary_key=True)
-
-    """
-    The user to whom this player character belongs.
-    """
 
     enemy_id = Column(Integer(), ForeignKey("enemy.id"), nullable=False)
     enemy: EnemyModel = relationship("EnemyModel")
@@ -137,33 +101,15 @@ class EnemyAbilityModel(OrmModelBase):
 
     text = Column(String(), nullable=False)
 
-    @classmethod
-    def from_id_text(cls, enemy_id: int, text: str):
-        c = cls()
-        c.enemy_id = enemy_id
-        c.text = text
-        return c
 
-    def to_json(self):
-        return {
-            "id": self.id,
-            "enemy_name": self.enemy.name,
-            "text": self.text
-        }
-
-
-class CampaignModel(OrmModelBase):
+class CampaignModel(OrmModelBase, JSONAble):
     """
     A campaign which contains data about a game.
     """
 
-    __tablename__ = 'campaign'
+    __tablename__ = "campaign"
 
     id = Column(Integer(), primary_key=True)
-
-    """
-    The user to whom this player character belongs.
-    """
 
     user_id = Column(Integer(), ForeignKey("user.id"))
     user = relationship("UserModel")
@@ -172,10 +118,6 @@ class CampaignModel(OrmModelBase):
 
     date = Column(DateTime(), nullable=False, default=datetime.datetime.now())
     code = Column(String(), nullable=True, unique=True)
-
-    def __init__(self, user: UserModel, *args: Any, **kwargs: Any):
-        super().__init__(*args, **kwargs)
-        self.user_id = user.id
 
     def code_url(self):
         from services.server import app
@@ -197,20 +139,8 @@ class CampaignModel(OrmModelBase):
 
         return "/static/images/qr_codes/%s.png" % self.code
 
-    def to_json(self, user: UserModel = None):
-        return {
-            "is_owner": self.user == user,
-            "owner": self.user.name,
-            "id": self.id,
-            "code": self.code,
-            "url": self.code_url(),
-            "qr_image": self.code_qr(),
-            "name": self.name,
-            "time": time.mktime(self.date.timetuple()) * 1000  # Python does time in seconds.
-        }
 
-
-class MapModel(OrmModelBase):
+class MapModel(OrmModelBase, JSONAble):
     """
     The mapmodel contains data about maps regarding their location on their parent maps.
     """
@@ -234,37 +164,24 @@ class MapModel(OrmModelBase):
 
     visible = Column(Boolean(), nullable=False, default=True)
 
-    def __init__(self, campaign_id: int, x: int, y: int, *args: Any, **kwargs: Any):
-        super().__init__(*args, **kwargs)
-        self.campaign_id = campaign_id
-        self.x = x
-        self.y = y
-
     def to_json(self, recursive=False):
-        children = []
+        response = super().to_json()
 
+        children = []
         if recursive:
             children = [m.to_json(recursive=True) for m in self.children()]
+        response["children"] = children
 
-        return {
-            "id": self.id,
-            "campaign_id": self.campaign_id,
-            "parent_map_id": self.parent_map_id,
-            "map_url": "/static/images/uploads/" + self.filename,
-            "x": self.x,
-            "y": self.y,
-            "name": self.name,
-            "visible": self.visible,
-            "story": self.story,
-            "children": children
-        }
+        return response
 
     def children(self):
+        # TODO: Define this with one-to-many database definition in sqlaclhemy
+        # https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html
         db = request_session()
         return db.query(MapModel).filter(MapModel.parent_map_id == self.id).all()
 
 
-class CreatorMapModel(OrmModelBase):
+class CreatorMapModel(OrmModelBase, JSONAble):
     """
     The CreatorMapModel contains information from the map_creation tool in the dnd site.
     For example, grid size, and drawn image.
@@ -285,27 +202,8 @@ class CreatorMapModel(OrmModelBase):
     creator_id = Column(Integer(), ForeignKey("user.id"), nullable=False)
     creator = relationship("UserModel")
 
-    @classmethod
-    def from_name_base64(cls, campaign_id: int, map_base64: str, name: str):
-        c = cls()
-        c.campaign_id = campaign_id
-        c.map_base64 = map_base64
-        c.name = name
-        return c
 
-    def to_json(self):
-        return {
-            "id": self.id,
-            "campaign_id": self.campaign_id,
-            "map_base64": self.map_base64,
-            "name": self.name,
-            "grid_size": self.grid_size,
-            "grid_type": self.grid_type,
-            "creator_id": self.creator_id
-        }
-
-
-class MessageModel(OrmModelBase):
+class MessageModel(OrmModelBase, JSONAble):
     """
     The map-model contanis data about maps regarding their location on their parent maps.
     """
@@ -321,19 +219,10 @@ class MessageModel(OrmModelBase):
     sender = relationship("PlayerModel")
 
     message = Column(String(), nullable=False)
-    time = Column(DateTime(), nullable=False)
-
-    @classmethod
-    def from_campaign_sender_msg(cls, campaign: CampaignModel, sender: PlayerModel, msg: str):
-        c = cls()
-        c.campaign_id = campaign.id
-        c.sender_id = sender.id
-        c.message = msg
-        c.time = datetime.datetime.now()
-        return c
+    time = Column(DateTime(), default=datetime.datetime.now())
 
 
-class LogModel(OrmModelBase):
+class LogModel(OrmModelBase, JSONAble):
     """
     The map-model contanis data about maps regarding their location on their parent maps.
     """
@@ -351,21 +240,10 @@ class LogModel(OrmModelBase):
     title = Column(String(), nullable=False)
     text = Column(String(), nullable=False)
 
-    time = Column(DateTime(), nullable=False)
-
-    @classmethod
-    def from_campaign_creator_content(cls, campaign: CampaignModel, creator: PlayerModel, title: str,
-                                      text: str):
-        c = cls()
-        c.campaign_id = campaign.id
-        c.creator_id = creator.id
-        c.title = title
-        c.text = text
-        c.time = datetime.datetime.now()
-        return c
+    time = Column(DateTime(), default=datetime.datetime.now())
 
 
-class BattlemapModel(OrmModelBase):
+class BattlemapModel(OrmModelBase, JSONAble):
     """
     The mapmodel contanis data about maps regarding their location on their parent maps.
     """
@@ -383,17 +261,8 @@ class BattlemapModel(OrmModelBase):
     name = Column(String(), nullable=False)
     data = Column(String(), nullable=False)
 
-    @classmethod
-    def from_name_data(cls, campaign: CampaignModel, creator: PlayerModel, name: str, data: str):
-        c = cls()
-        c.campaign_id = campaign.id
-        c.creator_id = creator.id
-        c.name = name
-        c.data = data
-        return c
 
-
-class PlayerModel(OrmModelBase):
+class PlayerModel(OrmModelBase, JSONAble):
     """
     A player character for a user, which may be used in a game.
     """
@@ -405,11 +274,11 @@ class PlayerModel(OrmModelBase):
     campaign_id = Column(Integer(), ForeignKey("campaign.id"), default=-1)
     campaign = relationship("CampaignModel")
 
-    user_id = Column(Integer(), ForeignKey("user.id"))
-    user = relationship("UserModel")
+    owner_id = Column(Integer(), ForeignKey("user.id"))
+    owner = relationship("UserModel")
 
     name = Column(String(), nullable=False)
-    race_name = Column(String(), nullable=False, default="Human")
+    race = Column(String(), nullable=False, default="Human")
 
     backstory = Column(String(), nullable=True, default="")
 
@@ -418,15 +287,6 @@ class PlayerModel(OrmModelBase):
     electron = Column(Integer(), nullable=False, default=0)
     gold = Column(Integer(), nullable=False, default=0)
     platinum = Column(Integer(), nullable=False, default=0)
-
-    info = Column(JSON(), nullable=True)
-
-    def __init__(self, name: str, campaign: CampaignModel, user: UserModel, *args: Any, **kwargs: Any):
-        super().__init__(*args, **kwargs)
-        self.info = self.get_default_info()
-        self.name = name
-        self.user_id = user.id
-        self.campaign_id = campaign.id if campaign is not None else -1
 
     @staticmethod
     def get_default_info():
@@ -475,27 +335,15 @@ class PlayerModel(OrmModelBase):
             "subclass_ids": [],
         }
 
-    def to_json(self):
-        return {
-            "name": self.name,
-            "owner": self.user.name,
-            "owner_id": self.user.id,
-            "id": self.id,
-            "race": self.race_name,
-            "backstory": self.backstory,
-            "campaign_id": self.campaign_id,
-            "money": {
-                "gold": self.gold,
-                "silver": self.silver,
-                "electron": self.electron,
-                "platinum": self.platinum,
-                "copper": self.copper
-            },
-            "info": self.info
-        }
+    def to_json(self, **kwargs):
+        data = super().to_json(kwargs)
+        data["owner"] = self.owner.name
+        return data
+
+    info = Column(JSON(), default=get_default_info())
 
 
-class ItemModel(OrmModelBase):
+class ItemModel(OrmModelBase, JSONAble):
     """
     The datamodel which stores items.
     """
@@ -526,28 +374,8 @@ class ItemModel(OrmModelBase):
     # Add variable fields on the item (e.g., weapon/armor specific stats)
     item_info = Column(JSON(), nullable=True, default=dict)
 
-    def to_json(self):
-        def to_gp_sp_cp(value):
-            if value % 10000 == 0:
-                return "%sgp" % (value // 10000)
-            if value % 100 == 0:
-                return "%ssp" % (value // 100)
-            return "%scp" % value
 
-        return {
-            "id": self.id,
-            "name": self.name,
-            "category": self.category,
-            "gear_category": self.gear_category,
-            "weight": self.weight,
-            "raw_value": self.cost,
-            "value": to_gp_sp_cp(self.cost),
-            "description": self.description,
-            "item_info": self.item_info,
-        }
-
-
-class PlayerEquipmentModel(OrmModelBase):
+class PlayerEquipmentModel(OrmModelBase, JSONAble):
     """
     The player data model contains information about weapons and items,
     and is linked via a player_id.
@@ -567,11 +395,6 @@ class PlayerEquipmentModel(OrmModelBase):
     amount = Column(Integer(), nullable=False, default=0)
     description = Column(String(), nullable=True, default="")
 
-    def __init__(self, player: PlayerModel, item: ItemModel, *args: Any, **kwargs: Any):
-        super().__init__(*args, **kwargs)
-        self.player_id = player.id
-        self.item_id = item.id
-
     def to_json(self):
         return {
             "id": self.id,
@@ -581,7 +404,7 @@ class PlayerEquipmentModel(OrmModelBase):
         }
 
 
-class SpellModel(OrmModelBase):
+class SpellModel(OrmModelBase, JSONAble):
     """
     Contains all information about a spell.
     All spells with campaign id of -1 are from the base game.
@@ -614,32 +437,8 @@ class SpellModel(OrmModelBase):
 
     school = Column(String(), nullable=False)
 
-    @classmethod
-    def from_name(cls, name: String):
-        c = cls()
-        c.name = name
-        return c
 
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "level": self.level,
-            "duration": self.duration,
-            "higher_level": self.higher_level,
-            "casting_time": self.casting_time,
-            "concentration": self.concentration,
-            "ritual": self.ritual,
-            "material": self.material if self.material is not None else "None",
-            "components": self.components,
-            "spell_range": self.spell_range,
-            "description": self.description,
-            "school": self.school,
-            "phb_page": self.phb_page
-        }
-
-
-class PlayerSpellModel(OrmModelBase):
+class PlayerSpellModel(OrmModelBase, JSONAble):
     """
     The player data model contains the spells a player knows.
     It refers to the SpellModel by id.
@@ -655,15 +454,8 @@ class PlayerSpellModel(OrmModelBase):
     spell_id = Column(Integer(), ForeignKey("spell.id"), nullable=False)
     spell: SpellModel = relationship("SpellModel")
 
-    @classmethod
-    def from_player_spell(cls, player: PlayerModel, spell: SpellModel):
-        c = cls()
-        c.player_id = player.id
-        c.spell_id = spell.id
-        return c
 
-
-class RaceModel(OrmModelBase):
+class RaceModel(OrmModelBase, JSONAble):
     __tablename__ = 'race'
     id = Column(Integer(), primary_key=True)
     name = Column(String(), nullable=False)
@@ -681,40 +473,8 @@ class RaceModel(OrmModelBase):
     vision = Column(String())
     traits = Column(String())
 
-    # ability_bonuses 1:many
-    # starting_proficiencies 1:*
-    # languages 1:1/many
-    # language_desc string 1:1
-    # traits 1:many
-    # trait_options 1:many
-    # subraces 1:*
 
-    @classmethod
-    def from_owner(cls, owner: UserModel = None):
-        c = cls()
-        if owner:
-            c.owner_id = owner.id
-        else:
-            c.owner_id = None
-        return c
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "speed": self.speed,
-            "desc": self.desc,
-            "speed_desc": self.speed_desc,
-            "age": self.age,
-            "alignment": self.alignment,
-            "size": self.size,
-            "languages": self.languages,
-            "vision": self.vision,
-            "traits": self.traits
-        }
-
-
-class BackgroundModel(OrmModelBase):
+class BackgroundModel(OrmModelBase, JSONAble):
     __tablename__ = 'background'
     id = Column(Integer(), primary_key=True)
     name = Column(String(), nullable=False)
@@ -730,20 +490,3 @@ class BackgroundModel(OrmModelBase):
     feature = Column(String())
     feature_desc = Column(String())
     extra = Column(String())
-
-    def __init__(self, name, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.name = name
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "desc": self.desc,
-            "skills": self.skills,
-            "tools": self.tools,
-            "languages": self.languages,
-            "equipment": self.equipment,
-            "feature": self.feature,
-            "feature_desc": self.feature_desc,
-        }

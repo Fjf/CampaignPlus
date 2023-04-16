@@ -25,7 +25,7 @@ def get_joined_campaigns(user: UserModel):
 
     return db.query(CampaignModel) \
         .join(PlayerModel) \
-        .filter(PlayerModel.user_id == user.id) \
+        .filter(PlayerModel.owner_id == user.id) \
         .all()
 
 

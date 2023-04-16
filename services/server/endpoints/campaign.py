@@ -16,7 +16,7 @@ def check_player(player: PlayerModel):
 
     if player is None:
         raise NotFound("This player does not exist.")
-    if player.user is not user and not campaign_service.is_user_dm(user, player):
+    if player.owner is not user and not campaign_service.is_user_dm(user, player):
         raise Unauthorized("This player is not yours.")
 
 
@@ -121,7 +121,7 @@ def get_players(campaign_id):
     data = []
     for player in players:
         # Make sure you can only see your own backstory, or if you are the dm.
-        if player.user_id == user.id or campaign.user_id == user.id:
+        if player.owner_id == user.id or campaign.user_id == user.id:
             backstory = player.backstory
         else:
             backstory = ""
@@ -130,9 +130,9 @@ def get_players(campaign_id):
 
         data.append({
             "id": player.id,
-            "user_name": player.user.name,
+            "user_name": player.owner.name,
             "name": player.name,
-            "race": player.race_name,
+            "race": player.race,
             "backstory": backstory,
             "class": player_classes[0].name if len(player_classes) > 0 else "Classless"
         })

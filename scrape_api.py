@@ -55,9 +55,9 @@ def get_spells():
     for elem in obj["results"]:
         spell = requests.get("http://www.dnd5eapi.co" + elem["url"]).json()
 
-        spell_model = SpellModel.from_name(spell["name"])
-
-        spell_model.campaign_id = -1
+        spell_model = SpellModel(
+            campaign_id=-1,
+            name=spell["name"])
 
         description = ""
         # TODO: Maybe make a better database structure to support multi line descriptions.
@@ -156,7 +156,7 @@ def get_races():
     obj = result.json()
 
     for result in obj['results']:
-        racemodel = RaceModel.from_owner(owner=None)
+        racemodel = RaceModel(owner_id=None)
         racemodel.name = result.get("name")
         racemodel.desc = result.get("desc")
         racemodel.age = result.get("age")

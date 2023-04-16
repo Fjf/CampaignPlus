@@ -30,7 +30,8 @@ def login(username, password):
 
 def create_user(username, password, email):
     if not is_valid_username(username):
-        raise BadRequest("Your username contains invalid characters. Allowed characters are alphanumeric and underscores.")
+        raise BadRequest(
+            "Your username contains invalid characters. Allowed characters are alphanumeric and underscores.")
 
     if find_user_by_username(username) is not None:
         raise BadRequest("This username is already in use.")
@@ -43,8 +44,8 @@ def create_user(username, password, email):
 
     hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
-    user = UserModel.from_name_password(username, hashed_pw)
-    user.email = email
+    user = UserModel(name=username, email=email)
+    user.password = hashed_pw
 
     user_repository.add(user)
     return user
@@ -71,7 +72,7 @@ def reset_password(email: str) -> str:
 
     code = _generate_reset_code()
 
-    reset_model = EmailResetModel.from_user_code_date(user, code, datetime.datetime.now())
+    reset_model = EmailResetModel(user=user, code=code)
     user_repository.add(reset_model)
 
     content = flask.render_template("reset_email.html", code=code, host=app.host, port=app.port)

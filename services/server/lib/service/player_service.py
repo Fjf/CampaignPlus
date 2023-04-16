@@ -31,8 +31,11 @@ def add_classes_to_player(player, class_ids):
 
 
 def create_player(user: UserModel, name: str, race: str = "", campaign: CampaignModel = None):
-    player = PlayerModel(name, campaign, user)
-    player.race_name = race
+    player = PlayerModel(
+        name=name,
+        campaign_id=campaign.id if campaign is not None else -1,
+        owner_id=user.id,
+        race=race)
 
     db = request_session()
     db.add(player)
@@ -67,10 +70,9 @@ def update_player(player: PlayerModel, data: dict):
 
     name, race, backstory, money, info = (
         data.get("name"), data.get("race"), data.get("backstory"), data.get("money"), data.get("info"))
-
     player.backstory = backstory or player.backstory
     player.name = name or player.name
-    player.race_name = race or player.race_name
+    player.race = race or player.race
 
     # Update currency
     if money is not None:
@@ -84,7 +86,6 @@ def update_player(player: PlayerModel, data: dict):
         if len(set(info.keys()) - set(player.info.keys())) > 0:
             return {"error:": "Invalid JSON format passed."}, 403
 
-        print(info)
         # Create deepcopy so that sqlalchemy commits the changes
         stats = copy.deepcopy(player.info)
 
@@ -103,14 +104,18 @@ def update_player(player: PlayerModel, data: dict):
 
 
 def get_user_players(user: UserModel) -> List[PlayerModel]:
-    return player_repository.get_user_players(user)
+    db = request_session()
+
+    return db.query(PlayerModel) \
+        .filter(PlayerModel.owner_id == user.id) \
+        .all()
 
 
 def get_user_players_by_id(user: UserModel, campaign_id: int) -> List[PlayerModel]:
     players = player_repository.get_players(campaign_id)
     user_players = []
     for player in players:
-        if player.user == user:
+        if player.owner == user:
             user_players.append(player)
     return user_players
 
@@ -142,7 +147,7 @@ def add_equipment(user, player, item_id, amount: int, extra_info: str = None):
 
     player_item = player_repository.get_player_item(item, player)
     if player_item is None:
-        player_item = PlayerEquipmentModel(player, item)
+        player_item = PlayerEquipmentModel(player_id=player.id, item_id=item.id)
         db.add(player_item)
 
     player_item.amount = amount
@@ -207,7 +212,7 @@ def player_add_spell(player: PlayerModel, spell_id: int):
     if spell is None:
         raise BadRequest("This spell does not exist.")
 
-    player_spell = PlayerSpellModel.from_player_spell(player, spell)
+    player_spell = PlayerSpellModel(player_id=player.id, spell_id=spell.id)
     repository.add_and_commit(player_spell)
 
     return player_spell
@@ -222,7 +227,7 @@ def delete_player_spell(user: UserModel, player: PlayerModel, spell_id: int):
     :param spell_id:
     :return:
     """
-    if player.user is not user:
+    if player.owner is not user:
         raise Unauthorized("This player does not belong to you.")
 
     spell = get_spell(player, spell_id)
@@ -235,7 +240,7 @@ def delete_player_spell(user: UserModel, player: PlayerModel, spell_id: int):
 
 
 def delete_player_item(user, player, item_id):
-    if player.user is not user:
+    if player.owner is not user:
         return "This player does not belong to you."
 
     player_repository.delete_equipment(player, item_id)

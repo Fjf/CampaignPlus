@@ -18,7 +18,7 @@ def check_player_ownership(player: PlayerModel):
 
     if player is None:
         raise NotFound("This player does not exist.")
-    if player.user is not user and not campaign_service.is_user_dm(user, player):
+    if player.owner is not user and not campaign_service.is_user_dm(user, player):
         raise Unauthorized("This player is not yours.")
 
 
