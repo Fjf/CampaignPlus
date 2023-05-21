@@ -62,7 +62,7 @@ def get_campaigns():
         if campaign not in campaigns:
             campaigns.append(campaign)
 
-    return [campaign.to_json(user) for campaign in campaigns]
+    return [campaign.to_json() for campaign in campaigns]
 
 
 @api.route('/campaigns/join/<campaign_code>', methods=["POST"])

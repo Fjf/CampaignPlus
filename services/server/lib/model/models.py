@@ -25,7 +25,6 @@ class JSONAble:
                     not k.startswith("_") and
                     type(v) in allowed_types
             )
-
         response.update({k: v for k, v in self.__dict__.items() if _is_valid(k, v)})
         return response
 
@@ -336,8 +335,9 @@ class PlayerModel(OrmModelBase, JSONAble):
         }
 
     def to_json(self, **kwargs):
-        data = super().to_json(kwargs)
-        data["owner"] = self.owner.name
+        name = self.owner.name
+        data = JSONAble.to_json(self, kwargs)
+        data["owner"] = name
         return data
 
     info = Column(JSON(), default=get_default_info())

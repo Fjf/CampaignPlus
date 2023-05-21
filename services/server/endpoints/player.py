@@ -64,7 +64,7 @@ def set_player_info(player_id):
         Required URL parameter:
          - player_id: The player id for which to update their information.
 
-        Optional POST parameters:
+        Optional PUT parameters:
          - name: The new name of your PC
          - race: The new race of your PC
          - class_ids: The new class ids for your PC
@@ -77,8 +77,8 @@ def set_player_info(player_id):
 
     player = player_service.get_player(player_id)
     check_player_ownership(player)
-
-    return player_service.update_player(player, data)
+    player = player_service.update_player(player, data)
+    return player.to_json()
 
 
 @api.route("/player/<int:player_id>/campaign", methods=["PUT"])

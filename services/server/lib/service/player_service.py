@@ -101,7 +101,7 @@ def update_player(player: PlayerModel, data: dict):
 
     db.commit()
 
-    return player.to_json()
+    return player
 
 
 def get_user_players(user: UserModel) -> List[PlayerModel]:

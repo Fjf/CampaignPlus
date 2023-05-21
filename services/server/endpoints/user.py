@@ -231,8 +231,7 @@ def create_player():
 
     player = player_service.create_player(user, name, race)
     player = player_service.update_player(player, data)
-
-    return player
+    return player.to_json()
 
 
 print("Registered user api endpoints.")
