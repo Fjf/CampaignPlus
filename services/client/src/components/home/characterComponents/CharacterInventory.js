@@ -10,8 +10,6 @@ import {TextField} from "@material-ui/core";
 export default function CharacterInventory(props) {
     const character = props.character;
 
-    const money = props.money;
-
     const [inventory, setInventory] = React.useState([]);
     const [item, setItem] = React.useState(null);
     const [addingItem, setAddingItem] = React.useState(false);
@@ -49,10 +47,10 @@ export default function CharacterInventory(props) {
                 <div className={"currency-entry"}>
                     <div>CP</div>
                     <div><TextField
-                        value={money.copper}
+                        value={character.copper}
                         onChange={(e) => {
-                            props.setMoney({
-                                ...money,
+                            props.setCharacter({
+                                ...character,
                                 copper: e.target.value
                             })
                         }}
@@ -61,10 +59,10 @@ export default function CharacterInventory(props) {
                 <div className={"currency-entry"}>
                     <div>SP</div>
                     <div><TextField
-                        value={money.silver}
+                        value={character.silver}
                         onChange={(e) => {
-                            props.setMoney({
-                                ...money,
+                            props.setCharacter({
+                                ...character,
                                 silver: e.target.value
                             })
                         }}
@@ -73,10 +71,10 @@ export default function CharacterInventory(props) {
                 <div className={"currency-entry"}>
                     <div>EP</div>
                     <div><TextField
-                        value={money.electron}
+                        value={character.electron}
                         onChange={(e) => {
-                            props.setMoney({
-                                ...money,
+                            props.setCharacter({
+                                ...character,
                                 electron: e.target.value
                             })
                         }}
@@ -85,10 +83,10 @@ export default function CharacterInventory(props) {
                 <div className={"currency-entry"}>
                     <div>GP</div>
                     <div><TextField
-                        value={money.gold}
+                        value={character.gold}
                         onChange={(e) => {
-                            props.setMoney({
-                                ...money,
+                            props.setCharacter({
+                                ...character,
                                 gold: e.target.value
                             })
                         }}
@@ -97,10 +95,10 @@ export default function CharacterInventory(props) {
                 <div className={"currency-entry"}>
                     <div>PP</div>
                     <div><TextField
-                        value={money.platinum}
+                        value={character.platinum}
                         onChange={(e) => {
-                            props.setMoney({
-                                ...money,
+                            props.setCharacter({
+                                ...character,
                                 platinum: e.target.value
                             })
                         }}

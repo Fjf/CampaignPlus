@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import RaceSelection from "./characterCreationComponents/RaceSelection";
 import ClassSelection from "./characterCreationComponents/ClassSelection";
 import {characterService} from "../services/characterService";
+import CharacterFinalization from "./characterCreationComponents/CharacterFinalization";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -46,7 +47,8 @@ export default function CharacterCreation(props) {
     function getSteps() {
         return [
             character.race === "" ? "Race" : character.race,
-            "Class"
+            "Class",
+            "Finalize Character"
         ]
     }
 
@@ -64,6 +66,10 @@ export default function CharacterCreation(props) {
                 return <ClassSelection
                     cls={character.info.class_ids}
                     setClass={(cls) => setCharacter({...character, info: {class_ids: [cls], subclass_ids: []}})}/>;
+            case 2:
+                return <CharacterFinalization
+                    character={character}
+                    setCharacter={setCharacter}/>;
             default:
                 return 'Unknown stepIndex';
         }

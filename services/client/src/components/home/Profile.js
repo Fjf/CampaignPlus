@@ -49,7 +49,7 @@ export default function Profile(props) {
             }
             <div className={classes.root}>
                 <Button onClick={() => {
-                    setSelectedCharacter("new");
+                    setNewCharacterCreation(true);
                 }} variant="outlined" color="primary">
                     Create new
                 </Button>
@@ -57,16 +57,19 @@ export default function Profile(props) {
 
 
         </div>
-        {selectedCharacter === null ?
-            <div className={"main-content"}>Select a character to show information here.</div> :
-            (selectedCharacter === "new" ?
-                    <CharacterCreation user={user}/> :
-                    <CharacterOverview character={selectedCharacter} reset={() => {
-                        setSelectedCharacter(null)
-                        updateCharacters()
-                    }}
-                    />
-            )
+        {newCharacterCreation ?
+            <CharacterCreation user={user} onCreate={(character) => {
+                setSelectedCharacter(character);
+                setCharacters([...characters, character]);
+                setNewCharacterCreation(false);
+            }}/> : (selectedCharacter === null ?
+                <div className={"main-content"}>Select a character to show information here.</div>
+
+                :
+                <CharacterOverview character={selectedCharacter} reset={() => {
+                    setSelectedCharacter(null)
+                    updateCharacters()
+                }}/>)
         }
 
     </>
