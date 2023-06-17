@@ -5,7 +5,7 @@ let map;
 import React from "react";
 import {FileDrop} from 'react-file-drop';
 import {dataService} from "../services/dataService";
-import {IconButton, TextField, TextareaAutosize} from "@material-ui/core"
+import {IconButton, TextField, TextareaAutosize, Tooltip} from "@material-ui/core"
 import {
     BsTrash,
     BsUpload,
@@ -490,19 +490,24 @@ export default function MapWidget(props) {
                         }}>
                             <FaArrowLeft/>
                         </IconButton> : null}
-                    <IconButton variant={"outlined"} color={"secondary"} aria-label="add" onClick={() => {
-                        map.setHoverMarker({x: 0, y: 0}, null);
-                    }}>
-                        <FaPlusCircle/>
-                    </IconButton>
-                    <IconButton variant={"outlined"} color={"secondary"} aria-label="hide" onClick={() => {
-                        setInfoVisible(!infoVisible);
-                    }}>
-                        <AiFillInfoCircle/>
-                    </IconButton>
+                    <Tooltip title={infoVisible ? "Hide information" : "Show information"}>
+                        <IconButton variant={"outlined"} color={"secondary"} aria-label="hide" onClick={() => {
+                            setInfoVisible(!infoVisible);
+                        }}>
+                            <AiFillInfoCircle/>
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Add location">
+                        <IconButton variant={"outlined"} color={"secondary"} aria-label="add"
+                                    onClick={() => {
+                                        map.setHoverMarker({x: 0, y: 0}, null);
+                                    }}>
+                            <FaPlusCircle/>
+                        </IconButton>
+                    </Tooltip>
                 </div> : null}
         </div>
-        {!infoVisible ? null : <div id={"map-info-bar"} className={"right-content-bar"}>
+        {!infoVisible || selectedMap.name === null ? null : <div id={"map-info-bar"} className={"right-content-bar"}>
             <div className={"basic-list-entry"}>
                 <h3>Map Info</h3>
                 <div className={"icon-bar"}>
@@ -524,7 +529,7 @@ export default function MapWidget(props) {
             </div>
             <TextField
                 label={"Title"}
-                value={selectedMap.name !== null ? selectedMap.name : ""}
+                value={selectedMap.name}
                 onChange={(e) => setSelectedMap({
                     ...selectedMap,
                     name: e.target.value
