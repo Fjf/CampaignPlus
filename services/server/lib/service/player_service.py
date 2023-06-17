@@ -169,6 +169,9 @@ def set_equipment(player, equipment_id, amount, description=None):
         .filter(PlayerEquipmentModel.id == equipment_id and PlayerEquipmentModel.player_id == player.id)
         .one_or_none())
 
+    if equipment is None:
+        raise BadRequest("Invalid equipment ID passed.")
+
     equipment.amount = amount
     if description is not None:
         equipment.description = description
