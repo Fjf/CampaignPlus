@@ -2,6 +2,7 @@ import {apiUrl, handleResponse} from "./constants";
 
 export const characterService = {
     getCharacterInfo,
+    create,
     del,
     save,
     getCharacterSpells,
@@ -73,7 +74,7 @@ function getItems() {
         headers: {'Content-Type': 'text/html'},
     };
 
-    return fetch(`${apiUrl}/items`, requestOptions)
+    return fetch(`${apiUrl}/user/items`, requestOptions)
         .then(handleResponse);
 }
 
@@ -126,5 +127,15 @@ function save(character) {
     };
 
     return fetch(`${apiUrl}/player/${character.id}`, requestOptions)
+        .then(handleResponse);
+}
+function create(character) {
+    const requestOptions = {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(character)
+    };
+
+    return fetch(`${apiUrl}/user/player`, requestOptions)
         .then(handleResponse);
 }

@@ -36,6 +36,7 @@ export default function RaceSelection(props) {
     };
 
     React.useEffect(() => {
+        console.log(stateStorage);
         if (stateStorage !== null) {
             setRaces(stateStorage.races);
 
@@ -54,7 +55,7 @@ export default function RaceSelection(props) {
         stateStorage = {
             races: [...races],
         };
-        props.setRace(selectedRace);
+        props.setRace(selectedRace.name);
     }, [races, selectedRace]);
 
     return <>

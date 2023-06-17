@@ -12,11 +12,12 @@ import ReactMarkdown from "react-markdown";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card/Card";
 import "../../../styles/creation.scss";
-import {Button, Checkbox} from "@material-ui/core";
+import {Button, Checkbox, IconButton} from "@material-ui/core";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormLabel from "@material-ui/core/FormLabel";
 import FormGroup from "@material-ui/core/FormGroup";
 import ItemsList from "../characterComponents/ItemsList";
+import {MdCreate} from "react-icons/md";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -35,74 +36,13 @@ let onSelect = () => {
 export default function classSelection(props) {
     const [classes, setClasses] = React.useState([]);
     const styles = useStyles();
-    const [selectedClass, setSelectedClass] = React.useState(props.cls);
+    const [selectedClass, setSelectedClass] = React.useState(null);
+    const [equipment, setEquipment] = React.useState([]);
 
     const [selectingItem, setSelectingItem] = React.useState(false);
     const handleChange = (event) => {
         setSelectedClass(event.target.value);
     };
-
-    function EquipmentOptions(props) {
-        const item = props.item;
-        if (item === undefined) return null;  // TODO: How the fuck is their json formatted AAAAAAAAAAAAAAAAAHH
-
-        const li = item.from.equipment_category.name.lastIndexOf(" ");
-        let categoryRange = item.from.equipment_category.name.substring(0, li);
-
-        // TODO: Fix the database to reduce the amount of nested objects, and set the weapon type correctly.
-        return <Typography color="textSecondary" component="span"
-                           className={"basic-list-entry"}>
-            <div>{item.selected}</div>
-            <Button onClick={() => {
-                itemFilter = (item) => {
-                    if (item.gear_category === null) return false;
-                    return item.gear_category.includes(categoryRange)
-                };
-                onSelect = (result) => {
-                    item.selected = result.name
-                };
-                setSelectingItem(true);
-            }}>Select {item.from.equipment_category.name}</Button>
-        </Typography>
-    }
-
-    function Equipment(props) {
-        const entry = props.item;
-        return <Typography color="textSecondary">{entry.equipment.name} ({entry.quantity})</Typography>
-    }
-
-    function itemRepresentation(item) {
-        if (Array.isArray(item)) return <Typography color="textSecondary">
-            {item.map((entry, i) => {
-                return `${entry.equipment.name} (${entry.quantity})`
-            }).join(", ")}
-        </Typography>;
-
-        if ("equipment" in item) return <Equipment item={item}/>;
-        else {
-            return <EquipmentOptions item={item.equipment_option}/>;
-        }
-    }
-
-
-    function EquipmentChoiceSelector(props) {
-        const entry = props.item;
-
-        if (Array.isArray(entry.from)) {
-            return <FormGroup>
-                {entry.from.map((item, j) => {
-                    return <FormControlLabel
-                        key={j}
-                        control={<Checkbox name="checkedA"/>}
-                        label={itemRepresentation(item)}
-                    />
-                })}
-            </FormGroup>
-        } else {
-            let d = {equipment_option: entry};
-            return <div>{itemRepresentation(d)}</div>
-        }
-    }
 
     React.useEffect(() => {
         if (stateStorage !== null) {
@@ -132,7 +72,7 @@ export default function classSelection(props) {
             <Select
                 labelId="class-select-label"
                 id="class-select"
-                value={selectedClass}
+                value={selectedClass === null ? "" : selectedClass}
                 onChange={handleChange}
             >
                 {
@@ -144,7 +84,7 @@ export default function classSelection(props) {
                 }
             </Select>
         </FormControl>
-        {selectedClass === "" ? null :
+        {selectedClass === null ? null :
             <Grid className={"card-container"} container spacing={1}>
                 <Grid item xs={4} className={"creation-card"}>
                     <Card>
@@ -152,45 +92,17 @@ export default function classSelection(props) {
                             <Typography gutterBottom variant="h5"
                                         component="h2">{selectedClass.name}</Typography>
                             <Typography color="textSecondary" component="span" className={"basic-list-entry"}>
-                                <div>Hit Die:</div>
-                                <div>{selectedClass.hit_die}</div>
+                                <div>Hit Dice:</div>
+                                <div>{selectedClass.hit_dice}</div>
                             </Typography>
                             <Typography color="textSecondary" component="span">
-                                <div>Saving throws:</div>
-                                {selectedClass.saving_throws.map((value, i) => {
-                                    return <div key={i} style={{marginLeft: 8}}>{value.name}</div>
-                                })}
-                            </Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-                <Grid item xs={4} className={"creation-card"}>
-                    <Card>
-                        <CardContent>
-                            <Typography color="textSecondary" variant="h6"
-                                        component="h2">Optional Proficiencies</Typography>
-                            <Typography component="span" color="textSecondary">
-                                {selectedClass.proficiency_choices.map((choice, i) => {
-                                    return <div key={i}><FormControl component="fieldset">
-                                        <FormLabel component="legend">Pick {choice.choose}</FormLabel>
-                                        <FormGroup>
-                                            {choice.from.map((entry, j) => {
-                                                return <FormControlLabel
-                                                    key={j}
-                                                    control={<Checkbox name="checkedA"/>}
-                                                    label={entry.name}
-                                                />
-                                            })}
-                                        </FormGroup>
-                                    </FormControl></div>
-                                })}
+                                <div>Saving throws: {selectedClass.proficiencies.saving_throws}</div>
                             </Typography>
                             <Typography color="textSecondary" variant="h6"
-                                        component="h2">Fixed Proficiencies</Typography>
+                                        component="h2">Proficiencies</Typography>
                             <Typography component={"span"} color="textSecondary">
-                                {selectedClass.proficiencies.map(e => {
-                                    return e.name
-                                }).join(", ")}
+                                <div>{selectedClass.proficiencies.skills}</div>
+
                             </Typography>
                         </CardContent>
                     </Card>
@@ -198,22 +110,47 @@ export default function classSelection(props) {
                 <Grid item xs={4} className={"creation-card"}>
                     <Card>
                         <CardContent>
+                            <Typography color="textSecondary" variant="h6"
+                                        component="h2">Equipment Info</Typography>
+                            <ReactMarkdown source={selectedClass.equipment}/>
                             <Typography color="textSecondary" variant="h6"
                                         component="h2">Equipment</Typography>
-                            {selectedClass.starting_equipment.map((entry, i) => {
-                                return <Equipment key={i} item={entry}/>
-                            })}
-                            <Typography color="textSecondary" variant="h6"
-                                        component="h2">Equipment Options</Typography>
-                            {selectedClass.starting_equipment_options.map((entry, i) => {
-                                return <Typography key={i} color="textSecondary" component="span">
-                                    <FormLabel component={"legend"}>Pick {entry.choose}</FormLabel>
-                                    <EquipmentChoiceSelector item={entry}/>
-                                </Typography>
-                            })}
+                            <IconButton onClick={e => {
+                                onSelect = (item) => {
+                                    setEquipment([...equipment, item]);
+                                };
+                                setSelectingItem(true);
+                            }}><MdCreate/></IconButton>
+                            {
+                                equipment.map((item, i) => {
+                                    return <div key={i}>{item.name}</div>
+                                })
+                            }
                         </CardContent>
                     </Card>
                 </Grid>
+                <Grid item xs={4} className={"creation-card"}>
+                    <Card>
+                        <CardContent>
+                            <Typography color="textSecondary" variant="h6"
+                                        component="h2">Armor Proficiency</Typography>
+                            <Typography component="span" color="textSecondary">
+                                <ReactMarkdown source={selectedClass.proficiencies.armor}/>
+                            </Typography>
+                            <Typography color="textSecondary" variant="h6"
+                                        component="h2">Tool Proficiency</Typography>
+                            <Typography component="span" color="textSecondary">
+                                <ReactMarkdown source={selectedClass.proficiencies.tools}/>
+                            </Typography>
+                            <Typography color="textSecondary" variant="h6"
+                                        component="h2">Weapon Proficiency</Typography>
+                            <Typography component="span" color="textSecondary">
+                                <ReactMarkdown source={selectedClass.proficiencies.weapons}/>
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+
             </Grid>}
         {selectingItem ? <ItemsList
             closeOnSelect={true}

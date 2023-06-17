@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import RaceSelection from "./characterCreationComponents/RaceSelection";
 import ClassSelection from "./characterCreationComponents/ClassSelection";
-import BackgroundSelection from "./characterCreationComponents/BackgroundSelection";
+import {characterService} from "../services/characterService";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -26,19 +26,27 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const blankCharacter = {race: "", cls: "", background: "", equipment: {}};
+const blankCharacter = {
+    "backstory": "",
+    "info": {
+        "class_ids": [],
+        "subclass_ids": []
+    },
+    "name": "",
+    "race": "",
+};
+
 export default function CharacterCreation(props) {
     const user = props.user;
+    const onCreate = props.onCreate
 
     const [activeStep, setActiveStep] = React.useState(0);
     const [character, setCharacter] = React.useState(blankCharacter);
 
     function getSteps() {
         return [
-            character.race === "" ? "Race" : character.race.name,
-            character.cls === "" ? "Class" : character.cls.name,
-            character.background === "" ? "Background" : character.background.name,
-            "Equipment"
+            character.race === "" ? "Race" : character.race,
+            "Class"
         ]
     }
 
@@ -47,20 +55,15 @@ export default function CharacterCreation(props) {
 
     const getStepContent = (stepIndex) => {
         switch (stepIndex) {
+            // TODO: Add player name and backstory input fields
             case 0:
                 return <RaceSelection
                     race={character.race}
                     setRace={(race) => setCharacter({...character, race: race})}/>;
             case 1:
                 return <ClassSelection
-                    cls={character.cls}
-                    setClass={(cls) => setCharacter({...character, cls: cls})}/>;
-            case 2:
-                return <BackgroundSelection
-                    background={character.background}
-                    setBackground={(background) => setCharacter({...character, background: background})}/>;
-            case 3:
-                return 'This is where the equipment is selected';
+                    cls={character.info.class_ids}
+                    setClass={(cls) => setCharacter({...character, info: {class_ids: [cls], subclass_ids: []}})}/>;
             default:
                 return 'Unknown stepIndex';
         }
@@ -68,6 +71,15 @@ export default function CharacterCreation(props) {
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
+
+        if (activeStep === 2) {
+            // Finalize character creation.
+            console.log(character);
+            characterService.create(character).then(data => {
+                console.log(data);
+                onCreate(data);
+            });
+        }
     };
 
     const handleBack = () => {
@@ -81,8 +93,8 @@ export default function CharacterCreation(props) {
     return <div className={"main-content"}>
         <div className={classes.root}>
             <Stepper activeStep={activeStep} alternativeLabel>
-                {steps.map((label) => (
-                    <Step key={label}>
+                {steps.map((label, i) => (
+                    <Step key={i}>
                         <StepLabel>{label}</StepLabel>
                     </Step>
                 ))}

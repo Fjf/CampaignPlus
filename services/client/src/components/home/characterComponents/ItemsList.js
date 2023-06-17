@@ -1,6 +1,6 @@
 import React, {useRef} from "react";
 import {characterService} from "../../services/characterService";
-import {TextField} from "@material-ui/core";
+import {TextField, Tooltip} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import {MdClose} from "react-icons/all";
 import {toggleRightContentBar} from "../../services/constants";
@@ -34,7 +34,14 @@ function ItemsList(props) {
         if (typeof (props.filter) === "function") {
             fItems = fItems.filter(props.filter);
         }
-        setFilteredItems(fItems.filter((val) => val.name.toLowerCase().includes(query.toLowerCase())));
+        setFilteredItems(fItems.filter((val) => {
+            let basic_match = val.name.toLowerCase().includes(query.toLowerCase()) ||
+                              val.description.toLowerCase().includes(query.toLowerCase());
+
+            if (val.gear_category !== undefined) {
+                return basic_match || val.gear_category.toLowerCase().includes(query.toLowerCase());
+            }
+        }));
     }, [query, items]);
 
     return <div ref={bar} className={"right-content-bar right-content-bar-invisible"}>
@@ -50,19 +57,18 @@ function ItemsList(props) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
         />
-        <div className={ "items-list"}>
+        <div className={"items-list"}>
             {filteredItems.map((item, i) => {
-                return <div key={i} onClick={() => {
+                return <Tooltip title={item.description}><div key={i} onClick={() => {
                     props.onSelect(item);
                     if (props.closeOnSelect) toggleRightContentBar(bar, props.onClose);
                 }}>
                     <div>{item.name}</div>
-                    <div>{item.value}</div>
-                </div>
+                    <div>{item.cost}</div>
+                </div></Tooltip>
             })}
         </div>
     </div>
-
 }
 
 export default React.memo(ItemsList);
