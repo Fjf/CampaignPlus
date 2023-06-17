@@ -6,7 +6,16 @@ import React from "react";
 import {FileDrop} from 'react-file-drop';
 import {dataService} from "../services/dataService";
 import {IconButton, TextField, TextareaAutosize} from "@material-ui/core"
-import {BsTrash, BsUpload, FaArrowLeft, FaPlusCircle, AiFillInfoCircle, MdCreate, MdSave, MdOpenInNew} from "react-icons/all"
+import {
+    BsTrash,
+    BsUpload,
+    FaArrowLeft,
+    FaPlusCircle,
+    AiFillInfoCircle,
+    MdCreate,
+    MdSave,
+    MdOpenInNew
+} from "react-icons/all"
 import {campaignService} from "../services/campaignService";
 import ReactMarkdown from "react-markdown";
 import Paper from "@material-ui/core/Paper";
@@ -117,14 +126,12 @@ function Map(c) {
         visibleMap = newMap;
 
         let parent = visibleMap.parent;
-        console.log(newMap, parent);
         for (let i = 0; i < parent.children.length; i++) {
             if (parent.children[i].id === visibleMap.id) {
                 parent.children[i] = visibleMap;
                 console.log("Updated child with idx", i);
             }
         }
-        console.log(parent)
     };
 
     function overwriteVisibleMap(newMap) {
@@ -133,7 +140,7 @@ function Map(c) {
             zoom = Math.max(img.width / c.width, img.height / c.height);
             newMap.zoom = zoom;
         };
-        img.src = newMap.map_url;
+        img.src = "/static/images/uploads/" + newMap.filename;
         newMap.image = img;
 
         visibleMap = newMap;
@@ -229,10 +236,8 @@ function Map(c) {
     this.onMouseScroll = function (event) {
         if (visibleMap === null) return;
 
-        let diff = (2*(event.deltaY/Math.abs(event.deltaY)) * 0.02) * zoom;
+        let diff = (2 * (event.deltaY / Math.abs(event.deltaY)) * 0.02) * zoom;
         let nextZoom = zoom + diff;
-
-        console.log(event.deltaY, nextZoom, visibleMap.zoom);
 
         if (nextZoom < 0.1 && nextZoom < zoom) return;
         if (nextZoom * c.width > visibleMap.image.width * 2 &&
@@ -286,7 +291,6 @@ function Map(c) {
                     x: loc.x,
                     y: loc.y,
                 };
-                console.log(hoverMarkerChild, mapUpdateData);
                 dataService.alterMap(mapUpdateData.id, mapUpdateData).then(new_data => {
                     console.log(new_data);
                 });
@@ -365,6 +369,7 @@ function Map(c) {
         if (event.key === "Escape" && hoverMarker !== null) hoverMarker = null;
     };
 }
+
 const icons = new Icons();
 icons.load();
 
@@ -373,10 +378,11 @@ export default function MapWidget(props) {
     const [isEditing, setIsEditing] = React.useState(false);
     const [message, setMessage] = React.useState(null);
     const [selectedMap, setSelectedMap] = React.useState({
-        name: "",
+        name: null,
         story: "",
-        map_url: "",
-        children: []
+        filename: "",
+        children: [],
+        parent: null,
     });
     const [selectedChild, setSelectedChild] = React.useState(null);
     const [infoVisible, setInfoVisible] = React.useState(true);
@@ -433,8 +439,8 @@ export default function MapWidget(props) {
 
         const reader = new FileReader();
         reader.addEventListener("load", () => {
-            selectedMap.map_url = reader.result;
-            selectedMap.image.src = reader.result;
+            selectedMap.filename = reader.result;
+            selectedMap.image.src = "/static/images/uploads/" + reader.result;
         }, false);
 
         dataService.setMapImage(selectedMap, file).then(r => {
@@ -476,13 +482,14 @@ export default function MapWidget(props) {
         </div>
         <div className={"main-content"}>
             <canvas id={"canvas"} style={{backgroundColor: "white"}}/>
-            {selectedMap !== null ?
+            {selectedMap.name !== null ?
                 <div className={"icon-bar"} style={{top: "8px", left: "8px", position: "absolute"}}>
-                    <IconButton variant={"outlined"} color={"secondary"} aria-label="back" onClick={() => {
-                        map.toParent();
-                    }}>
-                        <FaArrowLeft/>
-                    </IconButton>
+                    {selectedMap.parent !== null ?
+                        <IconButton variant={"outlined"} color={"secondary"} aria-label="back" onClick={() => {
+                            map.toParent();
+                        }}>
+                            <FaArrowLeft/>
+                        </IconButton> : null}
                     <IconButton variant={"outlined"} color={"secondary"} aria-label="add" onClick={() => {
                         map.setHoverMarker({x: 0, y: 0}, null);
                     }}>
@@ -517,7 +524,7 @@ export default function MapWidget(props) {
             </div>
             <TextField
                 label={"Title"}
-                value={selectedMap.name}
+                value={selectedMap.name !== null ? selectedMap.name : ""}
                 onChange={(e) => setSelectedMap({
                     ...selectedMap,
                     name: e.target.value
@@ -561,26 +568,27 @@ export default function MapWidget(props) {
                     Drop an image here to overwrite the current map.
                 </FileDrop>
             </div>
-            {selectedChild === null ? null :<>
+            {selectedChild === null ? null : <>
                 <div className={"basic-list-entry"}>
                     <h3>{selectedChild.name}</h3>
                     <div>
-                    <Button
-                        variant="contained"
-                        onClick={() => {
-                            map.onSetVisibleMap(selectedChild);
-                            setSelectedChild(null)}
-                        }>
-                    Open
-                    </Button>
-                    <Button
-                        variant="contained"
-                        onClick={() => {
-                            selectedChild.visible = false;
-                            map.setHoverMarker({x: 0, y: 0}, selectedChild);
-                        }}>
-                    Move
-                    </Button>
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                map.onSetVisibleMap(selectedChild);
+                                setSelectedChild(null)
+                            }
+                            }>
+                            Open
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                selectedChild.visible = false;
+                                map.setHoverMarker({x: 0, y: 0}, selectedChild);
+                            }}>
+                            Move
+                        </Button>
                     </div>
                 </div>
                 <div>
@@ -590,7 +598,8 @@ export default function MapWidget(props) {
             </>}
         </div>}
         <div>
-            <Snackbar open={message !== null} autoHideDuration={100000} onClose={() => setMessage(null)} message={message} style={{padding: 0, margin: 0}}/>
+            <Snackbar open={message !== null} autoHideDuration={100000} onClose={() => setMessage(null)}
+                      message={message} style={{padding: 0, margin: 0}}/>
         </div>
     </>
 }
