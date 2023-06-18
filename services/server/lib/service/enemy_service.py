@@ -73,7 +73,7 @@ def add_ability(enemy_id: int, text: str, user: UserModel):
 
     db.add(ability)
     db.commit()
-    return ability
+    return get_ability(ability.id)
 
 
 def get_abilities(user: UserModel, enemy_id=None) -> List[EnemyAbilityModel]:
