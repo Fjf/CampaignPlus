@@ -11,23 +11,18 @@ import TextField from "@material-ui/core/TextField";
 
 export default function CampaignOverview(props) {
     const campaigns = props.campaigns;
+    const setCampaigns = props.setCampaigns;
     const [selectedCampaign, setSelectedCampaign] = React.useState(null);
 
     const [players, setPlayers] = React.useState([]);
     const [playerToggled, setPlayerToggled] = React.useState([]);
 
-    function getPlayers() {
-        console.log("Getting players.");
-        if (selectedCampaign === null) return;
-        campaignService.getData(selectedCampaign.id).then(r => {
+    function getPlayers(campaignId) {
+        campaignService.getData(campaignId).then(r => {
             setPlayers(r);
             setPlayerToggled(new Array(r.length).fill(true));
         });
     }
-
-    React.useEffect(() => {
-        getPlayers();
-    }, [selectedCampaign]);
 
     function togglePlayerList(i) {
         let p;
@@ -46,11 +41,21 @@ export default function CampaignOverview(props) {
         })
     }
 
+    function selectCampaign(campaign) {
+        if (campaign !== null) {
+            setSelectedCampaign(campaign);
+            getPlayers(campaign.id);
+        } else {
+            setSelectedCampaign(campaign);
+            setPlayers([]);
+        }
+    }
+
     function deleteCampaign() {
         if (prompt("Are you sure you want to delete this campaign? Type the name of the campaign to continue deleting.") === selectedCampaign.name) {
             campaignService.del(selectedCampaign.id).then(r => {
                 props.setCampaigns(r);
-                setSelectedCampaign(null);
+                selectCampaign(null);
             })
         }
     }
@@ -61,8 +66,8 @@ export default function CampaignOverview(props) {
                 <div className={"icon-bar"}>
                     <IconButton aria-label="add" size={"small"} onClick={() => {
                         campaignService.create().then(r => {
-                            props.campaigns.push(r);
-                            setSelectedCampaign(r);
+                            setCampaigns([...campaigns, r]);
+                            selectCampaign(r);
                         });
                     }}>
                         <FaPlusCircle/>
@@ -73,7 +78,7 @@ export default function CampaignOverview(props) {
                 campaigns.map((campaign, i) => {
                     return <div key={i}
                                 className={"campaign-list-entry"}
-                                onClick={() => setSelectedCampaign(campaigns[i])}>
+                                onClick={() => selectCampaign(campaigns[i])}>
                         <div>{campaign.name}</div>
                         <div>{campaign.is_owner ? "You" : campaign.owner}</div>
                     </div>
@@ -117,16 +122,16 @@ export default function CampaignOverview(props) {
                                     <div className={"player-list-entry"}>
                                         <div>
                                             <div>
-                                                <b>{player.name}</b>(by {player.user_name})
+                                                <b>{player.name}</b> (by {player.owner})
                                             </div>
                                             <IconButton size="small" onClick={() => togglePlayerList(i)}>
                                                 {playerToggled[i] ? <ArrowUpwardIcon fontSize="inherit"/>
                                                     : <ArrowDownwardIcon fontSize="inherit"/>}
                                             </IconButton>
                                         </div>
-                                        <div>{player.race}</div>
-                                        <div>{player.class}</div>
-                                        <div>{player.backstory}</div>
+                                        <div>Race: {player.race}</div>
+                                        <div>Class: {player.class}</div>
+                                        <div>Level: {player.info.stats.level}</div>
                                     </div>
                                 </Collapse>
                             })
@@ -144,11 +149,9 @@ export default function CampaignOverview(props) {
                                 })
                             }
                         }/><h3>(by {selectedCampaign.owner})</h3>
-                    <div>Campaign code: {selectedCampaign.url}</div>
-                    <img style={{width: "80px", height: "80px"}} src={selectedCampaign.qr_image}/>
+                    <div>Campaign code: {selectedCampaign.code}</div>
+                    <img style={{width: "80px", height: "80px"}} src={"/static/images/qr_codes/" + selectedCampaign.code + ".png"}/>
                 </div>
-                {!selectedCampaign.is_owner ? null :
-                    <Link to={"/enemies"}><Button>Go to enemy creation.</Button></Link>}
             </div>
         }</>
 

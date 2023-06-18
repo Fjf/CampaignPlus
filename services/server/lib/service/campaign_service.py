@@ -31,6 +31,8 @@ def create_campaign(user: UserModel):
         except IntegrityError:
             print("A key had to be regenerated.")
 
+    # Create QR code on campaign selection
+    campaign.code_qr()
     return campaign
 
 
@@ -122,7 +124,7 @@ def update_campaign(user: UserModel, campaign_id: int, name: str = None) -> Camp
     db = request_session()
     db.commit()
 
-    return campaign
+    return get_campaign(campaign_id=campaign_id)
 
 
 def delete_campaign(user, campaign_id):

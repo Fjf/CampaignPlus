@@ -25,7 +25,7 @@ def check_player(player: PlayerModel):
 @require_login()
 def create_campaign():
     user = session_user()
-    return campaign_service.create_campaign(user).to_json(user)
+    return campaign_service.create_campaign(user).to_json()
 
 
 @api.route('/campaigns/<int:campaign_id>', methods=["POST"])
@@ -37,7 +37,7 @@ def update_campaign(campaign_id):
 
     name = data.get("name")
 
-    return campaign_service.update_campaign(user, campaign_id, name).to_json(user)
+    return campaign_service.update_campaign(user, campaign_id, name).to_json()
 
 
 @api.route('/campaigns/<int:campaign_id>', methods=["DELETE"])
@@ -62,7 +62,7 @@ def get_campaigns():
         if campaign not in campaigns:
             campaigns.append(campaign)
 
-    return [campaign.to_json() for campaign in campaigns]
+    return [campaign.to_json({"owner": campaign.user.name}) for campaign in campaigns]
 
 
 @api.route('/campaigns/join/<campaign_code>', methods=["POST"])
@@ -121,21 +121,12 @@ def get_players(campaign_id):
     data = []
     for player in players:
         # Make sure you can only see your own backstory, or if you are the dm.
-        if player.owner_id == user.id or campaign.user_id == user.id:
-            backstory = player.backstory
-        else:
-            backstory = ""
+        if player.owner_id != user.id and campaign.user_id != user.id:
+            player.backstory = ""
 
         player_classes = player_service.get_classes(player)
 
-        data.append({
-            "id": player.id,
-            "user_name": player.owner.name,
-            "name": player.name,
-            "race": player.race,
-            "backstory": backstory,
-            "class": player_classes[0].name if len(player_classes) > 0 else "Classless"
-        })
+        data.append(player.to_json(default_response={"class": player_classes[0].name if len(player_classes) > 0 else "Classless"}))
 
     return data
 
