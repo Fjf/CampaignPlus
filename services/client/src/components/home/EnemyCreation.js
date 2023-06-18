@@ -194,6 +194,8 @@ export default function EnemyCreation(props) {
                 </div>
                 <div className={"abilities-column"}>
                     <div style={{display: "flex", flexDirection: "row"}}>
+
+                        <h3>Abilities</h3>
                         <div className={"icon-bar"}>
                             <IconButton size="small" onClick={() => isSelectingAbility(true)}>
                                 <FaPlusCircle/>
@@ -202,7 +204,6 @@ export default function EnemyCreation(props) {
                                 <MdCreate/>
                             </IconButton>
                         </div>
-                        <h3>Abilities</h3>
                     </div>
                     <div className={"abilities-list"}>
                         {
