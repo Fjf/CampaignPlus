@@ -11,7 +11,12 @@ export default function DiceRoller(props) {
         <div className={"dice-bar"}>
             <div className={"dice-counter"} id="dice-counter"/>
 
-            <TextField type="text" id="set" value="4d6" style={{width: "6em"}}/><br/>
+            <TextField
+                variant="standard"
+                type="text"
+                id="set"
+                value="4d6"
+                style={{width: "6em"}} /><br/>
             <Button id="clear">Clear Result</Button>
             <Button onClick={() => {
                 setIsRolling(!isRolling);
@@ -21,5 +26,5 @@ export default function DiceRoller(props) {
         <div id="canvas" className={"dice-canvas"}>
             <canvas className={"dice-canvas"}/>
         </div>
-    </>
+    </>;
 }

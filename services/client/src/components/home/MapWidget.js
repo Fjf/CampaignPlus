@@ -531,12 +531,13 @@ export default function MapWidget(props) {
                 </div>
             </div>
             <TextField
+                variant="standard"
                 label={"Title"}
                 value={selectedMap.name}
                 onChange={(e) => setSelectedMap({
                     ...selectedMap,
                     name: e.target.value
-                })}/>
+                })} />
             <div className={"basic-list-entry"}>
                 <div className={"icon-bar"}>
                     <IconButton size={"small"} onClick={() => setIsEditing(!isEditing)}>
@@ -609,5 +610,5 @@ export default function MapWidget(props) {
             <Snackbar open={message !== null} autoHideDuration={100000} onClose={() => setMessage(null)}
                       message={message} style={{padding: 0, margin: 0}}/>
         </div>
-    </>
+    </>;
 }

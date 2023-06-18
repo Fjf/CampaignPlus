@@ -68,14 +68,14 @@ export default function classSelection(props) {
     }, [classes, selectedClass]);
 
     return <>
-        <FormControl className={styles.formControl}>
+        <FormControl variant="standard" className={styles.formControl}>
             <InputLabel id="class-simple-select-label">Class</InputLabel>
             <Select
+                variant="standard"
                 labelId="class-select-label"
                 id="class-select"
                 value={selectedClass === null ? "" : selectedClass}
-                onChange={handleChange}
-            >
+                onChange={handleChange}>
                 {
                     classes.map((cls, i) => {
                         return <MenuItem key={i} value={cls}>
@@ -161,5 +161,5 @@ export default function classSelection(props) {
                 setSelectingItem(false);
             }}
         /> : null}
-    </>
+    </>;
 }

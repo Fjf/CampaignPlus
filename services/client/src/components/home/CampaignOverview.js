@@ -141,6 +141,7 @@ export default function CampaignOverview(props) {
                 </div>
                 <div className={"join-section"}>
                     <TextField
+                        variant="standard"
                         value={selectedCampaign.name}
                         onChange={
                             (e) => {
@@ -149,11 +150,11 @@ export default function CampaignOverview(props) {
                                     name: e.target.value
                                 })
                             }
-                        }/><h3>(by {selectedCampaign.owner})</h3>
+                        } /><h3>(by {selectedCampaign.owner})</h3>
                     <div>Campaign code: {selectedCampaign.code}</div>
                     <img style={{width: "80px", height: "80px"}} src={"/static/images/qr_codes/" + selectedCampaign.code + ".png"}/>
                 </div>
             </div>
-        }</>
+        }</>;
 
 }

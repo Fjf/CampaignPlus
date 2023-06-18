@@ -77,10 +77,10 @@ export default function Classes(props) {
                 </FileDrop>
             </div>
             <TextField
+                variant="standard"
                 label={"Search"}
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
-            />
+                onChange={(e) => setQuery(e.target.value)} />
             <div className={"items-list"}>
                 {filteredClasses.map((item, i) => {
                     return <div key={i} onClick={() => {
@@ -92,5 +92,5 @@ export default function Classes(props) {
                 })}
             </div>
         </div>
-    </>
+    </>;
 }

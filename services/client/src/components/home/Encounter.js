@@ -46,16 +46,21 @@ function Row(props) {
                     {row.name}
                 </TableCell>
                 <TableCell align="right">{row.max_hp}</TableCell>
-                <TableCell align="right"><TextField value={row.current_hp}
-                                                    onChange={event => {
-                                                        row.current_hp = event.target.value;
-                                                        setRows(rowId, row); // Update storage.
-                                                    }}/></TableCell>
-                <TableCell align="right"><TextField type="number" value={row.initiative}
-                                                    onChange={e => {
-                                                        row.initiative = e.target.value;
-                                                        setRows(rowId, row); // Update storage.
-                                                    }}/></TableCell>
+                <TableCell align="right"><TextField
+                    variant="standard"
+                    value={row.current_hp}
+                    onChange={event => {
+                        row.current_hp = event.target.value;
+                        setRows(rowId, row); // Update storage.
+                    }} /></TableCell>
+                <TableCell align="right"><TextField
+                    variant="standard"
+                    type="number"
+                    value={row.initiative}
+                    onChange={e => {
+                        row.initiative = e.target.value;
+                        setRows(rowId, row); // Update storage.
+                    }} /></TableCell>
             </TableRow>
             <TableRow>
                 <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={6}>

@@ -44,31 +44,33 @@ function ItemsList(props) {
         }));
     }, [query, items]);
 
-    return <div ref={bar} className={"right-content-bar right-content-bar-invisible"}>
-        <div>
-            <h3>Items</h3>
-            <IconButton size={"small"} onClick={() => {
-                toggleRightContentBar(bar, props.onClose)
-            }}
-                        style={{top: "8px", left: "8px", position: "absolute"}}><MdClose/></IconButton>
+    return (
+        <div ref={bar} className={"right-content-bar right-content-bar-invisible"}>
+            <div>
+                <h3>Items</h3>
+                <IconButton size={"small"} onClick={() => {
+                    toggleRightContentBar(bar, props.onClose)
+                }}
+                            style={{top: "8px", left: "8px", position: "absolute"}}><MdClose/></IconButton>
+            </div>
+            <TextField
+                variant="standard"
+                label={"Search"}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)} />
+            <div className={"items-list"}>
+                {filteredItems.map((item, i) => {
+                    return <Tooltip title={item.description}><div key={i} onClick={() => {
+                        props.onSelect(item);
+                        if (props.closeOnSelect) toggleRightContentBar(bar, props.onClose);
+                    }}>
+                        <div>{item.name}</div>
+                        <div>{item.cost}</div>
+                    </div></Tooltip>
+                })}
+            </div>
         </div>
-        <TextField
-            label={"Search"}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-        />
-        <div className={"items-list"}>
-            {filteredItems.map((item, i) => {
-                return <Tooltip title={item.description}><div key={i} onClick={() => {
-                    props.onSelect(item);
-                    if (props.closeOnSelect) toggleRightContentBar(bar, props.onClose);
-                }}>
-                    <div>{item.name}</div>
-                    <div>{item.cost}</div>
-                </div></Tooltip>
-            })}
-        </div>
-    </div>
+    );
 }
 
 export default React.memo(ItemsList);

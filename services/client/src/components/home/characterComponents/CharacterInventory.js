@@ -47,62 +47,62 @@ export default function CharacterInventory(props) {
                 <div className={"currency-entry"}>
                     <div>CP</div>
                     <div><TextField
+                        variant="standard"
                         value={character.copper}
                         onChange={(e) => {
                             props.setCharacter({
                                 ...character,
                                 copper: e.target.value
                             })
-                        }}
-                    /></div>
+                        }} /></div>
                 </div>
                 <div className={"currency-entry"}>
                     <div>SP</div>
                     <div><TextField
+                        variant="standard"
                         value={character.silver}
                         onChange={(e) => {
                             props.setCharacter({
                                 ...character,
                                 silver: e.target.value
                             })
-                        }}
-                    /></div>
+                        }} /></div>
                 </div>
                 <div className={"currency-entry"}>
                     <div>EP</div>
                     <div><TextField
+                        variant="standard"
                         value={character.electron}
                         onChange={(e) => {
                             props.setCharacter({
                                 ...character,
                                 electron: e.target.value
                             })
-                        }}
-                    /></div>
+                        }} /></div>
                 </div>
                 <div className={"currency-entry"}>
                     <div>GP</div>
                     <div><TextField
+                        variant="standard"
                         value={character.gold}
                         onChange={(e) => {
                             props.setCharacter({
                                 ...character,
                                 gold: e.target.value
                             })
-                        }}
-                    /></div>
+                        }} /></div>
                 </div>
                 <div className={"currency-entry"}>
                     <div>PP</div>
                     <div><TextField
+                        variant="standard"
                         value={character.platinum}
                         onChange={(e) => {
                             props.setCharacter({
                                 ...character,
                                 platinum: e.target.value
                             })
-                        }}
-                    /></div>
+                        }} /></div>
                 </div>
             </div>
             <div className={"items-list"}>
@@ -147,5 +147,5 @@ export default function CharacterInventory(props) {
                 });
             }}
         />}
-    </>
+    </>;
 }

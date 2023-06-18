@@ -23,31 +23,33 @@ function SpellsList(props) {
         setFilteredSpells(spells.filter((val) => val.name.toLowerCase().includes(query.toLowerCase())));
     }, [query, spells]);
 
-    return <div ref={bar} className={"right-content-bar right-content-bar-invisible"}>
-        <div>
-            <h3>Spells</h3>
-            <IconButton size={"small"} onClick={() => {
-                toggleRightContentBar(bar, props.onClose)
-            }}
-                        style={{top: "8px", left: "8px", position: "absolute"}}><MdClose/></IconButton>
+    return (
+        <div ref={bar} className={"right-content-bar right-content-bar-invisible"}>
+            <div>
+                <h3>Spells</h3>
+                <IconButton size={"small"} onClick={() => {
+                    toggleRightContentBar(bar, props.onClose)
+                }}
+                            style={{top: "8px", left: "8px", position: "absolute"}}><MdClose/></IconButton>
+            </div>
+            <TextField
+                variant="standard"
+                label={"Search"}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)} />
+            <div className={"spells-list"}>
+                {filteredSpells.map((spell, i) => {
+                    return <div key={i} onClick={() => {
+                        characterService.addSpell(props.character.id, spell.id).then(r => {
+                            props.onSelect(r);
+                        })
+                    }}>
+                        {spell.name}
+                    </div>
+                })}
+            </div>
         </div>
-        <TextField
-            label={"Search"}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-        />
-        <div className={"spells-list"}>
-            {filteredSpells.map((spell, i) => {
-                return <div key={i} onClick={() => {
-                    characterService.addSpell(props.character.id, spell.id).then(r => {
-                        props.onSelect(r);
-                    })
-                }}>
-                    {spell.name}
-                </div>
-            })}
-        </div>
-    </div>
+    );
 
 }
 

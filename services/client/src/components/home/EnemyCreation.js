@@ -92,6 +92,7 @@ export default function EnemyCreation(props) {
                 <div className={"enemy-stats-column"}>
                     <h3>Info</h3>
                     <TextField
+                        variant="standard"
                         value={selectedEnemy.name}
                         onChange={(e) => {
                             setSelectedEnemy({
@@ -99,9 +100,9 @@ export default function EnemyCreation(props) {
                                 name: e.target.value
                             });
                         }}
-                        label={"Name"}
-                    />
+                        label={"Name"} />
                     <TextField
+                        variant="standard"
                         value={selectedEnemy.armor_class}
                         onChange={(e) => {
                             setSelectedEnemy({
@@ -109,9 +110,9 @@ export default function EnemyCreation(props) {
                                 armor_class: e.target.value
                             });
                         }}
-                        label={"Armor Class"}
-                    />
+                        label={"Armor Class"} />
                     <TextField
+                        variant="standard"
                         value={selectedEnemy.max_hp}
                         onChange={(e) => {
                             setSelectedEnemy({
@@ -119,9 +120,9 @@ export default function EnemyCreation(props) {
                                 max_hp: e.target.value
                             });
                         }}
-                        label={"Max HP"}
-                    />
+                        label={"Max HP"} />
                     <TextField
+                        variant="standard"
                         value={selectedEnemy.speed}
                         onChange={(e) => {
                             setSelectedEnemy({
@@ -129,10 +130,10 @@ export default function EnemyCreation(props) {
                                 speed: e.target.value
                             });
                         }}
-                        label={"Speed"}
-                    />
+                        label={"Speed"} />
                     <h3>Stats</h3>
                     <TextField
+                        variant="standard"
                         value={selectedEnemy.strength}
                         onChange={(e) => {
                             setSelectedEnemy({
@@ -140,9 +141,9 @@ export default function EnemyCreation(props) {
                                 strength: e.target.value
                             });
                         }}
-                        label={"Strength"}
-                    />
+                        label={"Strength"} />
                     <TextField
+                        variant="standard"
                         value={selectedEnemy.dexterity}
                         onChange={(e) => {
                             setSelectedEnemy({
@@ -150,9 +151,9 @@ export default function EnemyCreation(props) {
                                 dexterity: e.target.value
                             });
                         }}
-                        label={"Dexterity"}
-                    />
+                        label={"Dexterity"} />
                     <TextField
+                        variant="standard"
                         value={selectedEnemy.constitution}
                         onChange={(e) => {
                             setSelectedEnemy({
@@ -160,9 +161,9 @@ export default function EnemyCreation(props) {
                                 constitution: e.target.value
                             });
                         }}
-                        label={"Constitution"}
-                    />
+                        label={"Constitution"} />
                     <TextField
+                        variant="standard"
                         value={selectedEnemy.intelligence}
                         onChange={(e) => {
                             setSelectedEnemy({
@@ -170,9 +171,9 @@ export default function EnemyCreation(props) {
                                 intelligence: e.target.value
                             });
                         }}
-                        label={"Intelligence"}
-                    />
+                        label={"Intelligence"} />
                     <TextField
+                        variant="standard"
                         value={selectedEnemy.wisdom}
                         onChange={(e) => {
                             setSelectedEnemy({
@@ -180,9 +181,9 @@ export default function EnemyCreation(props) {
                                 wisdom: e.target.value
                             });
                         }}
-                        label={"Wisdom"}
-                    />
+                        label={"Wisdom"} />
                     <TextField
+                        variant="standard"
                         value={selectedEnemy.charisma}
                         onChange={(e) => {
                             setSelectedEnemy({
@@ -190,8 +191,7 @@ export default function EnemyCreation(props) {
                                 charisma: e.target.value
                             });
                         }}
-                        label={"Charisma"}
-                    />
+                        label={"Charisma"} />
                 </div>
                 <div className={"abilities-column"}>
                     <div style={{display: "flex", flexDirection: "row"}}>
@@ -209,25 +209,28 @@ export default function EnemyCreation(props) {
                     <div className={"abilities-list"}>
                         {
                             selectedEnemyAbilities.map((ability, i) => {
-                                return <div key={i} style={{display: "flex", flexDirection: "row"}}>
-                                    <TextField
-                                        rows={3}
-                                        fullWidth={true}
-                                        multiline={true}
-                                        value={ability.text}
-                                        onChange={(e) => {
-                                            let a = [...selectedEnemyAbilities];
-                                            a[i].text = e.target.value;
-                                            setSelectedEnemyAbilities([...a])
-                                        }}
-                                        key={ability.id}/>
-                                    <IconButton style={{width: "48px", height: "48px"}} onClick={e => {
-                                        dataService.deleteAbility(ability.id, selectedEnemy.id)
-                                            .then(d => {
-                                                setSelectedEnemyAbilities(d)
-                                            });
-                                    }}><FaTrash/></IconButton>
-                                </div>
+                                return (
+                                    <div key={i} style={{display: "flex", flexDirection: "row"}}>
+                                        <TextField
+                                            variant="standard"
+                                            rows={3}
+                                            fullWidth={true}
+                                            multiline={true}
+                                            value={ability.text}
+                                            onChange={(e) => {
+                                                let a = [...selectedEnemyAbilities];
+                                                a[i].text = e.target.value;
+                                                setSelectedEnemyAbilities([...a])
+                                            }}
+                                            key={ability.id} />
+                                        <IconButton style={{width: "48px", height: "48px"}} onClick={e => {
+                                            dataService.deleteAbility(ability.id, selectedEnemy.id)
+                                                .then(d => {
+                                                    setSelectedEnemyAbilities(d)
+                                                });
+                                        }}><FaTrash/></IconButton>
+                                    </div>
+                                );
                             })
                         }
                     </div>
@@ -244,5 +247,5 @@ export default function EnemyCreation(props) {
             })
         }}/> : null}
 
-    </>
+    </>;
 }

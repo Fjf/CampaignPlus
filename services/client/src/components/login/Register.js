@@ -57,74 +57,76 @@ export default function Register(props) {
             });
     }
 
-    return <div className={"authenticationInput"}>
-        <h3>Register</h3>
-        <TextField
-            type={"text"}
-            value={username}
-            onChange={(e) => {
-                setUsername(e.target.value);
-                setErrors({
-                    ...errors,
-                    username: null
-                })
-            }}
-            label={"Username"}
-            color={"secondary"}
-            error={errors.username !== null}
-            helperText={errors.username}
-        />
-        <TextField
-            type={"password"}
-            value={password}
-            onChange={(e) => {
-                setPassword(e.target.value);
-                setErrors({
-                    ...errors,
-                    password: null,
-                    cfPassword: null
-                })
+    return (
+        <div className={"authenticationInput"}>
+            <h3>Register</h3>
+            <TextField
+                variant="standard"
+                type={"text"}
+                value={username}
+                onChange={(e) => {
+                    setUsername(e.target.value);
+                    setErrors({
+                        ...errors,
+                        username: null
+                    })
+                }}
+                label={"Username"}
+                color={"secondary"}
+                error={errors.username !== null}
+                helperText={errors.username} />
+            <TextField
+                variant="standard"
+                type={"password"}
+                value={password}
+                onChange={(e) => {
+                    setPassword(e.target.value);
+                    setErrors({
+                        ...errors,
+                        password: null,
+                        cfPassword: null
+                    })
 
-            }}
-            label={"Password"}
-            color={"secondary"}
-            error={errors.password !== null}
-            helperText={errors.password}
-        />
-        <TextField
-            type={"password"}
-            value={cfPassword}
-            onChange={(e) => {
-                setCfPassword(e.target.value);
-                setErrors({
-                    ...errors,
-                    password: null,
-                    cfPassword: null
-                })
-            }}
-            label={"Confirm Password"}
-            color={"secondary"}
-            error={errors.cfPassword !== null}
-            helperText={errors.cfPassword}
-        />
-        <TextField
-            type={"email"}
-            value={email}
-            onChange={(e) => {
-                setEmail(e.target.value);
-                setErrors({
-                    ...errors,
-                    email: null
-                })
-            }}
-            label={"Email"}
-            color={"secondary"}
-            error={errors.email !== null}
-            helperText={errors.email}
-        />
-        <Button
-            onClick={() => register()}
-        >Submit</Button>
-    </div>
+                }}
+                label={"Password"}
+                color={"secondary"}
+                error={errors.password !== null}
+                helperText={errors.password} />
+            <TextField
+                variant="standard"
+                type={"password"}
+                value={cfPassword}
+                onChange={(e) => {
+                    setCfPassword(e.target.value);
+                    setErrors({
+                        ...errors,
+                        password: null,
+                        cfPassword: null
+                    })
+                }}
+                label={"Confirm Password"}
+                color={"secondary"}
+                error={errors.cfPassword !== null}
+                helperText={errors.cfPassword} />
+            <TextField
+                variant="standard"
+                type={"email"}
+                value={email}
+                onChange={(e) => {
+                    setEmail(e.target.value);
+                    setErrors({
+                        ...errors,
+                        email: null
+                    })
+                }}
+                label={"Email"}
+                color={"secondary"}
+                error={errors.email !== null}
+                helperText={errors.email} />
+            <Button
+                onClick={() => register()}
+            >Submit</Button>
+        </div>
+    );
 }
 

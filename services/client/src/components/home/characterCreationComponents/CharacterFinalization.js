@@ -28,14 +28,14 @@ export default function CharacterFinalization(props) {
                             <div>Name</div>
                         </Typography>
                         <TextField
+                            variant="standard"
                             value={props.character.name}
                             onChange={(e) => {
                                 props.setCharacter({
                                     ...props.character,
                                     name: e.target.value
                                 })
-                            }}
-                        />
+                            }} />
                         <Typography variant="body2" color="textSecondary" component="div">
                             <div>Backstory</div>
                         </Typography>
@@ -52,5 +52,5 @@ export default function CharacterFinalization(props) {
                 </Card>
             </Grid>
         </Grid>
-    </>
+    </>;
 }

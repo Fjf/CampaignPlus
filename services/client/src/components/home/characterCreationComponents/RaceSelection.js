@@ -60,14 +60,14 @@ export default function RaceSelection(props) {
     }, [races, selectedRace]);
 
     return <>
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
             <InputLabel id="race-simple-select-label">Race</InputLabel>
             <Select
+                variant="standard"
                 labelId="race-select-label"
                 id="race-select"
                 value={selectedRace}
-                onChange={handleChange}
-            >
+                onChange={handleChange}>
                 {
 
                     races.map((race, i) => {
@@ -139,5 +139,5 @@ export default function RaceSelection(props) {
                 </Grid>
             </Grid>
         }
-    </>
+    </>;
 }

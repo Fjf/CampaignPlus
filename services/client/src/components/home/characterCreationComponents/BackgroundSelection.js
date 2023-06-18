@@ -56,7 +56,7 @@ export default function BackgroundSelection(props) {
     }, [backgrounds, selectedBackground]);
 
     return <>
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
             <InputLabel>Background</InputLabel>
             <Select
                 labelId="background-select-label"
@@ -135,5 +135,5 @@ export default function BackgroundSelection(props) {
                 </Grid>
             </Grid>
         }
-    </>
+    </>;
 }

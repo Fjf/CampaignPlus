@@ -51,39 +51,41 @@ export default function Login(props) {
 
 
 
-    return <form className={"authenticationInput"} onSubmit={handleLogin} action='#'>
-        <h3>Login</h3>
-        <TextField
-            type={"text"}
-            value={username}
-            onChange={(e) => {
-                setUsername(e.target.value);
-                setErrors({
-                    ...errors,
-                    username: null
-                })
-            }}
-            label={"Username"}
-            color={"secondary"}
-            error={errors.username !== null}
-            helperText={errors.username}
-        />
-        <TextField
-            type={"password"}
-            value={password}
-            onChange={(e) => {
-                setPassword(e.target.value);
-                setErrors({
-                    ...errors,
-                    password: null
-                })
-            }}
-            label={"Password"}
-            color={"secondary"}
-            error={errors.password !== null}
-            helperText={errors.password}
-        />
-        <Button type="submit">Submit</Button>
-    </form>
+    return (
+        <form className={"authenticationInput"} onSubmit={handleLogin} action='#'>
+            <h3>Login</h3>
+            <TextField
+                variant="standard"
+                type={"text"}
+                value={username}
+                onChange={(e) => {
+                    setUsername(e.target.value);
+                    setErrors({
+                        ...errors,
+                        username: null
+                    })
+                }}
+                label={"Username"}
+                color={"secondary"}
+                error={errors.username !== null}
+                helperText={errors.username} />
+            <TextField
+                variant="standard"
+                type={"password"}
+                value={password}
+                onChange={(e) => {
+                    setPassword(e.target.value);
+                    setErrors({
+                        ...errors,
+                        password: null
+                    })
+                }}
+                label={"Password"}
+                color={"secondary"}
+                error={errors.password !== null}
+                helperText={errors.password} />
+            <Button type="submit">Submit</Button>
+        </form>
+    );
 }
 
