@@ -24,6 +24,16 @@ function Row(props) {
     const {rowId, row, setRows} = props;
     const [open, setOpen] = React.useState(false);
 
+    React.useEffect(() => {
+        // First time we open a row, we check if we need to fetch abilities, otherwise use existing.
+        if (row.abilities === undefined) {
+            dataService.getAbilities(row.id).then(r => {
+                row.abilities = r;
+                setRows(rowId, row);
+            });
+        }
+    }, []);
+
     return (
         <React.Fragment>
             <TableRow>
@@ -36,22 +46,42 @@ function Row(props) {
                     {row.name}
                 </TableCell>
                 <TableCell align="right">{row.max_hp}</TableCell>
-                <TableCell align="right"><TextField defaultValue={row.current_hp}
+                <TableCell align="right"><TextField value={row.current_hp}
                                                     onChange={event => {
                                                         row.current_hp = event.target.value;
                                                         setRows(rowId, row); // Update storage.
                                                     }}/></TableCell>
-                <TableCell align="right"><TextField defaultValue={row.initiative}
-                                                    onChange={event => {
-                                                        row.initiative = event.target.value;
+                <TableCell align="right"><TextField type="number" value={row.initiative}
+                                                    onChange={e => {
+                                                        row.initiative = e.target.value;
                                                         setRows(rowId, row); // Update storage.
                                                     }}/></TableCell>
             </TableRow>
             <TableRow>
                 <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box margin={1}>
-                            test123
+                        <Box margin={1} style={{display: "flex", flexDirection: "row"}}>
+                            <div style={{flex: 1}}>
+                                <h3>Stats</h3>
+                                <div>AC: {row.armor_class}</div>
+                                <div>Str: {row.strength}</div>
+                                <div>Dex: {row.dexterity}</div>
+                                <div>Con: {row.constitution}</div>
+                                <div>Int: {row.intelligence}</div>
+                                <div>Wis: {row.wisdom}</div>
+                                <div>Cha: {row.charisma}</div>
+                            </div>
+
+                            {row.abilities === undefined ? null :
+                                <div style={{flex: 4}}>
+                                    <h3>Abilities</h3>
+                                    {row.abilities.map((ability, i) => {
+                                        return <div key={i} style={{borderBottom: "1px solid #ffffff66"}}>
+                                            {ability.text}
+                                        </div>
+                                    })}
+                                </div>
+                            }
                         </Box>
                     </Collapse>
                 </TableCell>
