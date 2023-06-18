@@ -1,16 +1,15 @@
 import React from "react";
 import {profileService} from "../services/profileService";
 import CharacterOverview from "./CharacterOverview";
-import {makeStyles} from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import IconButton from "@material-ui/core/IconButton";
-import {FaPlusCircle} from "react-icons/all";
+import {makeStyles} from '@mui/styles';
+import Button from '@mui/material/Button';
 import CharacterCreation from "./CharacterCreation";
+import {useTheme} from "@mui/material/styles";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     root: {
         '& > *': {
-            margin: theme.spacing(1),
+            margin: useTheme().spacing(1),
         },
     },
 }));

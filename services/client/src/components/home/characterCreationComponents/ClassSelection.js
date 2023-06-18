@@ -1,31 +1,32 @@
 import React from "react";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import {makeStyles} from "@material-ui/core/styles";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import {makeStyles} from "@mui/styles";
 
 import {characterCreationService} from "../../services/characterCreationService";
-import Typography from "@material-ui/core/Typography";
-import CardContent from "@material-ui/core/CardContent";
+import Typography from "@mui/material/Typography";
+import CardContent from "@mui/material/CardContent";
 import ReactMarkdown from "react-markdown";
-import Grid from "@material-ui/core/Grid";
-import Card from "@material-ui/core/Card/Card";
+import Grid from "@mui/material/Grid";
+import Card from "@mui/material/Card/Card";
 import "../../../styles/creation.scss";
-import {Button, Checkbox, IconButton} from "@material-ui/core";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormLabel from "@material-ui/core/FormLabel";
-import FormGroup from "@material-ui/core/FormGroup";
+import {Button, Checkbox, IconButton} from "@mui/material";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormLabel from "@mui/material/FormLabel";
+import FormGroup from "@mui/material/FormGroup";
 import ItemsList from "../characterComponents/ItemsList";
 import {MdCreate} from "react-icons/md";
+import {useTheme} from "@mui/material/styles";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
-        margin: theme.spacing(1),
+        margin: useTheme().spacing(1),
         minWidth: 120,
     },
     selectEmpty: {
-        marginTop: theme.spacing(2),
+        marginTop: useTheme().spacing(2),
     },
 }));
 

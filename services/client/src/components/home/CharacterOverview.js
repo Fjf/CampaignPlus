@@ -1,8 +1,9 @@
 import React from "react";
 import {characterService} from "../services/characterService";
 import "../../styles/profile.scss";
-import {FaTrash, MdSave} from "react-icons/all";
-import IconButton from "@material-ui/core/IconButton";
+import {MdSave} from "react-icons/md";
+import {FaTrash} from "react-icons/fa";
+import IconButton from "@mui/material/IconButton";
 import CharacterInventory from "./characterComponents/CharacterInventory";
 import CharacterStats from "./characterComponents/CharacterStats";
 import CharacterSpells from "./characterComponents/CharacterSpells";

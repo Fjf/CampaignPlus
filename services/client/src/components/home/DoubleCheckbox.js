@@ -1,6 +1,6 @@
 import React from "react";
-import {SvgIcon} from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
+import {SvgIcon} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
 
 
 export default function DoubleCheckbox(props) {

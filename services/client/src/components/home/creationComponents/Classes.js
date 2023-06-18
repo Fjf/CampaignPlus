@@ -1,7 +1,7 @@
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import React, {useRef} from "react";
-import {MdClose} from "react-icons/all";
-import TextField from "@material-ui/core/TextField";
+import {MdClose} from "react-icons/md";
+import TextField from "@mui/material/TextField";
 import {toggleRightContentBar} from "../../services/constants";
 import {dataService} from "../../services/dataService";
 import {FileDrop} from "react-file-drop";

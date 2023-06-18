@@ -1,8 +1,8 @@
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import {toggleRightContentBar} from "../../services/constants";
-import {FaTrash, MdClose} from "react-icons/all";
-import TextField from "@material-ui/core/TextField/TextField";
-import DeleteIcon from "@material-ui/core/SvgIcon/SvgIcon";
+import {FaTrash} from "react-icons/fa";
+import {MdClose} from "react-icons/md";
+import TextField from "@mui/material/TextField/TextField";
 import React, {useRef} from "react";
 import {dataService} from "../../services/dataService";
 

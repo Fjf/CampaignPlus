@@ -1,7 +1,7 @@
 import React from "react";
 import "../styles/dice-roller.scss";
-import Button from "@material-ui/core/Button";
-import {TextField} from "@material-ui/core";
+import Button from "@mui/material/Button";
+import {TextField} from "@mui/material";
 
 export default function DiceRoller(props) {
     const [isRolling, setIsRolling] = React.useState(false);

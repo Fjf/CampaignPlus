@@ -1,7 +1,7 @@
 import React, {useRef} from "react";
-import IconButton from "@material-ui/core/IconButton";
-import {FaPlusCircle, MdClose, MdSave} from "react-icons/all";
-import {TextField} from "@material-ui/core";
+import IconButton from "@mui/material/IconButton";
+import {MdClose, MdSave} from "react-icons/md";
+import {TextField} from "@mui/material";
 import {toggleRightContentBar} from "../../services/constants";
 
 function ItemInfo(props) {

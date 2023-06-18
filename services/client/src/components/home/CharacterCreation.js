@@ -1,28 +1,29 @@
 import React from "react";
-import {makeStyles} from '@material-ui/core/styles';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
+import {makeStyles} from '@mui/styles';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import RaceSelection from "./characterCreationComponents/RaceSelection";
 import ClassSelection from "./characterCreationComponents/ClassSelection";
 import {characterService} from "../services/characterService";
 import CharacterFinalization from "./characterCreationComponents/CharacterFinalization";
+import {useTheme} from "@mui/material/styles";
 
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     root: {
         width: '100%',
         display: "flex",
         flexDirection: "column",
     },
     backButton: {
-        marginRight: theme.spacing(1),
+        marginRight: useTheme().spacing(1),
     },
     instructions: {
-        marginTop: theme.spacing(1),
-        marginBottom: theme.spacing(1),
+        marginTop: useTheme().spacing(1),
+        marginBottom: useTheme().spacing(1),
     },
 }));
 

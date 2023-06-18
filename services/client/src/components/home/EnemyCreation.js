@@ -1,9 +1,10 @@
-import IconButton from "@material-ui/core/IconButton";
+import IconButton from "@mui/material/IconButton";
 import React from "react";
 import {dataService} from "../services/dataService";
 import "../../styles/enemy.scss"
-import TextField from "@material-ui/core/TextField";
-import {FaPlusCircle, FaTrash, MdCreate, MdSave} from "react-icons/all";
+import TextField from "@mui/material/TextField";
+import {FaPlusCircle, FaTrash} from "react-icons/fa";
+import {MdCreate, MdSave} from "react-icons/md";
 import EnemyAbilityList from "./enemyComponents/EnemyAbilityList";
 import EnemyList from "./enemyComponents/EnemyList";
 

@@ -1,27 +1,30 @@
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 
 let map;
 
 import React from "react";
 import {FileDrop} from 'react-file-drop';
 import {dataService} from "../services/dataService";
-import {IconButton, TextField, TextareaAutosize, Tooltip} from "@material-ui/core"
+import {IconButton, TextField, TextareaAutosize, Tooltip} from "@mui/material"
+import {
+    FaArrowLeft,
+    FaPlusCircle,
+} from "react-icons/fa"
 import {
     BsTrash,
     BsUpload,
-    FaArrowLeft,
-    FaPlusCircle,
+} from "react-icons/bs"
+import {
     AiFillInfoCircle,
+} from "react-icons/ai"
+import {
     MdCreate,
-    MdSave,
-    MdOpenInNew
-} from "react-icons/all"
-import {campaignService} from "../services/campaignService";
+    MdSave
+} from "react-icons/md"
 import ReactMarkdown from "react-markdown";
-import Paper from "@material-ui/core/Paper";
-import Snackbar from "@material-ui/core/Snackbar";
-import Alert from "@material-ui/lab/Alert";
-import makeStyles from "@material-ui/core/styles/makeStyles";
+import Paper from "@mui/material/Paper";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/lab/Alert";
 
 
 function distance(p1, p2) {

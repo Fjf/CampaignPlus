@@ -1,10 +1,13 @@
 import * as React from "react";
 import "../styles/audioplayer.scss"
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import {FaWind, GiCaveEntrance, GiCricket, GiDropletSplash, GiHeavyRain, MdStore} from "react-icons/all";
-import Grid from "@material-ui/core/Grid";
-import {Pause, PlayArrow, VolumeDown, VolumeUp} from "@material-ui/icons";
-import Slider from "@material-ui/core/Slider";
+import ToggleButton from '@mui/lab/ToggleButton';
+import {GiCricket, GiDropletSplash, GiHeavyRain} from "react-icons/gi";
+import {FaWind} from "react-icons/fa";
+import {MdStore} from "react-icons/md";
+
+import Grid from "@mui/material/Grid";
+import {Pause, PlayArrow, VolumeDown, VolumeUp} from "@mui/icons-material";
+import Slider from "@mui/material/Slider";
 
 const fileNames = ["rain", "cave", "crickets", "forest_wind", "market"];
 const files = {};

@@ -1,6 +1,7 @@
-import IconButton from "@material-ui/core/IconButton";
-import {BsDiamond, BsDiamondFill, GoArrowDown, GoArrowUp} from "react-icons/all";
-import {Checkbox, TextField} from "@material-ui/core";
+import IconButton from "@mui/material/IconButton";
+import {GoArrowDown, GoArrowUp} from "react-icons/go";
+import {BsDiamond, BsDiamondFill} from "react-icons/bs";
+import {Checkbox, TextField} from "@mui/material";
 import React from "react";
 
 

@@ -1,10 +1,10 @@
-import Input from "@material-ui/core/Input/Input";
+import Input from "@mui/material/Input/Input";
 import React from "react";
 import "../../styles/authentication.scss"
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import {userService} from "../services/userService";
-import TextField from "@material-ui/core/TextField";
-import {useHistory} from "react-router-dom";
+import TextField from "@mui/material/TextField";
+import {useNavigate} from "react-router-dom";
 
 
 export default function Register(props) {
@@ -12,7 +12,7 @@ export default function Register(props) {
     const [password, setPassword] = React.useState("");
     const [cfPassword, setCfPassword] = React.useState("");
     const [email, setEmail] = React.useState("");
-    const history = useHistory()
+    const history = useNavigate()
     const [errors, setErrors] = React.useState({username: null, password: null, cfPassword: null, email: null})
 
     function register() {

@@ -1,5 +1,5 @@
-import IconButton from "@material-ui/core/IconButton";
-import {FaPlusCircle, FaTrash} from "react-icons/all";
+import IconButton from "@mui/material/IconButton";
+import {FaPlusCircle, FaTrash} from "react-icons/fa";
 import {characterService} from "../../services/characterService";
 import React from "react";
 import SpellsList from "./SpellsList";

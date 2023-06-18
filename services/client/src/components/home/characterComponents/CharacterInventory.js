@@ -1,11 +1,11 @@
 import {characterService} from "../../services/characterService";
 import React from "react";
 import ItemInfo from "./ItemInfo";
-import IconButton from "@material-ui/core/IconButton";
-import {FaPlusCircle, MdClose} from "react-icons/all";
+import IconButton from "@mui/material/IconButton";
+import {MdClose} from "react-icons/md";
+import {FaPlusCircle} from "react-icons/fa";
 import ItemsList from "./ItemsList";
-import SpellsList from "./SpellsList";
-import {TextField} from "@material-ui/core";
+import {TextField} from "@mui/material";
 
 export default function CharacterInventory(props) {
     const character = props.character;

@@ -1,27 +1,28 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import {makeStyles} from "@material-ui/core/styles";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import {makeStyles} from "@mui/styles";
 import {characterCreationService} from "../../services/characterCreationService";
-import CardMedia from "@material-ui/core/CardMedia";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
-import Card from "@material-ui/core/Card";
-import red from "@material-ui/core/colors/red";
-import Grid from "@material-ui/core/Grid";
+import CardMedia from "@mui/material/CardMedia";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import Card from "@mui/material/Card";
+import red from "@mui/material/colors/red";
+import Grid from "@mui/material/Grid";
+import {useTheme} from "@mui/material/styles"
 import "../../../styles/creation.scss";
 
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     formControl: {
-        margin: theme.spacing(1),
+        margin: useTheme().spacing(1),
         minWidth: 120,
     },
     selectEmpty: {
-        marginTop: theme.spacing(2),
+        marginTop: useTheme().spacing(2),
     }
 }));
 

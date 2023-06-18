@@ -1,23 +1,24 @@
-import {makeStyles} from "@material-ui/core/styles";
+import {makeStyles} from "@mui/styles";
 import React from "react";
 import {characterCreationService} from "../../services/characterCreationService";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel/InputLabel";
-import Select from "@material-ui/core/Select/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import Grid from "@material-ui/core/Grid";
-import Card from "@material-ui/core/Card/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel/InputLabel";
+import Select from "@mui/material/Select/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Grid from "@mui/material/Grid";
+import Card from "@mui/material/Card/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
 import ReactMarkdown from "react-markdown";
+import {useTheme} from "@mui/material/styles";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     formControl: {
-        margin: theme.spacing(1),
+        margin: useTheme().spacing(1),
         minWidth: 120,
     },
     selectEmpty: {
-        marginTop: theme.spacing(2),
+        marginTop: useTheme().spacing(2),
     }
 }));
 

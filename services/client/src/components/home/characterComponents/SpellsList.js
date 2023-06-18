@@ -1,9 +1,9 @@
 import React, {useRef} from "react";
 import {characterService} from "../../services/characterService";
 import {userService} from "../../services/userService";
-import {TextField} from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
-import {MdClose} from "react-icons/all";
+import {TextField} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import {MdClose} from "react-icons/md";
 import {toggleRightContentBar} from "../../services/constants";
 
 function SpellsList(props) {

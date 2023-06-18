@@ -1,6 +1,6 @@
-import IconButton from "@material-ui/core/IconButton";
-import {MdClose} from "react-icons/all";
-import {Checkbox} from "@material-ui/core";
+import IconButton from "@mui/material/IconButton";
+import {MdClose} from "react-icons/md";
+import {Checkbox} from "@mui/material";
 import React, {useRef} from "react";
 import {toggleRightContentBar} from "../../services/constants";
 

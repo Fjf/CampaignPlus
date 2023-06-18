@@ -1,6 +1,6 @@
-import IconButton from "@material-ui/core/IconButton";
-import {FaPlusCircle} from "react-icons/all";
-import TextField from "@material-ui/core/TextField/TextField";
+import IconButton from "@mui/material/IconButton";
+import {FaPlusCircle} from "react-icons/fa";
+import TextField from "@mui/material/TextField/TextField";
 import React from "react";
 
 

@@ -1,13 +1,14 @@
-import IconButton from "@material-ui/core/IconButton";
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import {Collapse} from "@material-ui/core";
+import IconButton from "@mui/material/IconButton";
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import {Collapse} from "@mui/material";
 import React from "react";
 import {campaignService} from "../services/campaignService";
 import {Link} from "react-router-dom";
-import Button from "@material-ui/core/Button";
-import {FaPlusCircle, FaTrash, MdSave} from "react-icons/all";
-import TextField from "@material-ui/core/TextField";
+import Button from "@mui/material/Button";
+import {MdSave} from "react-icons/md";
+import {FaPlusCircle, FaTrash} from "react-icons/fa";
+import TextField from "@mui/material/TextField";
 
 export default function CampaignOverview(props) {
     const campaigns = props.campaigns;
@@ -117,7 +118,7 @@ export default function CampaignOverview(props) {
                                 return <Collapse
                                     in={playerToggled[i]}
                                     key={i}
-                                    collapsedHeight={"24px"}
+                                    collapsedSize={"24px"}
                                 >
                                     <div className={"player-list-entry"}>
                                         <div>
