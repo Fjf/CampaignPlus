@@ -1,5 +1,6 @@
 from typing import List
 
+from sqlalchemy import or_
 from werkzeug.exceptions import BadRequest, Unauthorized, NotFound
 
 from lib.database import request_session
@@ -30,7 +31,7 @@ def create_enemy(name, max_hp, armor_class, strength, dex, con, intelligence, wi
     db = request_session()
     db.add(enemy)
     db.commit()
-    return enemy
+    return enemy_repository.get_enemy(enemy.id)
 
 
 def delete_enemy(enemy_id: int, user: UserModel):
@@ -78,7 +79,7 @@ def add_ability(enemy_id: int, text: str, user: UserModel):
 def get_abilities(user: UserModel, enemy_id=None) -> List[EnemyAbilityModel]:
     db = request_session()
     sub = db.query(EnemyAbilityModel) \
-        .filter(EnemyAbilityModel.owner_id == user.id)
+        .filter(or_(EnemyAbilityModel.owner_id == user.id, EnemyAbilityModel.owner_id == -1))
 
     if enemy_id is not None:
         sub = sub.filter(EnemyAbilityModel.enemy_id == enemy_id)
@@ -86,22 +87,14 @@ def get_abilities(user: UserModel, enemy_id=None) -> List[EnemyAbilityModel]:
     return sub.distinct(EnemyAbilityModel.text).all()
 
 
-def delete_ability(ability_id: int, enemy_id: int, user: UserModel):
-    enemy = get_enemy(enemy_id)
-    if not enemy:
-        return "This enemy does not exist"
-
-    if enemy.user != user:
-        return "This enemy does not belong to this user"
-
+def delete_ability(ability_id: int, user: UserModel):
     ability = enemy_repository.get_ability(ability_id)
+    if ability.owner_id != user.id:
+        raise Unauthorized("You cannot delete abilities which are not yours.")
 
-    # This should never happen when the front end works correctly.
-    if ability.enemy != enemy:
-        return "This ability does not belong to this enemy"
-
-    enemy_repository.delete_ability(ability)
-    return ""
+    session = request_session()
+    session.delete(ability)
+    session.commit()
 
 
 def edit_ability(ability_id, text, user):
@@ -147,7 +140,3 @@ def edit_enemy(user, data):
 
     db = request_session()
     db.commit()
-
-
-
-

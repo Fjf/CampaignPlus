@@ -6,6 +6,7 @@ export const dataService = {
     createEnemy,
     getAbilities,
     addAbility,
+    deleteAbility,
     getMaps,
     createMap,
     alterMap,
@@ -58,6 +59,21 @@ function addAbility(eid, ability) {
 
     return fetch(`${apiUrl}/enemies/${eid}/abilities`, requestOptions)
         .then(handleResponse);
+}
+
+function deleteAbility(ability_id, enemy_id) {
+    const requestOptions = {
+        method: 'DELETE',
+        headers: {'Content-Type': 'text/html'},
+    };
+
+    if (enemy_id !== undefined) {
+        return fetch(`${apiUrl}/enemies/${enemy_id}/abilities/${ability_id}`, requestOptions)
+            .then(handleResponse);
+    } else {
+        return fetch(`${apiUrl}/abilities/${ability_id}`, requestOptions)
+            .then(handleResponse);
+    }
 }
 
 function getEnemies() {
@@ -141,7 +157,6 @@ function deleteMap(cid, map_id) {
     return fetch(`${apiUrl}/campaigns/${cid}/maps/${map_id}`, requestOptions)
         .then(handleResponse);
 }
-
 
 
 function getClasses() {

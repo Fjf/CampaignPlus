@@ -10,9 +10,9 @@ import EnemyList from "./enemyComponents/EnemyList";
 
 export default function EnemyCreation(props) {
     const [selectedEnemy, setSelectedEnemy] = React.useState(null);
-    const [enemies, setEnemies] = React.useState([]);
+    const [selectedEnemyAbilities, setSelectedEnemyAbilities] = React.useState([]);
 
-    const [abilities, setAbilities] = React.useState([]);
+    const [enemies, setEnemies] = React.useState([]);
 
     const [selectingAbility, isSelectingAbility] = React.useState(false);
 
@@ -21,22 +21,13 @@ export default function EnemyCreation(props) {
         dataService.getEnemies().then(r => {
             setEnemies(r);
         });
-        // Store abilities here between renders of the list to reduce traffic.
-        dataService.getAbilities().then(r => {
-            setAbilities(r);
-        });
     }, []);
 
 
-
-
-        function openEditEnemy(enemy) {
+    function openEditEnemy(enemy) {
+        setSelectedEnemy(enemy);
         dataService.getAbilities(enemy.id).then(r => {
-            console.log(r);
-            setSelectedEnemy({
-                ...enemy,
-                abilities: r
-            })
+            setSelectedEnemyAbilities(r);
         })
     }
 
@@ -53,7 +44,7 @@ export default function EnemyCreation(props) {
         let name = prompt("Set an enemy name.");
         dataService.createEnemy({name: name}).then(r => {
             setEnemies([...enemies, r]);
-            openEditEnemy(enemies.length);
+            openEditEnemy(r);
         });
     }
 
@@ -65,13 +56,7 @@ export default function EnemyCreation(props) {
         const ability = prompt("Type your ability here.");
         if (ability === null) return;
         dataService.addAbility(selectedEnemy.id, ability).then((a) => {
-            setSelectedEnemy({
-                ...selectedEnemy,
-                abilities: [
-                    ...selectedEnemy.abilities,
-                    a
-                ]
-            });
+            setSelectedEnemyAbilities([...selectedEnemyAbilities, a]);
             stopSelecting();
         })
     }
@@ -87,7 +72,10 @@ export default function EnemyCreation(props) {
                     <IconButton onClick={() => deleteEnemy()}>
                         <FaTrash fontSize="inherit"/>
                     </IconButton>
-                    <IconButton onClick={() => dataService.saveEnemy(selectedEnemy).then(r => alert("Saved!"))}>
+                    <IconButton onClick={() => dataService.saveEnemy({
+                        ...selectedEnemy,
+                        abilities: selectedEnemyAbilities
+                    }).then(r => alert("Saved!"))}>
                         <MdSave/>
                     </IconButton>
                 </div>
@@ -199,21 +187,26 @@ export default function EnemyCreation(props) {
                     </div>
                     <div className={"abilities-list"}>
                         {
-                            selectedEnemy.abilities.map((ability, i) => {
-                                return <TextField
-                                    rows={3}
-                                    fullWidth={true}
-                                    multiline={true}
-                                    value={ability.text}
-                                    onChange={(e) => {
-                                        let a = [...selectedEnemy.abilities];
-                                        a[i].text = e.target.value;
-                                        setSelectedEnemy({
-                                            ...selectedEnemy,
-                                            abilities: a
-                                        })
-                                    }}
-                                    key={ability.id}/>
+                            selectedEnemyAbilities.map((ability, i) => {
+                                return <div key={i} style={{display: "flex", flexDirection: "row"}}>
+                                    <TextField
+                                        rows={3}
+                                        fullWidth={true}
+                                        multiline={true}
+                                        value={ability.text}
+                                        onChange={(e) => {
+                                            let a = [...selectedEnemyAbilities];
+                                            a[i].text = e.target.value;
+                                            setSelectedEnemyAbilities([...a])
+                                        }}
+                                        key={ability.id}/>
+                                    <IconButton style={{width: "48px", height: "48px"}} onClick={e => {
+                                        dataService.deleteAbility(ability.id, selectedEnemy.id)
+                                            .then(d => {
+                                                setSelectedEnemyAbilities(d)
+                                            });
+                                    }}><FaTrash/></IconButton>
+                                </div>
                             })
                         }
                     </div>
@@ -222,15 +215,12 @@ export default function EnemyCreation(props) {
         }
         {selectingAbility ? <EnemyAbilityList onClose={stopSelecting} onSelect={(ability) => {
             dataService.addAbility(selectedEnemy.id, ability.text).then((a) => {
-                setSelectedEnemy({
-                    ...selectedEnemy,
-                    abilities: [
-                        ...selectedEnemy.abilities,
-                        a
-                    ]
-                });
+                setSelectedEnemyAbilities([
+                    ...selectedEnemyAbilities,
+                    a
+                ]);
                 stopSelecting();
             })
-        }} abilities={abilities}/> : null}
+        }}/> : null}
     </>
 }

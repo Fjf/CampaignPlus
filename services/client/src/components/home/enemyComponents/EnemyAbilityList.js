@@ -7,18 +7,25 @@ import React, {useRef} from "react";
 import {dataService} from "../../services/dataService";
 
 let timeout = null;
-function EnemyAbilityList(props) {
-    const abilities = props.abilities;
+export default function EnemyAbilityList(props) {
+    // TODO: We can cache this if we explicitly manage enemyability access, to ensure we only fetch when a delete update
+    //  occurred.
+    const [abilities, setAbilities] = React.useState([]);
     const bar = useRef(null);
-    const [filteredAbilities, setFilteredAbilities] = React.useState(abilities.slice(0, 50));
+    const [filteredAbilities, setFilteredAbilities] = React.useState([]);
 
     React.useEffect(() => {
         toggleRightContentBar(bar);
+        // Store abilities here between renders of the list to reduce traffic.
+        dataService.getAbilities().then(r => {
+            setAbilities(r);
+            setFilteredAbilities(r.slice(0, 50));
+        });
     }, []);
 
-    function setFilterAbility(event) {
+    function setFilterAbility(value) {
         clearTimeout(timeout);
-        let val = event.target.value.toLowerCase();
+        let val = value.toLowerCase();
         timeout = setTimeout(() => {
             setFilteredAbilities(abilities.filter((ability) => ability.text.toLowerCase().includes(val)).slice(0, 50));
         }, 500);
@@ -35,7 +42,7 @@ function EnemyAbilityList(props) {
         </div>
         <div>
             <TextField
-                onChange={setFilterAbility}
+                onChange={e => setFilterAbility(e.target.value)}
                 label={"Filter"}
             />
         </div>
@@ -47,7 +54,9 @@ function EnemyAbilityList(props) {
                     }}>
                         <div>{ability.text}</div>
                         <div className={"icon-bar"}>
-                            <IconButton size="small" onClick={() => console.log("Deleting enemy ability.")}>
+                            <IconButton size="small" onClick={() => {
+                                dataService.deleteAbility(ability.id).then(r => toggleRightContentBar(bar, props.onClose));
+                            }}>
                                 <FaTrash fontSize="inherit"/>
                             </IconButton>
                         </div>
@@ -58,4 +67,3 @@ function EnemyAbilityList(props) {
     </div>
 }
 
-export default React.memo(EnemyAbilityList);
