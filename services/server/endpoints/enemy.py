@@ -45,13 +45,9 @@ def edit_ability(enemy_id):
     data = request.get_json()
 
     user = session_user()
-    error = enemy_service.edit_enemy(user, data)
+    enemy = enemy_service.edit_enemy(user, enemy_id=enemy_id, data=data)
 
-    success = error == ""
-    return {
-        "success": success,
-        "error": error
-    }
+    return enemy.to_json()
 
 
 @api.route('/enemies/<int:enemy_id>/abilities', methods=["GET"])

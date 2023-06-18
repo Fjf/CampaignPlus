@@ -25,6 +25,7 @@ class JSONAble:
                     not k.startswith("_") and
                     type(v) in allowed_types
             )
+
         response.update({k: v for k, v in self.__dict__.items() if _is_valid(k, v)})
         return response
 
@@ -72,15 +73,16 @@ class EnemyModel(OrmModelBase, JSONAble):
     user = relationship("UserModel")
 
     name = Column(String(), unique=True, nullable=False)
-    max_hp = Column(Integer(), nullable=False)
-    armor_class = Column(Integer(), nullable=False)
+    max_hp = Column(Integer(), default=0)
+    armor_class = Column(Integer(), default=0)
+    speed = Column(Integer(), default=0)
 
-    strength = Column(Integer, nullable=True)
-    dexterity = Column(Integer, nullable=True)
-    constitution = Column(Integer, nullable=True)
-    intelligence = Column(Integer, nullable=True)
-    wisdom = Column(Integer, nullable=True)
-    charisma = Column(Integer, nullable=True)
+    strength = Column(Integer, default=0)
+    dexterity = Column(Integer, default=0)
+    constitution = Column(Integer, default=0)
+    intelligence = Column(Integer, default=0)
+    wisdom = Column(Integer, default=0)
+    charisma = Column(Integer, default=0)
 
 
 class EnemyAbilityModel(OrmModelBase, JSONAble):

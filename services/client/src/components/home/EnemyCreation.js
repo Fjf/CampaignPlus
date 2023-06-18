@@ -75,7 +75,16 @@ export default function EnemyCreation(props) {
                     <IconButton onClick={() => dataService.saveEnemy({
                         ...selectedEnemy,
                         abilities: selectedEnemyAbilities
-                    }).then(r => alert("Saved!"))}>
+                    }).then(r => {
+                        const updatedEnemies = enemies.map((item) => {
+                            if (item.id === r.id)
+                                return r;
+                            return item;
+                        });
+
+                        setEnemies(updatedEnemies);
+                        alert("Saved!");
+                    })}>
                         <MdSave/>
                     </IconButton>
                 </div>
@@ -111,63 +120,73 @@ export default function EnemyCreation(props) {
                         }}
                         label={"Max HP"}
                     />
-                    <h3>Stats</h3>
                     <TextField
-                        value={selectedEnemy.str}
+                        value={selectedEnemy.speed}
                         onChange={(e) => {
                             setSelectedEnemy({
                                 ...selectedEnemy,
-                                str: e.target.value
+                                speed: e.target.value
+                            });
+                        }}
+                        label={"Speed"}
+                    />
+                    <h3>Stats</h3>
+                    <TextField
+                        value={selectedEnemy.strength}
+                        onChange={(e) => {
+                            setSelectedEnemy({
+                                ...selectedEnemy,
+                                strength: e.target.value
                             });
                         }}
                         label={"Strength"}
                     />
                     <TextField
-                        value={selectedEnemy.dex}
+                        value={selectedEnemy.dexterity}
                         onChange={(e) => {
                             setSelectedEnemy({
                                 ...selectedEnemy,
-                                dex: e.target.value
+                                dexterity: e.target.value
                             });
                         }}
                         label={"Dexterity"}
                     />
                     <TextField
-                        value={selectedEnemy.con}
+                        value={selectedEnemy.constitution}
                         onChange={(e) => {
                             setSelectedEnemy({
                                 ...selectedEnemy,
-                                con: e.target.value
+                                constitution: e.target.value
                             });
                         }}
                         label={"Constitution"}
                     />
                     <TextField
-                        value={selectedEnemy.int}
+                        value={selectedEnemy.intelligence}
                         onChange={(e) => {
                             setSelectedEnemy({
                                 ...selectedEnemy,
-                                int: e.target.value
+                                intelligence: e.target.value
                             });
                         }}
                         label={"Intelligence"}
                     />
                     <TextField
-                        value={selectedEnemy.wis}
+                        value={selectedEnemy.wisdom}
                         onChange={(e) => {
                             setSelectedEnemy({
                                 ...selectedEnemy,
-                                wis: e.target.value
+                                wisdom: e.target.value
                             });
                         }}
                         label={"Wisdom"}
                     />
                     <TextField
-                        value={selectedEnemy.cha}
+                        value={selectedEnemy.charisma}
                         onChange={(e) => {
                             setSelectedEnemy({
                                 ...selectedEnemy,
-                                cha: e.target.value
+                                charisma: e.target.value
                             });
                         }}
                         label={"Charisma"}
@@ -222,5 +241,6 @@ export default function EnemyCreation(props) {
                 stopSelecting();
             })
         }}/> : null}
+
     </>
 }

@@ -108,8 +108,7 @@ def edit_ability(ability_id, text, user):
     return ""
 
 
-def edit_enemy(user, data):
-    enemy_id = data.get("id")
+def edit_enemy(user, enemy_id: int, data: dict):
     enemy = get_enemy(enemy_id)
     if enemy is None:
         raise NotFound("This enemy does not exist.")
@@ -117,16 +116,13 @@ def edit_enemy(user, data):
     if enemy.user_id != user.id:
         raise Unauthorized("This enemy does not belong to you.")
 
-    enemy.name = data.get("name")
-    enemy.armor_class = data.get("armor_class")
-    enemy.max_hp = data.get("max_hp")
-
-    enemy.strength = data.get("str")
-    enemy.dexterity = data.get("dex")
-    enemy.constitution = data.get("con")
-    enemy.intelligence = data.get("int")
-    enemy.wisdom = data.get("wis")
-    enemy.charisma = data.get("cha")
+    for key, value in data.items():
+        try:
+            getattr(enemy, key)
+            setattr(enemy, key, value)
+        except AttributeError as e:
+            # Ignore mismatch in keys
+            continue
 
     abilities = data.get("abilities")
     for ability in abilities:
@@ -140,3 +136,5 @@ def edit_enemy(user, data):
 
     db = request_session()
     db.commit()
+
+    return get_enemy(enemy_id)
