@@ -12,7 +12,7 @@ export default function Register(props) {
     const [password, setPassword] = React.useState("");
     const [cfPassword, setCfPassword] = React.useState("");
     const [email, setEmail] = React.useState("");
-    const history = useNavigate()
+    const navigate = useNavigate()
     const [errors, setErrors] = React.useState({username: null, password: null, cfPassword: null, email: null})
 
     function register() {
@@ -40,7 +40,7 @@ export default function Register(props) {
 
         userService.registerUser(username, password, email).then(
             r => {
-                history.push(r.refer)
+                navigate.push("/")
             }, error => {
                 if (error.includes("username")) {
                     setErrors({

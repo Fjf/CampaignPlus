@@ -13,7 +13,7 @@ export default function Authenticate(props) {
                 <div>Already have an account?</div> :
                 <div>Don't have an account yet?</div>
             }
-            <div>Click <a onClick={() => setIsRegister(!isRegister)} style={{cursor: 'pointer'}}>here!</a></div>
+            <div>Click <a onClick={() => setIsRegister(!isRegister)} href={"#register"} style={{cursor: 'pointer'}}>here!</a></div>
         </div>
     </div>
 }

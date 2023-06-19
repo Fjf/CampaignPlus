@@ -15,7 +15,7 @@ import BattleMap from "../battlemap/BattleMap";
 export default function Home(props) {
     const [campaigns, setCampaigns] = React.useState([]);
     const [user, setUser] = React.useState(userService.getUser());
-    const history = useNavigate();
+    const navigate = useNavigate();
 
     React.useEffect(() => {
         if (user === null) return;
@@ -56,7 +56,7 @@ export default function Home(props) {
                             userService.logout().then(r => {
                                 console.log("Logout successful.")
                             });
-                            history.push('/login')
+                            navigate('/login')
                         }}
                         >Logout
                         </div>

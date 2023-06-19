@@ -9,7 +9,7 @@ import {useNavigate} from "react-router-dom";
 export default function Login(props) {
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
-    const history = useNavigate();
+    const navigate = useNavigate();
     const [errors, setErrors] = React.useState({username: null, password: null});
 
     function handleLogin(event) {
@@ -29,7 +29,8 @@ export default function Login(props) {
         }
 
         userService.login(username, password).then(r => {
-            history.push(r.refer);
+            console.log(r);
+            navigate("/");
         }, error => {
             console.log("Error:", error);
             if (error.toLowerCase().includes("password")) {

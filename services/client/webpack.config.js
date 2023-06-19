@@ -16,12 +16,15 @@ module.exports = {
                 exclude: /node_modules/,
                 loader: "babel-loader"
             }, {
-                test: /\.(png|svg|jpe?g|gif|ico)$/,
-                loader: 'file-loader',
-                options: {
-                    outputPath: './images/'
-                }
-            }, {
+                // test: /\.(png|svg|jpe?g|gif|ico)$/,
+                // use: [
+                //     'file-loader?name=./images/[name].[ext]'
+                // ],
+                // options: {
+                //     outputPath: './images/',
+                //     name: '[name].[ext]'
+                // }
+            // }, {
                 test: /\.s[ac]ss$/i,
                 use: [
                     // Creates `style` nodes from JS strings
