@@ -49,5 +49,5 @@ def create_item(user: UserModel, json_object):
     item.item_info = json_object.get("item_info")
 
     db.commit()
-
+    db.refresh(item)
     return item
