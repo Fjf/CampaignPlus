@@ -7,7 +7,7 @@ from typing import Any
 
 import qrcode
 from sqlalchemy import Column, Integer, String, ForeignKey, LargeBinary, DateTime, Boolean, JSON
-from sqlalchemy.orm import relationship, deferred
+from sqlalchemy.orm import relationship, deferred, Mapped
 
 from lib.database import OrmModelBase, request_session
 
@@ -95,10 +95,10 @@ class EnemyAbilityModel(OrmModelBase, JSONAble):
     id = Column(Integer(), primary_key=True)
 
     enemy_id = Column(Integer(), ForeignKey("enemy.id"), nullable=False)
-    enemy: EnemyModel = relationship("EnemyModel")
+    enemy: Mapped[EnemyModel] = relationship("EnemyModel")
 
     owner_id = Column(Integer(), ForeignKey("user.id"), nullable=False)
-    owner: UserModel = relationship("UserModel")
+    owner: Mapped[UserModel] = relationship("UserModel")
 
     text = Column(String(), nullable=False)
 
@@ -392,7 +392,7 @@ class PlayerEquipmentModel(OrmModelBase, JSONAble):
     player = relationship("PlayerModel")
 
     item_id = Column(Integer(), ForeignKey("item.id"), nullable=False)
-    item: ItemModel = relationship("ItemModel")
+    item: Mapped[ItemModel] = relationship("ItemModel")
 
     amount = Column(Integer(), nullable=False, default=0)
     description = Column(String(), nullable=True, default="")
@@ -454,7 +454,7 @@ class PlayerSpellModel(OrmModelBase, JSONAble):
     player = relationship("PlayerModel")
 
     spell_id = Column(Integer(), ForeignKey("spell.id"), nullable=False)
-    spell: SpellModel = relationship("SpellModel")
+    spell: Mapped[SpellModel] = relationship("SpellModel")
 
 
 class RaceModel(OrmModelBase, JSONAble):
